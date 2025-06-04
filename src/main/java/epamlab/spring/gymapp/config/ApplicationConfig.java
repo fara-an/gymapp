@@ -7,7 +7,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 
 @Configuration
-@ComponentScan(basePackages = "springgymapp")
+@ComponentScan(basePackages = "epamlab.spring.gymapp")
 @PropertySource("classpath:storage.properties")
 public class ApplicationConfig {
 
