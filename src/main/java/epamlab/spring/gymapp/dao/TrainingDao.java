@@ -1,15 +1,20 @@
-package springgymapp.dao;
+package epamlab.spring.gymapp.dao;
 
+import epamlab.spring.gymapp.storage.TrainingStorage;
 import org.springframework.stereotype.Repository;
-import springgymapp.model.Training;
+import epamlab.spring.gymapp.model.Training;
 
 import java.util.List;
 import java.util.Optional;
+
 @Repository
 public class TrainingDao implements Dao<Training> {
 
     private TrainingStorage trainingStorage;
 
+    public TrainingDao(TrainingStorage trainingStorage) {
+        this.trainingStorage = trainingStorage;
+    }
 
     @Override
     public Optional<Training> get(Long id) {
@@ -17,8 +22,13 @@ public class TrainingDao implements Dao<Training> {
     }
 
     @Override
+    public Optional<Training> get(String username) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public List<Training> getAll() {
-        return (List<Training>) trainingStorage.getAll();
+        return trainingStorage.getAll();
     }
 
     @Override
@@ -32,9 +42,20 @@ public class TrainingDao implements Dao<Training> {
     }
 
 
-    @Override
     public void delete(Training training) {
         trainingStorage.delete(training.getId());
+
+    }
+
+    @Override
+    public void delete(long id) {
+        trainingStorage.delete(id);
+
+    }
+
+    @Override
+    public long findUsernamesStartsWith(String userName) {
+        throw new UnsupportedOperationException("Method is not supported in" + getClass().getName());
 
     }
 }

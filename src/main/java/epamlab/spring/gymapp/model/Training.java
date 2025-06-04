@@ -1,18 +1,16 @@
-package springgymapp.model;
+package epamlab.spring.gymapp.model;
 
 import java.time.Duration;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class Training {
     private long id;
-    private Trainer trainer; // 0..1
-    private Trainee trainee; // 0..1
+    private Trainer trainer;
+    private Trainee trainee;
     private String trainingName;
-    private TrainingType trainingType;// 1
+    private TrainingType trainingType;
     private LocalDateTime trainingDate;
     private Duration duration;
-
     private long trainerId;
     private long traineeId;
 

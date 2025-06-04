@@ -1,7 +1,7 @@
-package springgymapp.dao;
+package epamlab.spring.gymapp.storage;
 
 import org.springframework.stereotype.Component;
-import springgymapp.model.Trainer;
+import epamlab.spring.gymapp.model.Trainer;
 @Component("trainerStorage")
 public class TrainerStorage extends InMemoryStorage<Trainer> {
 }
