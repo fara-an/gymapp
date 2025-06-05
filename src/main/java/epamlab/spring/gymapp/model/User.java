@@ -19,6 +19,30 @@ public abstract class User {
         this.userId=userId;
     }
 
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
+
+    public void setUserId(long userId) {
+        this.userId = userId;
+    }
+
     public String getFirstName() {
         return firstName;
     }

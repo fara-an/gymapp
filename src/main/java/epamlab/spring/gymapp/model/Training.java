@@ -62,6 +62,26 @@ public class Training {
         return traineeId;
     }
 
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public void setTrainingName(String trainingName) {
+        this.trainingName = trainingName;
+    }
+
+    public void setTrainingType(TrainingType trainingType) {
+        this.trainingType = trainingType;
+    }
+
+    public void setTrainingDate(LocalDateTime trainingDate) {
+        this.trainingDate = trainingDate;
+    }
+
+    public void setDuration(Duration duration) {
+        this.duration = duration;
+    }
+
     public void setTrainer(Trainer trainer) {
         this.trainer = trainer;
     }

@@ -23,6 +23,13 @@ public class Trainer extends User {
         return trainingType;
     }
 
+    public void setSpecialization(String specialization) {
+        this.specialization = specialization;
+    }
+
+    public void setTrainingType(TrainingType trainingType) {
+        this.trainingType = trainingType;
+    }
 
     @Override
     public String toString() {

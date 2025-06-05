@@ -22,6 +22,13 @@ public class Trainee extends User {
         return address;
     }
 
+    public void setBirthday(LocalDateTime birthday) {
+        this.birthday = birthday;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
 
     @Override
     public String toString() {
