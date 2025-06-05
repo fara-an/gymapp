@@ -35,7 +35,7 @@ public class TrainerServiceImpl implements TrainerService {
         long numberOfSameUsernames = trainerDao.findUsernamesStartsWith(userName);
         usernameAndPasswordGenerator.generateUsername(firstName, lastName, numberOfSameUsernames);
         String password = usernameAndPasswordGenerator.generatePassword();
-        Trainer newTrainer = new Trainer(firstName, lastName, userName, password, isActive, specialization, trainingType, training, userId);
+        Trainer newTrainer = new Trainer(firstName, lastName, userName, password, isActive, specialization, trainingType,  userId);
         trainerDao.save(newTrainer);
     }
 
@@ -50,7 +50,6 @@ public class TrainerServiceImpl implements TrainerService {
                     updatedTrainer.isActive(),
                     updatedTrainer.getSpecialization(),
                     updatedTrainer.getTrainingType(),
-                    updatedTrainer.getTraining(),
                     id);
             trainerDao.update(id, newTrainer);
             LOGGER.info("Trainer with id {}  is successfully updated", id);

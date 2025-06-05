@@ -11,10 +11,4 @@ import org.springframework.core.env.Environment;
 @PropertySource("classpath:storage.properties")
 public class ApplicationConfig {
 
-
-    @Bean
-    StoragePostProcessor storagePostProcessor(Environment environment) {
-        return new StoragePostProcessor(environment);
-    }
-
 }
