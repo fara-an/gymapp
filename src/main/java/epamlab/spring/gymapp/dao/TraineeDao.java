@@ -30,7 +30,7 @@ public class TraineeDao implements TraineeDaoInterface<Trainee> {
 
     @Override
     public void save(Trainee trainee) {
-        traineeStorage.save(trainee.getUserId(), trainee);
+        traineeStorage.save(trainee.getId(), trainee);
 
     }
 

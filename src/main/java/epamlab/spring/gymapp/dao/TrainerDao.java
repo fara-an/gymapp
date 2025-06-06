@@ -25,7 +25,7 @@ public class TrainerDao implements TrainerDaoInterface<Trainer> {
 
     @Override
     public void save(Trainer trainer) {
-        trainerStorage.save(trainer.getUserId(), trainer);
+        trainerStorage.save(trainer.getId(), trainer);
     }
 
     @Override

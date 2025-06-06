@@ -32,7 +32,7 @@ public class TraineeStorage extends InMemoryStorage<Trainee> {
                 Trainee trainee = new Trainee(parts[0], parts[1], parts[2], parts[3], Boolean.parseBoolean(parts[4]), LocalDateTime.parse(parts[5]), parts[6], Long.parseLong(parts[7])
 
                 );
-                this.save(trainee.getUserId(), trainee);
+                this.save(trainee.getId(), trainee);
             });
         } catch (IOException io) {
             throw new RuntimeException("Failed to load trainers from " + path, io);

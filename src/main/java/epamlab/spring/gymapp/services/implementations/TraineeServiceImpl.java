@@ -57,7 +57,7 @@ public class TraineeServiceImpl implements TraineeService {
             LOGGER.info("Trainer with ID {} successfully updated.", id);
             return;
         }else {
-            LOGGER.warn("Trainer with id {} not found", updatedTrainee.getUserId());
+            LOGGER.warn("Trainer with id {} not found", updatedTrainee.getId());
 
         }
     }

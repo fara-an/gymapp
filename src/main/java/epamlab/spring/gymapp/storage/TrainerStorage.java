@@ -32,7 +32,7 @@ public class TrainerStorage extends InMemoryStorage<Trainer> {
 
 
                 );
-                this.save(trainer.getUserId(), trainer);
+                this.save(trainer.getId(), trainer);
             });
         } catch (IOException io) {
             throw new RuntimeException("Failed to load trainers from " + path, io);

@@ -25,7 +25,7 @@ public class TrainerServiceImpl implements TrainerService {
     private TrainerDao trainerDao;
 
     @Override
-    public void createTrainer(String firstName, String lastName, boolean isActive, String specialization, TrainingType trainingType, Training training, long userId) {
+    public Trainer createTrainer(String firstName, String lastName, boolean isActive, String specialization, TrainingType trainingType, Training training, long userId) {
         LOGGER.info("Creating trainer profile {} {}", firstName, lastName);
         String baseUsername = firstName + "." + lastName;
         Trainer existingTrainer = trainerDao.findByUsername(baseUsername);
@@ -40,6 +40,7 @@ public class TrainerServiceImpl implements TrainerService {
         String password = PasswordGenerator.generatePassword();
         Trainer newTrainer = new Trainer(firstName, lastName, username, password, isActive, specialization, trainingType, userId);
         trainerDao.save(newTrainer);
+        return newTrainer;
     }
 
     @Override

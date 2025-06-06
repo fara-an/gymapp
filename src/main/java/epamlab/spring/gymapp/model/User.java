@@ -1,22 +1,21 @@
 package epamlab.spring.gymapp.model;
 
-public abstract class User {
+public abstract class User extends BaseEntity{
 
     private String firstName;
     private String lastName;
     private String userName;
     private String password;
     private boolean isActive;
-    private   long userId;
 
 
     public User(String firstName, String lastName, String userName, String password, boolean isActive, long userId) {
+        super(userId);
         this.firstName = firstName;
         this.lastName = lastName;
         this.userName = userName;
         this.password = password;
         this.isActive = isActive;
-        this.userId=userId;
     }
 
     public void setFirstName(String firstName) {
@@ -39,9 +38,6 @@ public abstract class User {
         isActive = active;
     }
 
-    public void setUserId(long userId) {
-        this.userId = userId;
-    }
 
     public String getFirstName() {
         return firstName;
@@ -63,9 +59,6 @@ public abstract class User {
         return isActive;
     }
 
-    public long getUserId() {
-        return userId;
-    }
 
     @Override
     public String toString() {
@@ -74,7 +67,7 @@ public abstract class User {
                 ", userName='" + userName + '\'' +
                 ", password='" + password + '\'' +
                 ", isActive=" + isActive +
-                ", userId=" + userId +
+                ", userId=" + super.id +
                 '}';
     }
 

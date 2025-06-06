@@ -4,7 +4,7 @@ import epamlab.spring.gymapp.model.Training;
 
 public interface TrainingService {
 
-    void create(Training training);
+    Training create(Training training);
 
     Training get(Training training);
 }

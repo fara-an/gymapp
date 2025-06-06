@@ -6,7 +6,7 @@ import epamlab.spring.gymapp.model.TrainingType;
 
 public interface TrainerService {
 
-    void createTrainer(String firstName, String lastName, boolean isActive, String specialization, TrainingType trainingType, Training training, long userId);
+    Trainer createTrainer(String firstName, String lastName, boolean isActive, String specialization, TrainingType trainingType, Training training, long userId);
 
     void updateTrainer(long id, Trainer updatedTrainer);
 
