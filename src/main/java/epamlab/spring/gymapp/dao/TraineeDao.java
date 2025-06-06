@@ -1,6 +1,7 @@
 package epamlab.spring.gymapp.dao;
 
 import epamlab.spring.gymapp.dao.interfaces.TraineeDaoInterface;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import epamlab.spring.gymapp.model.Trainee;
 import epamlab.spring.gymapp.storage.TraineeStorage;
@@ -14,7 +15,8 @@ public class TraineeDao implements TraineeDaoInterface<Trainee> {
 
     private TraineeStorage traineeStorage;
 
-    public TraineeDao(TraineeStorage traineeStorage) {
+    @Autowired
+    public void setTraineeStorage(TraineeStorage traineeStorage) {
         this.traineeStorage = traineeStorage;
     }
 
