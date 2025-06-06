@@ -2,6 +2,7 @@ package epamlab.spring.gymapp.config;
 
 import epamlab.spring.gymapp.model.Trainer;
 import epamlab.spring.gymapp.model.Training;
+import epamlab.spring.gymapp.services.TraineeService;
 import epamlab.spring.gymapp.storage.TraineeStorage;
 import epamlab.spring.gymapp.storage.TrainerStorage;
 import epamlab.spring.gymapp.storage.TrainingStorage;
@@ -26,7 +27,6 @@ public class Main {
 
         List<Training> trainings = trainingStorage.getAll();
         trainings.forEach(System.out::println);
-
 
     }
 }
