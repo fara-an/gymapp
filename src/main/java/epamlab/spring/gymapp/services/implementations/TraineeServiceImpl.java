@@ -18,18 +18,8 @@ public class TraineeServiceImpl implements TraineeService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TraineeServiceImpl.class);
 
-    private TraineeDao traineeDao;
-
-
-    public TraineeServiceImpl(TraineeDao traineeDao) {
-        this.traineeDao = traineeDao;
-    }
-
     @Autowired
-    public void setTrainerDao(TraineeDao traineeDao) {
-        this.traineeDao = traineeDao;
-    }
-
+    private TraineeDao traineeDao;
 
     @Override
     public Trainee createTrainee(String firstName, String lastName, boolean isActive, LocalDateTime birthday, String address, long userId) {

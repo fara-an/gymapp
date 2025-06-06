@@ -13,13 +13,8 @@ public class TrainingServiceImpl implements TrainingService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TrainingServiceImpl.class);
 
-    private TrainingDao trainingDao;
-
     @Autowired
-    public void setTrainingDao(TrainingDao trainingDao) {
-        this.trainingDao = trainingDao;
-    }
-
+    private TrainingDao trainingDao;
 
     @Override
     public void create(Training training) {

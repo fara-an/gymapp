@@ -21,13 +21,8 @@ public class TrainerServiceImpl implements TrainerService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TraineeServiceImpl.class);
 
-    private TrainerDao trainerDao;
-
-
     @Autowired
-    public TrainerServiceImpl(TrainerDao trainerDao) {
-        this.trainerDao = trainerDao;
-    }
+    private TrainerDao trainerDao;
 
     @Override
     public void createTrainer(String firstName, String lastName, boolean isActive, String specialization, TrainingType trainingType, Training training, long userId) {
