@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import epamlab.spring.gymapp.model.Training;
 
+import java.util.Optional;
+
 @Service
 public class TrainingServiceImpl implements TrainingService {
 
@@ -18,13 +20,26 @@ public class TrainingServiceImpl implements TrainingService {
 
     @Override
     public Training create(Training training) {
+        LOGGER.info("Creating training: name='{}', type='{}'", training.getTrainingName(), training.getTrainingType());
         trainingDao.save(training);
+        LOGGER.info("Training created successfully with ID: {}", training.getId());
         return training;
     }
 
     @Override
     public Training get(Training training) {
-        return trainingDao.get(training.getId()).get();
+        long id = training.getId();
+        LOGGER.info("Retrieving training with ID: {}", id);
+        Optional<Training> foundTraining = trainingDao.get(id);
+
+        if (foundTraining.isPresent()) {
+            LOGGER.info("Training with ID {} retrieved successfully: name='{}'",
+                    id, foundTraining.get().getTrainingName());
+            return foundTraining.get();
+        } else {
+            LOGGER.warn("Training with ID {} not found.", id);
+            return null;
+        }
     }
 
 
