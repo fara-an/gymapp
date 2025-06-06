@@ -1,7 +1,10 @@
-package epamlab.spring.gymapp.services;
+package epamlab.spring.gymapp.services.implementations;
 
 import epamlab.spring.gymapp.dao.TrainerDao;
-import epamlab.spring.gymapp.services.serviceInterfaces.TrainerService;
+import epamlab.spring.gymapp.model.Trainee;
+import epamlab.spring.gymapp.services.TrainerService;
+import epamlab.spring.gymapp.util.PasswordGenerator;
+import epamlab.spring.gymapp.util.UsernameGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,22 +23,27 @@ public class TrainerServiceImpl implements TrainerService {
 
     private TrainerDao trainerDao;
 
-    private DotSeparatedUsernameAndPasswordGeneration usernameAndPasswordGenerator;
-
 
     @Autowired
-    public TrainerServiceImpl(TrainerDao trainerDao, DotSeparatedUsernameAndPasswordGeneration dotSeparatedUsernameAndPasswordGeneration) {
+    public TrainerServiceImpl(TrainerDao trainerDao) {
         this.trainerDao = trainerDao;
-        this.usernameAndPasswordGenerator = dotSeparatedUsernameAndPasswordGeneration;
     }
 
     @Override
     public void createTrainer(String firstName, String lastName, boolean isActive, String specialization, TrainingType trainingType, Training training, long userId) {
-        String userName = firstName + "." + lastName;
-        long numberOfSameUsernames = trainerDao.findUsernamesStartsWith(userName);
-        usernameAndPasswordGenerator.generateUsername(firstName, lastName, numberOfSameUsernames);
-        String password = usernameAndPasswordGenerator.generatePassword();
-        Trainer newTrainer = new Trainer(firstName, lastName, userName, password, isActive, specialization, trainingType,  userId);
+        LOGGER.info("Creating trainer profile {} {}", firstName, lastName);
+        String baseUsername = firstName + "." + lastName;
+        Trainer existingTrainer = trainerDao.findByUsername(baseUsername);
+        boolean usernameExists = existingTrainer != null;
+
+
+        if (usernameExists) {
+            LOGGER.info("Username '{}' already exists. Generating unique username.", baseUsername);
+        }
+
+        String username = UsernameGenerator.generateUsername(firstName, lastName, usernameExists);
+        String password = PasswordGenerator.generatePassword();
+        Trainer newTrainer = new Trainer(firstName, lastName, username, password, isActive, specialization, trainingType, userId);
         trainerDao.save(newTrainer);
     }
 
@@ -59,7 +67,13 @@ public class TrainerServiceImpl implements TrainerService {
 
     @Override
     public Trainer getTrainer(long id) {
+        LOGGER.info("Retrieving trainer with ID: {}", id);
         Optional<Trainer> trainerOptional = trainerDao.get(id);
+        if (trainerOptional.isPresent()) {
+            LOGGER.info("Trainer found: {}", trainerOptional.get().getUserName());
+        } else {
+            LOGGER.warn("Trainer with ID {} not found.", id);
+        }
         return trainerOptional.orElse(null);
     }
 

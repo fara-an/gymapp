@@ -1,4 +1,4 @@
-package epamlab.spring.gymapp.services.serviceInterfaces;
+package epamlab.spring.gymapp.services;
 
 import epamlab.spring.gymapp.model.Training;
 

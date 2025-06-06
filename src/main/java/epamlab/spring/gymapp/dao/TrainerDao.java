@@ -1,5 +1,7 @@
 package epamlab.spring.gymapp.dao;
 
+import epamlab.spring.gymapp.dao.interfaces.TrainerDaoInterface;
+import epamlab.spring.gymapp.model.Trainee;
 import org.springframework.stereotype.Repository;
 import epamlab.spring.gymapp.model.Trainer;
 import epamlab.spring.gymapp.storage.TrainerStorage;
@@ -8,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class TrainerDao implements Dao<Trainer> {
+public class TrainerDao implements TrainerDaoInterface<Trainer> {
 
     private TrainerStorage trainerStorage;
 
@@ -21,18 +23,6 @@ public class TrainerDao implements Dao<Trainer> {
         return Optional.ofNullable(trainerStorage.get(id));
     }
 
-    public Optional<Trainer> get(String username) {
-        List<Trainer> trainers = (List<Trainer>) trainerStorage.getAll();
-        return trainers.stream().filter(t -> t.getUserName().equals(username)).findFirst();
-
-    }
-
-    @Override
-    public List<Trainer> getAll() {
-        return trainerStorage.getAll();
-
-    }
-
     @Override
     public void save(Trainer trainer) {
         trainerStorage.save(trainer.getUserId(), trainer);
@@ -43,13 +33,9 @@ public class TrainerDao implements Dao<Trainer> {
         trainerStorage.save(id, trainer);
     }
 
-    @Override
-    public void delete(long id) {
-        trainerStorage.delete(id);
+    public Trainer findByUsername(String username) {
+        List<Trainer> trainers = trainerStorage.getAll();
+        return trainers.stream().filter(trainer -> trainer.getUserName().equals(username)).findFirst().orElse(null);
     }
 
-    public long findUsernamesStartsWith(String username) {
-        List<Trainer> trainers = trainerStorage.getAll();
-        return trainers.stream().map(t -> t.getUserName()).filter(s -> s.contains(username)).count();
-    }
 }

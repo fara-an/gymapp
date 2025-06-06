@@ -1,5 +1,6 @@
 package epamlab.spring.gymapp.dao;
 
+import epamlab.spring.gymapp.dao.interfaces.TraineeDaoInterface;
 import org.springframework.stereotype.Repository;
 import epamlab.spring.gymapp.model.Trainee;
 import epamlab.spring.gymapp.storage.TraineeStorage;
@@ -8,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class TraineeDao implements Dao<Trainee> {
+public class TraineeDao implements TraineeDaoInterface<Trainee> {
 
 
     private TraineeStorage traineeStorage;
@@ -22,15 +23,9 @@ public class TraineeDao implements Dao<Trainee> {
         return Optional.ofNullable(traineeStorage.get(id));
     }
 
-    public Optional<Trainee> get(String username) {
+    public Trainee findByUsername(String username) {
         List<Trainee> trainees = traineeStorage.getAll();
-        return trainees.stream().filter(trainee -> trainee.getUserName().equals(username)).findFirst();
-
-    }
-
-    @Override
-    public List<Trainee> getAll() {
-        return traineeStorage.getAll();
+        return trainees.stream().filter(trainee -> trainee.getUserName().equals(username)).findFirst().orElse(null);
     }
 
     @Override
@@ -49,8 +44,4 @@ public class TraineeDao implements Dao<Trainee> {
         traineeStorage.delete(id);
     }
 
-    public long findUsernamesStartsWith(String username) {
-        List<Trainee> trainers = traineeStorage.getAll();
-        return trainers.stream().map(t -> t.getUserName()).filter(s -> s.contains(username)).count();
-    }
 }
