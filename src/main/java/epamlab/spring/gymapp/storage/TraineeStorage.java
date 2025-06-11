@@ -28,10 +28,9 @@ public class TraineeStorage extends InMemoryStorage<Trainee> {
         try (BufferedReader br = new BufferedReader(new FileReader(path))) {
             br.lines().forEach(line -> {
                 String[] parts = line.split(",");
+                Trainee.builder().id()
 
-                Trainee trainee = new Trainee(parts[0], parts[1], parts[2], parts[3], Boolean.parseBoolean(parts[4]), LocalDateTime.parse(parts[5]), parts[6], Long.parseLong(parts[7])
 
-                );
                 this.save(trainee.getId(), trainee);
             });
         } catch (IOException io) {

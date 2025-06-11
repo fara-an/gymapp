@@ -1,6 +1,6 @@
 package epamlab.spring.gymapp.dao;
 
-import epamlab.spring.gymapp.dao.interfaces.TraineeDaoInterface;
+import epamlab.spring.gymapp.dao.interfaces.CrudDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import epamlab.spring.gymapp.model.Trainee;
@@ -10,8 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class TraineeDao implements TraineeDaoInterface<Trainee> {
-
+public class TraineeDao implements CrudDao<Trainee, Long> {
 
     private TraineeStorage traineeStorage;
 
@@ -21,7 +20,7 @@ public class TraineeDao implements TraineeDaoInterface<Trainee> {
     }
 
     @Override
-    public Optional<Trainee> get(Long id) {
+    public Optional<Trainee> findById(Long id) {
         return Optional.ofNullable(traineeStorage.get(id));
     }
 
@@ -31,18 +30,18 @@ public class TraineeDao implements TraineeDaoInterface<Trainee> {
     }
 
     @Override
-    public void save(Trainee trainee) {
+    public void create(Trainee trainee) {
         traineeStorage.save(trainee.getId(), trainee);
 
     }
 
     @Override
-    public void update(long id, Trainee updatedTrainee) {
+    public void update(Long id, Trainee updatedTrainee) {
         traineeStorage.save(id, updatedTrainee);
     }
 
     @Override
-    public void delete(long id) {
+    public void delete(Long id) {
         traineeStorage.delete(id);
     }
 

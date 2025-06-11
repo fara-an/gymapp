@@ -1,10 +1,16 @@
 package epamlab.spring.gymapp.model;
 
+import lombok.*;
+import lombok.experimental.SuperBuilder;
+
 import java.time.Duration;
 import java.time.LocalDateTime;
-
-public class Training {
-    private long id;
+@EqualsAndHashCode(callSuper = true)
+@Data
+@SuperBuilder
+@NoArgsConstructor
+@AllArgsConstructor
+public class Training extends BaseEntity<Long>{
     private Trainer trainer;
     private Trainee trainee;
     private String trainingName;
@@ -14,86 +20,10 @@ public class Training {
     private long trainerId;
     private long traineeId;
 
-    public Training(long id, long traineeId, long trainerId,
-                    String trainingName, TrainingType trainingType,
-                    LocalDateTime trainingDate, Duration duration) {
-        this.id = id;
-        this.traineeId = traineeId;
-        this.trainerId = trainerId;
-        this.trainingName = trainingName;
-        this.trainingType = trainingType;
-        this.trainingDate = trainingDate;
-        this.duration = duration;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public Trainer getTrainer() {
-        return trainer;
-    }
-
-    public Trainee getTrainee() {
-        return trainee;
-    }
-
-    public String getTrainingName() {
-        return trainingName;
-    }
-
-    public TrainingType getTrainingType() {
-        return trainingType;
-    }
-
-    public LocalDateTime getTrainingDate() {
-        return trainingDate;
-    }
-
-    public Duration getDuration() {
-        return duration;
-    }
-
-    public long getTrainerId() {
-        return trainerId;
-    }
-
-    public long getTraineeId() {
-        return traineeId;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public void setTrainingName(String trainingName) {
-        this.trainingName = trainingName;
-    }
-
-    public void setTrainingType(TrainingType trainingType) {
-        this.trainingType = trainingType;
-    }
-
-    public void setTrainingDate(LocalDateTime trainingDate) {
-        this.trainingDate = trainingDate;
-    }
-
-    public void setDuration(Duration duration) {
-        this.duration = duration;
-    }
-
-    public void setTrainer(Trainer trainer) {
-        this.trainer = trainer;
-    }
-
-    public void setTrainee(Trainee trainee) {
-        this.trainee = trainee;
-    }
-
     @Override
     public String toString() {
         return "Training{" +
-                "id=" + id +
+                "id=" + getId() +
                 ", trainer=" + trainer.getUserName() +
                 ", trainee=" + trainee.getUserName() +
                 ", trainingName='" + trainingName + '\'' +

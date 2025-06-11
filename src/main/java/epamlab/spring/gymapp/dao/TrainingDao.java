@@ -1,6 +1,6 @@
 package epamlab.spring.gymapp.dao;
 
-import epamlab.spring.gymapp.dao.interfaces.TrainingDaoInterface;
+import epamlab.spring.gymapp.dao.interfaces.CreateReadDao;
 import epamlab.spring.gymapp.storage.TrainingStorage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -9,7 +9,7 @@ import epamlab.spring.gymapp.model.Training;
 import java.util.Optional;
 
 @Repository
-public class TrainingDao implements TrainingDaoInterface<Training> {
+public class TrainingDao implements CreateReadDao<Training,Long> {
 
     private TrainingStorage trainingStorage;
 
@@ -19,12 +19,12 @@ public class TrainingDao implements TrainingDaoInterface<Training> {
     }
 
     @Override
-    public Optional<Training> get(Long id) {
+    public Optional<Training> findById(Long id) {
         return Optional.ofNullable(trainingStorage.get(id));
     }
 
     @Override
-    public void save(Training training) {
+    public void create(Training training) {
         trainingStorage.save(training.getId(), training);
     }
 
