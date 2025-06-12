@@ -1,0 +1,35 @@
+[
+    {
+        "id": 1,
+        "trainer": "michaelbrown",
+        "trainee": "johndoe",
+        "trainingName": "Strength Session",
+        "trainingType": "INDIVIDUAL",
+        "trainingDate": "2025-06-15T10:00:00",
+        "duration": "PT1H",
+        "trainerId": 1,
+        "traineeId": 1
+    },
+    {
+        "id": 2,
+        "trainer": "sarahwilson",
+        "trainee": "janesmith",
+        "trainingName": "Yoga Flow",
+        "trainingType": "GROUP",
+        "trainingDate": "2025-06-16T08:30:00",
+        "duration": "PT1H30M",
+        "trainerId": 2,
+        "traineeId": 2
+    },
+    {
+        "id": 3,
+        "trainer": "davidlee",
+        "trainee": "alexjohnson",
+        "trainingName": "Cardio Blast",
+        "trainingType": "INDIVIDUAL",
+        "trainingDate": "2025-06-17T14:00:00",
+        "duration": "PT45M",
+        "trainerId": 3,
+        "traineeId": 3
+    }
+]

@@ -1,0 +1,32 @@
+[
+    {
+        "id": 1,
+        "firstName": "John",
+        "lastName": "Doe",
+        "userName": "johndoe",
+        "password": "password123",
+        "active": true,
+        "birthday": "1995-03-15T00:00:00",
+        "address": "123 Main St, Springfield"
+    },
+    {
+        "id": 2,
+        "firstName": "Jane",
+        "lastName": "Smith",
+        "userName": "janesmith",
+        "password": "securepass456",
+        "active": true,
+        "birthday": "1998-07-22T00:00:00",
+        "address": "456 Oak Ave, Rivertown"
+    },
+    {
+        "id": 3,
+        "firstName": "Alex",
+        "lastName": "Johnson",
+        "userName": "alexjohnson",
+        "password": "mypassword789",
+        "active": false,
+        "birthday": "1993-11-30T00:00:00",
+        "address": "789 Pine Rd, Hillcity"
+    }
+]
