@@ -1,4 +1,4 @@
-package epamlab.spring.gymapp.util;
+package epamlab.spring.gymapp.utils;
 
 import java.security.SecureRandom;
 import java.util.Random;

@@ -1,20 +1,19 @@
 package epamlab.spring.gymapp.services.implementations;
 
 import epamlab.spring.gymapp.dao.TraineeDao;
-import epamlab.spring.gymapp.services.TraineeService;
-import epamlab.spring.gymapp.util.PasswordGenerator;
-import epamlab.spring.gymapp.util.UsernameGenerator;
+import epamlab.spring.gymapp.services.CrudService;
+import epamlab.spring.gymapp.utils.PasswordGenerator;
+import epamlab.spring.gymapp.utils.UsernameGenerator;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import epamlab.spring.gymapp.model.Trainee;
 import org.slf4j.Logger;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
-public class TraineeServiceImpl implements TraineeService {
+public class TraineeServiceImpl implements CrudService<Trainee, Long> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TraineeServiceImpl.class);
 
@@ -22,49 +21,72 @@ public class TraineeServiceImpl implements TraineeService {
     private TraineeDao traineeDao;
 
     @Override
-    public Trainee createTrainee(String firstName, String lastName, boolean isActive, LocalDateTime birthday, String address, long userId) {
-        LOGGER.info("Creating trainee profile {} {}", firstName, lastName);
-        String baseUsername=firstName + "." + lastName;
-        Trainee trainee = traineeDao.findByUsername(baseUsername);
-        boolean usernameExists=trainee!=null;
+    public Trainee create(Trainee trainee) {
+        LOGGER.info("Creating trainee profile {} {}", trainee.getFirstName(), trainee.getLastName());
 
-        if (usernameExists) {
-            LOGGER.info("Username '{}' already exists. Generating unique username.", baseUsername);
-        }
-        String username=UsernameGenerator.generateUsername(firstName, lastName, usernameExists);
+        String username = UsernameGenerator.generateUsername(
+                trainee.getFirstName(),
+                trainee.getLastName(),
+                userNameToBeChecked -> traineeDao.findByUsername(userNameToBeChecked) != null
+        );
+
         String password = PasswordGenerator.generatePassword();
-        Trainee newTrainee = new Trainee(firstName, lastName, username, password, isActive, birthday, address, userId);
-        traineeDao.save(newTrainee);
-        LOGGER.info("Trainee created successfully with username: '{}', userId: {}", username, userId);
+        Trainee newTrainee = Trainee.builder()
+                .id(trainee.getId())
+                .firstName(trainee.getFirstName())
+                .lastName(trainee.getLastName())
+                .userName(username)
+                .password(password)
+                .isActive(trainee.isActive())
+                .address(trainee.getAddress())
+                .birthday(trainee.getBirthday())
+                .build();
+
+
+        traineeDao.create(newTrainee);
+        LOGGER.info("Trainee created successfully with username: '{}', userId: {}", username, trainee.getId());
+        return newTrainee;
+    }
+
+    @Override
+    public Trainee findById(Long id) {
+        LOGGER.debug("Searching for trainee with ID: {}", id);
+        Trainee trainee = traineeDao.findById(id)
+                .orElseThrow(() -> {
+                    LOGGER.error("Trainee with ID {} not found!", id);
+                    return new IllegalArgumentException("Trainee with ID " + id + " not found.");
+                });
+        LOGGER.debug("Trainee found successfully: {}", trainee);
         return trainee;
     }
 
     @Override
-    public Trainee getTrainee(Long id ) {
-        Optional<Trainee> optionalTrainee = traineeDao.get(id);
-        return optionalTrainee.orElse(null);
-    }
-
-    @Override
-    public void updateTrainee(long id, Trainee updatedTrainee) {
+    public void update(Long id, Trainee trainee) {
         LOGGER.info("Attempting to update trainee with ID: {}", id);
-        Optional<Trainee> trainee = traineeDao.get(id);
-        if (trainee.isPresent()) {
-            Trainee t = new Trainee(updatedTrainee.getFirstName(), updatedTrainee.getLastName(),
-                    updatedTrainee.getUserName(), updatedTrainee.getPassword(),
-                    updatedTrainee.isActive(), updatedTrainee.getBirthday(), updatedTrainee.getAddress(), id);
+        Optional<Trainee> oldTrainee = traineeDao.findById(id);
+        if (oldTrainee.isPresent()) {
+            Trainee t = Trainee.builder()
+                    .id(trainee.getId())
+                    .firstName(trainee.getFirstName())
+                    .lastName(trainee.getLastName())
+                    .userName(trainee.getUserName())
+                    .password(trainee.getPassword())
+                    .isActive(trainee.isActive())
+                    .address(trainee.getAddress())
+                    .birthday(trainee.getBirthday())
+                    .build();
             traineeDao.update(id, t);
             LOGGER.info("Trainer with ID {} successfully updated.", id);
-            return;
-        }else {
-            LOGGER.warn("Trainer with id {} not found", updatedTrainee.getId());
+        } else {
+            LOGGER.warn("Trainer with id {} not found", trainee.getId());
 
         }
     }
 
-    public void deleteTrainee(long id) {
-        LOGGER.info("Attempting to delete user with ID:{}",id);
+    public void delete(Long id) {
+        LOGGER.info("Attempting to delete user with ID:{}", id);
         traineeDao.delete(id);
+        LOGGER.debug("Trainee with ID {} deleted successfully.", id);
     }
 
 
