@@ -1,30 +1,41 @@
 package epamlab.spring.gymapp.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.*;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
+import java.util.List;
+
+@Entity
 @EqualsAndHashCode(callSuper = true)
 @Data
 @SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Trainee extends UserEntity<Long> {
+public class Trainee extends BaseEntity<Long> {
     private LocalDateTime birthday;
     private String address;
+
+    @OneToOne
+    @JoinColumn(name ="user_id" ,referencedColumnName = "id")
+    private UserEntity<Long> userEntity;
+
+    @ManyToMany(mappedBy = "trainees")
+    List<Trainer> trainers;
+
+    @OneToMany(mappedBy = "trainee")
+    private List<Training> trainings;
 
     @Override
     public String toString() {
         return "Trainee{" +
                 "id=" + getId() +
-                ", firstName='" + getFirstName() + '\'' +
-                ", lastName='" + getLastName() + '\'' +
-                ", userName='" + getUserName() + '\'' +
-                ", password='" + getPassword() + '\'' +
-                ", active=" + isActive() +
+                ", firstName='" + userEntity.getFirstName() + '\'' +
+                ", lastName='" + userEntity.getLastName() + '\'' +
+                ", userName='" + userEntity.getUserName() + '\'' +
+                ", password='" + userEntity.getPassword() + '\'' +
+                ", active=" + userEntity.getIsActive() +
                 ", birthday=" + getBirthday() +
                 ", address='" + getAddress() + '\'' +
                 '}';

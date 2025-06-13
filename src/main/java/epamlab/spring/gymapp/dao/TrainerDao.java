@@ -36,7 +36,7 @@ public class TrainerDao implements CreateReadUpdateDao<Trainer, Long> {
 
     public Trainer findByUsername(String username) {
         List<Trainer> trainers = trainerStorage.getAll();
-        return trainers.stream().filter(trainer -> trainer.getUserName().equals(username)).findFirst().orElse(null);
+        return trainers.stream().filter(trainer -> trainer.getUserEntity().getUserName().equals(username)).findFirst().orElse(null);
     }
 
 }

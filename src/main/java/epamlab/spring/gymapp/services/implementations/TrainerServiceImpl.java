@@ -8,64 +8,84 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import epamlab.spring.gymapp.model.Trainer;
-import epamlab.spring.gymapp.model.Training;
+import epamlab.spring.gymapp.model.UserEntity;
 import epamlab.spring.gymapp.model.TrainingType;
 
 import java.util.Optional;
 
-
 @Service
 public class TrainerServiceImpl implements CreateReadUpdateService<Trainer, Long> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TraineeServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TrainerServiceImpl.class);
 
     @Autowired
     private TrainerDao trainerDao;
 
-    @Override
-    public Trainer create(Trainer trainer) {
-        LOGGER.info("Creating trainer profile {} {}", trainer.getFirstName(), trainer.getLastName());
+    @Transactional
+    public Trainer createProfile(String firstName, String lastName, TrainingType specialization) {
+        LOGGER.info("Creating trainer profile for {} {}", firstName, lastName);
+
+        // Create UserEntity
+        UserEntity<Long> userEntity = UserEntity.<Long>builder()
+                .firstName(firstName)
+                .lastName(lastName)
+                .isActive(true)
+                .build();
+
+        // Generate username and password
         String username = UsernameGenerator.generateUsername(
-                trainer.getFirstName(),
-                trainer.getLastName(),
+                firstName,
+                lastName,
                 userNameToBeChecked -> trainerDao.findByUsername(userNameToBeChecked) != null
         );
         String password = PasswordGenerator.generatePassword();
-        Trainer newTrainer = Trainer.builder()
-                .id(trainer.getId())
-                .firstName(trainer.getFirstName())
-                .lastName(trainer.getLastName())
-                .userName(username)
-                .password(password)
-                .isActive(trainer.isActive())
-                .specialization(trainer.getSpecialization())
-                .trainingType(trainer.getTrainingType())
+
+        userEntity.setUserName(username);
+        userEntity.setPassword(password);
+
+        // Create Trainer
+        Trainer trainer = Trainer.builder()
+                .userEntity(userEntity)
+                .specialization(specialization)
                 .build();
 
-        trainerDao.create(newTrainer);
-        return newTrainer;
+        // Save to database
+        trainerDao.create(trainer);
+
+        LOGGER.info("Trainer profile created successfully with username: {}", username);
+        return trainer;
     }
 
     @Override
+    @Transactional
+    public Trainer create(Trainer trainer) {
+        LOGGER.info("Creating trainer profile {} {}", trainer.getUserEntity().getFirstName(), trainer.getUserEntity().getLastName());
+        String username = UsernameGenerator.generateUsername(
+                trainer.getUserEntity().getFirstName(),
+                trainer.getUserEntity().getLastName(),
+                userNameToBeChecked -> trainerDao.findByUsername(userNameToBeChecked) != null
+        );
+        String password = PasswordGenerator.generatePassword();
+
+        trainer.getUserEntity().setUserName(username);
+        trainer.getUserEntity().setPassword(password);
+
+        trainerDao.create(trainer);
+        return trainer;
+    }
+
+    @Override
+    @Transactional
     public void update(Long id, Trainer trainer) {
         Optional<Trainer> oldTrainer = trainerDao.findById(id);
         if (oldTrainer.isPresent()) {
-            Trainer newTrainer = Trainer.builder()
-                    .id(trainer.getId())
-                    .firstName(trainer.getFirstName())
-                    .lastName(trainer.getLastName())
-                    .userName(trainer.getUserName())
-                    .password(trainer.getPassword())
-                    .isActive(trainer.isActive())
-                    .specialization(trainer.getSpecialization())
-                    .trainingType(trainer.getTrainingType())
-                    .build();
-
-            trainerDao.update(id, newTrainer);
-            LOGGER.info("Trainer with id {}  is successfully updated", id);
+            trainerDao.update(id, trainer);
+            LOGGER.info("Trainer with id {} is successfully updated", id);
+        } else {
+            LOGGER.warn("Trainer with id {} not found", id);
         }
-        LOGGER.warn("Trainer with id {} not found", id);
     }
 
     @Override
@@ -73,12 +93,15 @@ public class TrainerServiceImpl implements CreateReadUpdateService<Trainer, Long
         LOGGER.debug("Retrieving trainer with ID: {}", id);
         Optional<Trainer> trainerOptional = trainerDao.findById(id);
         if (trainerOptional.isPresent()) {
-            LOGGER.debug("Trainer found: {}", trainerOptional.get().getUserName());
+            LOGGER.debug("Trainer found: {}", trainerOptional.get().getUserEntity().getUserName());
         } else {
             LOGGER.error("Trainer with ID {} not found.", id);
         }
         return trainerOptional.orElse(null);
     }
 
-
+    public Trainer findByUsername(String username) {
+        LOGGER.debug("Retrieving trainer with username: {}", username);
+        return trainerDao.findByUsername(username);
+    }
 }

@@ -1,6 +1,7 @@
 package epamlab.spring.gymapp.services.implementations;
 
 import epamlab.spring.gymapp.dao.TraineeDao;
+import epamlab.spring.gymapp.model.UserEntity;
 import epamlab.spring.gymapp.services.CrudService;
 import epamlab.spring.gymapp.utils.PasswordGenerator;
 import epamlab.spring.gymapp.utils.UsernameGenerator;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import epamlab.spring.gymapp.model.Trainee;
 import org.slf4j.Logger;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -20,32 +22,48 @@ public class TraineeServiceImpl implements CrudService<Trainee, Long> {
     @Autowired
     private TraineeDao traineeDao;
 
+    public Trainee createProfile(String firstName, String lastName, LocalDateTime localDateTime, String address) {
+        UserEntity<Long> userEntity = UserEntity.<Long>builder()
+                .firstName(firstName)
+                .lastName(lastName)
+                .isActive(true)
+                .build();
+        String username = UsernameGenerator.generateUsername(firstName, lastName, userNameToBeChecked -> traineeDao.findByUsername(userNameToBeChecked) != null);
+        String password = PasswordGenerator.generatePassword();
+        userEntity.setUserName(username);
+        userEntity.setPassword(password);
+
+        Trainee trainee = Trainee.builder()
+                .userEntity(userEntity)
+                .birthday(localDateTime)
+                .address(address)
+                .build();
+
+        traineeDao.create(trainee);
+        LOGGER.info("Trainee profile created successfully with username: {}", username);
+        return trainee;
+
+
+    }
+
     @Override
     public Trainee create(Trainee trainee) {
-        LOGGER.info("Creating trainee profile {} {}", trainee.getFirstName(), trainee.getLastName());
+        LOGGER.info("Creating trainee profile {} {}", trainee.getUserEntity().getFirstName(), trainee.getUserEntity().getLastName());
 
         String username = UsernameGenerator.generateUsername(
-                trainee.getFirstName(),
-                trainee.getLastName(),
+                trainee.getUserEntity().getFirstName(),
+                trainee.getUserEntity().getLastName(),
                 userNameToBeChecked -> traineeDao.findByUsername(userNameToBeChecked) != null
         );
 
         String password = PasswordGenerator.generatePassword();
-        Trainee newTrainee = Trainee.builder()
-                .id(trainee.getId())
-                .firstName(trainee.getFirstName())
-                .lastName(trainee.getLastName())
-                .userName(username)
-                .password(password)
-                .isActive(trainee.isActive())
-                .address(trainee.getAddress())
-                .birthday(trainee.getBirthday())
-                .build();
 
+        trainee.getUserEntity().setUserName(username);
+        trainee.getUserEntity().setPassword(password);
 
-        traineeDao.create(newTrainee);
+        traineeDao.create(trainee);
         LOGGER.info("Trainee created successfully with username: '{}', userId: {}", username, trainee.getId());
-        return newTrainee;
+        return trainee;
     }
 
     @Override
@@ -65,17 +83,7 @@ public class TraineeServiceImpl implements CrudService<Trainee, Long> {
         LOGGER.info("Attempting to update trainee with ID: {}", id);
         Optional<Trainee> oldTrainee = traineeDao.findById(id);
         if (oldTrainee.isPresent()) {
-            Trainee t = Trainee.builder()
-                    .id(trainee.getId())
-                    .firstName(trainee.getFirstName())
-                    .lastName(trainee.getLastName())
-                    .userName(trainee.getUserName())
-                    .password(trainee.getPassword())
-                    .isActive(trainee.isActive())
-                    .address(trainee.getAddress())
-                    .birthday(trainee.getBirthday())
-                    .build();
-            traineeDao.update(id, t);
+            traineeDao.update(id, trainee);
             LOGGER.info("Trainer with ID {} successfully updated.", id);
         } else {
             LOGGER.warn("Trainer with id {} not found", trainee.getId());
