@@ -1,6 +1,5 @@
 package epamlab.spring.gymapp.services.implementations;
 
-import epamlab.spring.gymapp.dao.TrainingDao;
 import epamlab.spring.gymapp.services.CreateReadService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

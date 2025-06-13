@@ -11,14 +11,13 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 
-import java.io.Serializable;
 
 @MappedSuperclass
 @Data
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public abstract class BaseEntity<ID extends Serializable> {
+public abstract class BaseEntity<ID> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include

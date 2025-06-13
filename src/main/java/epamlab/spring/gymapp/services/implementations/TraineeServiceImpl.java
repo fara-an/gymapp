@@ -1,6 +1,5 @@
 package epamlab.spring.gymapp.services.implementations;
 
-import epamlab.spring.gymapp.dao.TraineeDao;
 import epamlab.spring.gymapp.model.UserEntity;
 import epamlab.spring.gymapp.services.CrudService;
 import epamlab.spring.gymapp.utils.PasswordGenerator;

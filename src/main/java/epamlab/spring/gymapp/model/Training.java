@@ -20,18 +20,18 @@ public class Training extends BaseEntity<Long> {
     @ManyToOne
     @JoinColumn(name = "trainer_id")
     private Trainer trainer;
+
     @ManyToOne
     @JoinColumn(name = "trainee_id")
     private Trainee trainee;
-    @NotBlank
+
     private String trainingName;
 
     @ManyToOne
     @JoinColumn(name = "training_type_id")
     private TrainingType trainingType;
-    @NotNull
+
     private LocalDateTime trainingDate;
-    @NotNull
     private Double duration;
     private long trainerId;
     private long traineeId;
