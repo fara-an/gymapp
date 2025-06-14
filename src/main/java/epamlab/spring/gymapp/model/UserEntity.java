@@ -1,30 +1,22 @@
 package epamlab.spring.gymapp.model;
 
-import jakarta.persistence.Entity;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import epamlab.spring.gymapp.utils.DatabaseConstants;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.OneToOne;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
-import java.io.Serializable;
-@Entity
-@EqualsAndHashCode(callSuper = true)
-@Data
+@MappedSuperclass
+@Getter
+@Setter
 @SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserEntity<ID extends Serializable> extends BaseEntity<ID>{
-    @NotBlank
-    private String firstName;
-    @NotBlank
-    private String lastName;
-    @NotBlank
-    private String userName;
-    @NotBlank
-    private String password;
-    @NotNull
-    private Boolean isActive;
+public abstract class UserEntity<ID> extends BaseEntity<ID>{
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = DatabaseConstants.COL_USER_ID, unique = true)
+    protected UserProfile userProfile;
 }

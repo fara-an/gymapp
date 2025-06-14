@@ -1,43 +1,106 @@
 package epamlab.spring.gymapp.config;
 
-import epamlab.spring.gymapp.model.Trainee;
-import epamlab.spring.gymapp.model.Trainer;
-import epamlab.spring.gymapp.model.Training;
-import epamlab.spring.gymapp.model.TrainingType;
-import epamlab.spring.gymapp.services.CreateReadService;
-import epamlab.spring.gymapp.services.CreateReadUpdateService;
-import epamlab.spring.gymapp.services.CrudService;
-import org.springframework.beans.factory.annotation.Autowired;
+import epamlab.spring.gymapp.dto.Credentials;
+import epamlab.spring.gymapp.model.*;
+import epamlab.spring.gymapp.services.interfaces.TraineeService;
+import epamlab.spring.gymapp.services.interfaces.TrainerService;
+import epamlab.spring.gymapp.services.interfaces.TrainingService;
 import org.springframework.stereotype.Component;
+
+import java.time.LocalDateTime;
 
 @Component
 public class TrainingManagementFacade {
 
+    TraineeService traineeService;
+    TrainerService trainerService;
+    TrainingService trainingService;
 
-   private CrudService<Trainee, Long> traineeService;
-   private CreateReadUpdateService<Trainer, Long> trainerService;
-   private CreateReadService<Training, Long> trainingService;
 
-    @Autowired
-    public TrainingManagementFacade(CrudService<Trainee, Long> traineeService,  CreateReadUpdateService<Trainer,Long> trainerService, CreateReadService<Training,Long> trainingService) {
+    public TrainingManagementFacade(TraineeService traineeService, TrainerService trainerService, TrainingService trainingService) {
         this.traineeService = traineeService;
         this.trainerService = trainerService;
         this.trainingService = trainingService;
     }
 
+    public  void findTraineeById(Credentials credentials, Long id){
+        traineeService.findById(credentials,id);
+    }
 
-    public void organizeTraining(Training training, long trainerId, long traineeId){
-        Training newTraining = trainingService.create(training);
-        TrainingType trainingType = newTraining.getTrainingType();
-        Trainee trainee=traineeService.findById(traineeId);
-        Trainer trainer = trainerService.findById(trainerId);
-        if (trainer.getTrainingType().equals(trainingType)) {
-            newTraining.setTrainer(trainer);
-            newTraining.setTrainee(trainee);
-        }
+    public void findTraineeByUsername(Credentials credentials, String username){
+        traineeService.findByUsername(credentials,username);
+    }
+
+    public void registerTrainee(Trainee trainee) {
+        traineeService.createProfile(trainee);
+    }
+
+    public void updateTrainee(Credentials credentials, Trainee trainee) {
+        traineeService.updateProfile(credentials, trainee);
+    }
+
+    public void deleteTrainee(Credentials credentials, String traineeUsername) {
+        traineeService.delete(credentials, traineeUsername);
+    }
+
+    public void getTraineeTrainingsBasedOn(Credentials credentials, String traineeUsername, LocalDateTime fromDate, LocalDateTime toDate, String trainerName, String trainingType) {
+        traineeService.getTraineeTrainings(
+                credentials,
+                traineeUsername,
+                fromDate,
+                toDate,
+                trainerName,
+                trainingType);
+    }
+
+    public void toggleActiveStatusTrainee(Credentials credentials, String userName){
+        traineeService.toggleActiveStatus(credentials, userName);
+    }
+
+    public void  changePasswordTrainee(Credentials credentials, String userName){
+        traineeService.changePassword(credentials,userName);
+    }
+
+
+    public void registerTrainer(Trainer trainer) {
+        trainerService.createProfile(trainer);
+    }
+
+    public void updateTrainer(Credentials credentials, Trainer trainer) {
+        trainerService.updateProfile(credentials, trainer);
+    }
+
+
+    public void getTrainerTrainingsBasedOn(Credentials credentials, String trainerUsername, LocalDateTime fromDate, LocalDateTime toDate, String trainerName, String trainingType) {
+        trainerService.getTrainerTrainings(
+                credentials,
+                trainerUsername,
+                fromDate,
+                toDate,
+                trainerName,
+                trainingType);
+    }
+
+    public  void findTrainerById(Credentials credentials, Long id){
+        trainerService.findById(credentials,id);
+    }
+
+    public void findTrainerByUsername(Credentials credentials, String traineeUsername){
+        traineeService.findByUsername(credentials, traineeUsername);
     }
 
 
 
+    public void toggleActiveStatusTrainer(Credentials credentials, String userName){
+        trainerService.toggleActiveStatus(credentials, userName);
+    }
+
+    public void  changePasswordTrainer(Credentials credentials, String userName){
+        trainerService.changePassword(credentials,userName);
+    }
+
 
 }
+
+
+

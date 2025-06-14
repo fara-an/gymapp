@@ -8,10 +8,12 @@ import epamlab.spring.gymapp.model.Training;
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Repository
 public class TraineeDaoImpl extends BaseDao<Trainee, Long> implements TraineeDao {
     private static final Logger LOGGER = LoggerFactory.getLogger(TraineeDaoImpl.class);
 
@@ -23,7 +25,7 @@ public class TraineeDaoImpl extends BaseDao<Trainee, Long> implements TraineeDao
             String hql = """
                     select t
                     from Training t
-                    where t.trainee.userEntity.userName = :traineeUsername
+                    where t.trainee.userProfile.userName = :traineeUsername
                       and t.trainingDate between :fromDate and :toDate
                       and t.trainingType.name = :trainingType
                     """;
@@ -36,7 +38,7 @@ public class TraineeDaoImpl extends BaseDao<Trainee, Long> implements TraineeDao
                     .getResultList();
         } catch (Exception e) {
             LOGGER.debug("DAO: Error retrieving trainings for trainee '{}'", traineeUsername, e);
-            String errorMessage = String.format("DAO: Error retrieving trainings for trainee '{}'", traineeUsername);
+            String errorMessage = String.format("DAO: Error retrieving trainings for trainee %s", traineeUsername);
             throw new DaoException(errorMessage, e);
         }
     }

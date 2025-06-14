@@ -1,100 +1,86 @@
 package epamlab.spring.gymapp.services.implementations;
 
-import epamlab.spring.gymapp.model.UserEntity;
-import epamlab.spring.gymapp.services.CrudService;
-import epamlab.spring.gymapp.utils.PasswordGenerator;
-import epamlab.spring.gymapp.utils.UsernameGenerator;
+import epamlab.spring.gymapp.dao.interfaces.TraineeDao;
+import epamlab.spring.gymapp.dto.Credentials;
+import epamlab.spring.gymapp.model.Training;
+import epamlab.spring.gymapp.model.UserProfile;
+import epamlab.spring.gymapp.services.interfaces.AuthenticationService;
+import epamlab.spring.gymapp.services.interfaces.TraineeService;
+import jakarta.transaction.Transactional;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import epamlab.spring.gymapp.model.Trainee;
 import org.slf4j.Logger;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
-public class TraineeServiceImpl implements CrudService<Trainee, Long> {
+public class TraineeServiceImpl implements TraineeService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TraineeServiceImpl.class);
 
-    @Autowired
-    private TraineeDao traineeDao;
+    private static final String SERVICE_NAME = "TraineeServiceImpl";
+    private static final String LOG_DELETE_START = SERVICE_NAME + " - Deleting trainee by username: {}";
+    private static final String LOG_DELETE_SUCCESS = SERVICE_NAME + " - Deleted trainee: {}";
 
-    public Trainee createProfile(String firstName, String lastName, LocalDateTime localDateTime, String address) {
-        UserEntity<Long> userEntity = UserEntity.<Long>builder()
-                .firstName(firstName)
-                .lastName(lastName)
-                .isActive(true)
-                .build();
-        String username = UsernameGenerator.generateUsername(firstName, lastName, userNameToBeChecked -> traineeDao.findByUsername(userNameToBeChecked) != null);
-        String password = PasswordGenerator.generatePassword();
-        userEntity.setUserName(username);
-        userEntity.setPassword(password);
-
-        Trainee trainee = Trainee.builder()
-                .userEntity(userEntity)
-                .birthday(localDateTime)
-                .address(address)
-                .build();
-
-        traineeDao.create(trainee);
-        LOGGER.info("Trainee profile created successfully with username: {}", username);
-        return trainee;
+    private static final String LOG_QUERY_START = SERVICE_NAME + " - Fetching trainings for trainee {} with [from={}, to={}, trainer={}, type={}]";
+    private static final String LOG_QUERY_RESULTS = SERVICE_NAME + " - Retrieved {} trainings for trainee {}";
 
 
+    private final TraineeDao traineeDao;
+    private final AuthenticationService authenticationService;
+
+    public TraineeServiceImpl(TraineeDao traineeDao, AuthenticationService authenticationService) {
+        this.traineeDao = traineeDao;
+        this.authenticationService = authenticationService;
     }
 
     @Override
-    public Trainee create(Trainee trainee) {
-        LOGGER.info("Creating trainee profile {} {}", trainee.getUserEntity().getFirstName(), trainee.getUserEntity().getLastName());
+    @Transactional
+    public void delete(Credentials authCredentials, String username) {
+        LOGGER.debug(LOG_DELETE_START, username);
+        authenticationService.authenticateUser(authCredentials);
 
-        String username = UsernameGenerator.generateUsername(
-                trainee.getUserEntity().getFirstName(),
-                trainee.getUserEntity().getLastName(),
-                userNameToBeChecked -> traineeDao.findByUsername(userNameToBeChecked) != null
-        );
-
-        String password = PasswordGenerator.generatePassword();
-
-        trainee.getUserEntity().setUserName(username);
-        trainee.getUserEntity().setPassword(password);
-
-        traineeDao.create(trainee);
-        LOGGER.info("Trainee created successfully with username: '{}', userId: {}", username, trainee.getId());
-        return trainee;
-    }
-
-    @Override
-    public Trainee findById(Long id) {
-        LOGGER.debug("Searching for trainee with ID: {}", id);
-        Trainee trainee = traineeDao.findById(id)
-                .orElseThrow(() -> {
-                    LOGGER.error("Trainee with ID {} not found!", id);
-                    return new IllegalArgumentException("Trainee with ID " + id + " not found.");
-                });
-        LOGGER.debug("Trainee found successfully: {}", trainee);
-        return trainee;
-    }
-
-    @Override
-    public void update(Long id, Trainee trainee) {
-        LOGGER.info("Attempting to update trainee with ID: {}", id);
-        Optional<Trainee> oldTrainee = traineeDao.findById(id);
-        if (oldTrainee.isPresent()) {
-            traineeDao.update(id, trainee);
-            LOGGER.info("Trainer with ID {} successfully updated.", id);
-        } else {
-            LOGGER.warn("Trainer with id {} not found", trainee.getId());
-
-        }
-    }
-
-    public void delete(Long id) {
-        LOGGER.info("Attempting to delete user with ID:{}", id);
+        Long id = findByUsername(authCredentials, username).getId();
         traineeDao.delete(id);
-        LOGGER.debug("Trainee with ID {} deleted successfully.", id);
+        LOGGER.debug(LOG_DELETE_SUCCESS, username);
     }
 
+    @Override
+    @Transactional
+    public List<Training> getTraineeTrainings(Credentials credentials,String traineeUsername, LocalDateTime fromDate, LocalDateTime toDate, String trainerName, String trainingType) {
+        LOGGER.debug(LOG_QUERY_START,traineeUsername,fromDate,toDate,trainerName,trainingType);
+        authenticationService.authenticateUser(credentials);
+        List<Training> traineeTrainings = traineeDao.getTraineeTrainings(traineeUsername, fromDate, toDate, trainerName, trainingType);
+        LOGGER.debug(LOG_QUERY_RESULTS, traineeTrainings.size(),traineeUsername);
+        return traineeTrainings;
 
+    }
+
+    @Override
+    public TraineeDao getDao() {
+        return traineeDao;
+    }
+
+    @Override
+    public AuthenticationService getAuthService() {
+        return authenticationService;
+    }
+
+    @Override
+    public Trainee buildProfile(UserProfile user, Trainee profile) {
+        return Trainee.builder()
+                .userProfile(user)
+                .birthday(profile.getBirthday())
+                .address(profile.getAddress())
+                .build();
+    }
+
+    @Override
+    public void updateProfileSpecificFields(Trainee existing, Trainee item) {
+        Optional.ofNullable(item.getBirthday()).ifPresent(existing::setBirthday);
+        Optional.ofNullable(item.getAddress()).ifPresent(existing::setAddress);
+    }
 }

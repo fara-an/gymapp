@@ -1,8 +1,7 @@
 package epamlab.spring.gymapp.dao.interfaces;
 
-import org.springframework.stereotype.Component;
+import epamlab.spring.gymapp.dto.Credentials;
 
-@Component
 public interface AuthenticationDao {
-    boolean validateCredentials(String username, String password);
+    boolean validateCredentials(Credentials credentials);
 }

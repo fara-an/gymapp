@@ -1,17 +1,14 @@
 package epamlab.spring.gymapp.services.implementations;
 
+import epamlab.spring.gymapp.dao.interfaces.TrainerDao;
+import epamlab.spring.gymapp.dto.Credentials;
 import epamlab.spring.gymapp.model.Trainer;
 import epamlab.spring.gymapp.model.Training;
-import epamlab.spring.gymapp.model.TrainingType;
-import epamlab.spring.gymapp.model.UserEntity;
-import epamlab.spring.gymapp.services.AuthenticationService;
-import epamlab.spring.gymapp.services.CreateReadUpdateService;
-import epamlab.spring.gymapp.utils.PasswordGenerator;
-import epamlab.spring.gymapp.utils.UsernameGenerator;
-import jakarta.persistence.EntityNotFoundException;
+import epamlab.spring.gymapp.model.UserProfile;
+import epamlab.spring.gymapp.services.interfaces.AuthenticationService;
+import epamlab.spring.gymapp.services.interfaces.TrainerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,131 +17,73 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class TrainerServiceImpl implements CreateReadUpdateService<Trainer, Long> {
-
+public class TrainerServiceImpl implements TrainerService {
     private static final Logger LOGGER = LoggerFactory.getLogger(TrainerServiceImpl.class);
 
-    @Autowired
-    private TrainerDao trainerDao;
+    private static final String SERVICE_NAME = "TrainerServiceImpl";
 
-    @Autowired
-    private TrainingDao trainingDao;
+    private static final String LOG_QUERY_START =
+            SERVICE_NAME + " - Fetching trainings for trainer {} with [from={}, to={}, trainee={}]";
+    private static final String LOG_QUERY_RESULTS =
+            SERVICE_NAME + " - Retrieved {} trainings for trainer {}";
 
-    @Autowired
-    private AuthenticationService authenticationService;
+    private static final String LOG_UNASSIGNED_SEARCH_START =
+            SERVICE_NAME + " - Initiating search for unassigned trainers (without trainees).";
+    private static final String LOG_UNASSIGNED_SEARCH_SUCCESS =
+            SERVICE_NAME + " - Search completed. Found {} unassigned trainers.";
 
+
+    private final TrainerDao trainerDao;
+    private final AuthenticationService authenticationService;
+
+    public TrainerServiceImpl(TrainerDao trainerDao, AuthenticationService authenticationService) {
+        this.trainerDao = trainerDao;
+        this.authenticationService = authenticationService;
+    }
+
+    @Override
     @Transactional
-    public Trainer createProfile(String firstName, String lastName, TrainingType specialization) {
-        LOGGER.info("Creating trainer profile for {} {}", firstName, lastName);
-        
-        UserEntity<Long> userEntity = UserEntity.<Long>builder()
-                .firstName(firstName)
-                .lastName(lastName)
-                .isActive(true)
+    public List<Training> getTrainerTrainings(Credentials credentials, String traineeUsername, LocalDateTime fromDate, LocalDateTime toDate, String trainerName, String trainingType) {
+        LOGGER.debug(LOG_QUERY_START, trainerName, fromDate, toDate, traineeUsername);
+        List<Training> trainerTrainings = trainerDao.getTrainerTrainings(credentials, traineeUsername, fromDate, toDate, traineeUsername);
+        LOGGER.debug(LOG_QUERY_RESULTS, trainerTrainings.size(), trainerName);
+        return trainerTrainings;
+    }
+
+    @Override
+    @Transactional
+    public List<Trainer> trainersNotAssignedToTrainee(String traineeUsername) {
+        LOGGER.debug(LOG_UNASSIGNED_SEARCH_START);
+        List<Trainer> trainers = trainerDao.trainersNotAssignedToTrainee(traineeUsername);
+        LOGGER.debug(LOG_UNASSIGNED_SEARCH_SUCCESS, trainers.size());
+        return trainers;
+
+
+    }
+
+    @Override
+    public TrainerDao getDao() {
+        return trainerDao;
+    }
+
+    @Override
+    public AuthenticationService getAuthService() {
+        return authenticationService;
+    }
+
+
+    @Override
+    public Trainer buildProfile(UserProfile user, Trainer profile) {
+        return Trainer.builder()
+                .userProfile(user)
+                .specialization(profile.getSpecialization())
                 .build();
-
-        String username = UsernameGenerator.generateUsername(
-                firstName,
-                lastName,
-                userNameToBeChecked -> trainerDao.findByUserEntity_UserName(userNameToBeChecked) != null
-        );
-        String password = PasswordGenerator.generatePassword();
-        
-        userEntity.setUserName(username);
-        userEntity.setPassword(password);
-
-        Trainer trainer = Trainer.builder()
-                .userEntity(userEntity)
-                .specialization(specialization)
-                .build();
-
-        trainerDao.save(trainer);
-        LOGGER.info("Trainer profile created successfully with username: {}", username);
-        return trainer;
     }
 
     @Override
-    @Transactional
-    public Trainer create(Trainer trainer) {
-        LOGGER.info("Creating trainer profile {} {}", 
-            trainer.getUserEntity().getFirstName(), 
-            trainer.getUserEntity().getLastName());
+    public void updateProfileSpecificFields(Trainer existing, Trainer item) {
+        Optional.ofNullable(existing.getSpecialization())
+                .ifPresent(newSpecialization -> existing.setSpecialization(newSpecialization));
 
-        String username = UsernameGenerator.generateUsername(
-                trainer.getUserEntity().getFirstName(),
-                trainer.getUserEntity().getLastName(),
-                userNameToBeChecked -> trainerDao.findByUserEntity_UserName(userNameToBeChecked) != null
-        );
-        String password = PasswordGenerator.generatePassword();
-        
-        trainer.getUserEntity().setUserName(username);
-        trainer.getUserEntity().setPassword(password);
-
-        return trainerDao.save(trainer);
-    }
-
-    @Override
-    @Transactional
-    public void update(Long id, Trainer trainer) {
-        Optional<Trainer> existingTrainer = trainerDao.findById(id);
-        if (existingTrainer.isPresent()) {
-            trainer.setId(id);
-            trainerDao.save(trainer);
-            LOGGER.info("Trainer with id {} is successfully updated", id);
-        } else {
-            LOGGER.warn("Trainer with id {} not found", id);
-            throw new EntityNotFoundException("Trainer not found with id: " + id);
-        }
-    }
-
-    @Override
-    public Trainer findById(Long id) {
-        LOGGER.debug("Retrieving trainer with ID: {}", id);
-        return trainerDao.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Trainer not found with id: " + id));
-    }
-
-    public Trainer findByUsername(String username) {
-        LOGGER.debug("Retrieving trainer with username: {}", username);
-        return trainerDao.findByUserEntity_UserName(username);
-    }
-
-    @Transactional
-    public void activateTrainer(String username) {
-        Trainer trainer = findByUsername(username);
-        if (trainer != null) {
-            trainer.getUserEntity().setIsActive(true);
-            trainerDao.save(trainer);
-            LOGGER.info("Trainer {} activated successfully", username);
-        } else {
-            throw new EntityNotFoundException("Trainer not found with username: " + username);
-        }
-    }
-
-    @Transactional
-    public void deactivateTrainer(String username) {
-        Trainer trainer = findByUsername(username);
-        if (trainer != null) {
-            trainer.getUserEntity().setIsActive(false);
-            trainerDao.save(trainer);
-            LOGGER.info("Trainer {} deactivated successfully", username);
-        } else {
-            throw new EntityNotFoundException("Trainer not found with username: " + username);
-        }
-    }
-
-    public List<Training> getTrainerTrainings(String username, LocalDateTime fromDate, 
-            LocalDateTime toDate, String traineeName) {
-        Trainer trainer = findByUsername(username);
-        if (trainer == null) {
-            throw new EntityNotFoundException("Trainer not found with username: " + username);
-        }
-        
-        return trainingDao.findByTrainerAndDateRangeAndTraineeName(
-                trainer, fromDate, toDate, traineeName);
-    }
-
-    public List<Trainer> getUnassignedTrainers(String traineeUsername) {
-        return trainerDao.findUnassignedTrainers(traineeUsername);
     }
 }

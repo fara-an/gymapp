@@ -2,8 +2,8 @@ package epamlab.spring.gymapp.services.implementations;
 
 import epamlab.spring.gymapp.dao.interfaces.AuthenticationDao;
 import epamlab.spring.gymapp.exceptions.InvalidCredentialsException;
-import epamlab.spring.gymapp.services.AuthenticationService;
-import org.springframework.beans.factory.annotation.Autowired;
+import epamlab.spring.gymapp.dto.Credentials;
+import epamlab.spring.gymapp.services.interfaces.AuthenticationService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,9 +17,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public void authenticateUser(String username, String password) {
-        if (!authenticationDao.validateCredentials(username, password)) {
-            throw new InvalidCredentialsException(username);
+    @Transactional(readOnly = true)
+    public void authenticateUser(Credentials credentials) {
+        if (!authenticationDao.validateCredentials(credentials)) {
+            throw new InvalidCredentialsException(credentials.username());
         }
     }
 }

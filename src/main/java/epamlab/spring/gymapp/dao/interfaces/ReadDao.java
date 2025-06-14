@@ -5,7 +5,6 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.util.Optional;
 
 public interface ReadDao<T extends BaseEntity<ID>, ID> {
@@ -14,9 +13,6 @@ public interface ReadDao<T extends BaseEntity<ID>, ID> {
     String LOG_READ_START = "{}: DAO READ - Initiating read for entity {}";
     String LOG_READ_ERROR = "{}: DAO READ - Failed to read entity {} – {}";
     String ERROR_READ_TEMPLATE = "%s: DAO READ - Failed to read entity %s";
-
-    public static final String FIND_BY_USERNAME =
-            "FROM %s e WHERE e.user.username = :username";
 
     SessionFactory getSessionFactory();
 
