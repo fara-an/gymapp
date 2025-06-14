@@ -1,12 +1,13 @@
 package epamlab.spring.gymapp.model;
 
 import epamlab.spring.gymapp.utils.DatabaseConstants;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 @Entity
+@Table(name = "userprofile")
+@Inheritance(strategy = InheritanceType.JOINED)
 @Getter
 @Setter
 @SuperBuilder
@@ -20,7 +21,7 @@ public class UserProfile extends BaseEntity<Long> {
     @Column(name = DatabaseConstants.COL_LAST_NAME, nullable = false)
     private String lastName;
 
-    @Column(nullable = false)
+    @Column(name = DatabaseConstants.COL_USER_NAME, nullable = false)
     private String userName;
 
     @Column(nullable = false)

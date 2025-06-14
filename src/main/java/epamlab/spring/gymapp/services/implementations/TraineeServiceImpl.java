@@ -6,11 +6,11 @@ import epamlab.spring.gymapp.model.Training;
 import epamlab.spring.gymapp.model.UserProfile;
 import epamlab.spring.gymapp.services.interfaces.AuthenticationService;
 import epamlab.spring.gymapp.services.interfaces.TraineeService;
-import jakarta.transaction.Transactional;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import epamlab.spring.gymapp.model.Trainee;
 import org.slf4j.Logger;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;

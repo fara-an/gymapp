@@ -30,6 +30,9 @@ public class HibernateConfig {
     @Value("${hibernate.hbm2ddl.import_files}")
     private String importFiles;
 
+    @Value("${hibernate.dialect}")
+    private String dialect;
+
     private final DataSource dataSource;
 
     public HibernateConfig(DataSource dataSource) {
@@ -48,6 +51,8 @@ public class HibernateConfig {
         hibernateProperties.put("hibernate.hbm2ddl.import_files", importFiles);
         hibernateProperties.put("hibernate.format_sql", formatSql);
         hibernateProperties.put("hibernate.current_session_context_class", currentSessionContextClass);
+        hibernateProperties.put("hibernate.dialect",dialect);
+
 
         sessionFactoryBean.setHibernateProperties(hibernateProperties);
         return sessionFactoryBean;

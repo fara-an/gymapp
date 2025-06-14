@@ -15,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 public class Trainer extends UserEntity<Long> {
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = DatabaseConstants.COL_SPECIALIZATION)
     private TrainingType specialization;
 

@@ -26,16 +26,23 @@ public class TraineeDaoImpl extends BaseDao<Trainee, Long> implements TraineeDao
                     select t
                     from Training t
                     where t.trainee.userProfile.userName = :traineeUsername
-                      and t.trainingDate between :fromDate and :toDate
                       and t.trainingType.name = :trainingType
                     """;
 
-            return session.createQuery(hql, Training.class)
+            List<Training> resultList = session.createQuery(hql, Training.class)
                     .setParameter("traineeUsername", traineeUsername)
                     .setParameter("fromDate", fromDate)
                     .setParameter("toDate", toDate)
                     .setParameter("trainingType", trainingType)
                     .getResultList();
+
+            return resultList.stream()
+                    .filter(t -> {
+                        LocalDateTime start = t.getTrainingDate();
+                        LocalDateTime end = start.plusMinutes((long)(t.getDuration() * 60));
+                        return (start.isBefore(toDate) && end.isAfter(fromDate));
+                    })
+                    .toList();
         } catch (Exception e) {
             LOGGER.debug("DAO: Error retrieving trainings for trainee '{}'", traineeUsername, e);
             String errorMessage = String.format("DAO: Error retrieving trainings for trainee %s", traineeUsername);

@@ -17,6 +17,7 @@ public final class DatabaseConstants {
 
 
     public static final String COL_USER_ID = "user_id";
+    public static final String COL_USER_NAME = "user_name";
 
 
     public static final String COL_TRAINER_ID="trainer_id";

@@ -8,6 +8,7 @@ import epamlab.spring.gymapp.services.interfaces.TrainingService;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Component
 public class TrainingManagementFacade {
@@ -43,8 +44,8 @@ public class TrainingManagementFacade {
         traineeService.delete(credentials, traineeUsername);
     }
 
-    public void getTraineeTrainingsBasedOn(Credentials credentials, String traineeUsername, LocalDateTime fromDate, LocalDateTime toDate, String trainerName, String trainingType) {
-        traineeService.getTraineeTrainings(
+    public List<Training> getTraineeTrainingsBasedOn(Credentials credentials, String traineeUsername, LocalDateTime fromDate, LocalDateTime toDate, String trainerName, String trainingType) {
+      return  traineeService.getTraineeTrainings(
                 credentials,
                 traineeUsername,
                 fromDate,
@@ -54,7 +55,7 @@ public class TrainingManagementFacade {
     }
 
     public void toggleActiveStatusTrainee(Credentials credentials, String userName){
-        traineeService.toggleActiveStatus(credentials, userName);
+         traineeService.toggleActiveStatus(credentials, userName);
     }
 
     public void  changePasswordTrainee(Credentials credentials, String userName){
