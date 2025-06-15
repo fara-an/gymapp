@@ -6,6 +6,7 @@ import epamlab.spring.gymapp.exceptions.DaoException;
 import epamlab.spring.gymapp.model.Trainee;
 import epamlab.spring.gymapp.model.Training;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -17,6 +18,10 @@ import java.util.List;
 public class TraineeDaoImpl extends BaseDao<Trainee, Long> implements TraineeDao {
     private static final Logger LOGGER = LoggerFactory.getLogger(TraineeDaoImpl.class);
 
+    public TraineeDaoImpl( SessionFactory sessionFactory) {
+        super(Trainee.class, sessionFactory);
+    }
+
     @Override
     public List<Training> getTraineeTrainings(String traineeUsername, LocalDateTime fromDate, LocalDateTime toDate, String trainerName, String trainingType) {
         LOGGER.debug("DAO: Fetching trainings for, trainee '{}', from {} to {}, trainingType '{}'", traineeUsername, fromDate, toDate, trainingType);
@@ -25,14 +30,12 @@ public class TraineeDaoImpl extends BaseDao<Trainee, Long> implements TraineeDao
             String hql = """
                     select t
                     from Training t
-                    where t.trainee.userProfile.userName = :traineeUsername
+                    where t.trainee.userName = :traineeUsername
                       and t.trainingType.name = :trainingType
                     """;
 
             List<Training> resultList = session.createQuery(hql, Training.class)
                     .setParameter("traineeUsername", traineeUsername)
-                    .setParameter("fromDate", fromDate)
-                    .setParameter("toDate", toDate)
                     .setParameter("trainingType", trainingType)
                     .getResultList();
 

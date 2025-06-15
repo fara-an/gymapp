@@ -75,7 +75,11 @@ public class TrainerServiceImpl implements TrainerService {
     @Override
     public Trainer buildProfile(UserProfile user, Trainer profile) {
         return Trainer.builder()
-                .userProfile(user)
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .userName(user.getUserName())
+                .password(user.getPassword())
+                .isActive(user.getIsActive())
                 .specialization(profile.getSpecialization())
                 .build();
     }

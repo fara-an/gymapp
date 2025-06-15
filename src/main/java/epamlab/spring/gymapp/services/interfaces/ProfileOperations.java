@@ -7,7 +7,7 @@ import epamlab.spring.gymapp.dao.interfaces.UpdateDao;
 import epamlab.spring.gymapp.exceptions.EntityNotFoundException;
 import epamlab.spring.gymapp.exceptions.ServiceException;
 import epamlab.spring.gymapp.dto.Credentials;
-import epamlab.spring.gymapp.model.UserEntity;
+import epamlab.spring.gymapp.model.BaseEntity;
 import epamlab.spring.gymapp.model.UserProfile;
 import epamlab.spring.gymapp.utils.PasswordGenerator;
 import epamlab.spring.gymapp.utils.UsernameGenerator;
@@ -18,7 +18,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
-public interface ProfileOperations<T extends UserEntity<ID>, ID, D extends CreateDao<T, ID> & ReadDao<T, ID> & ReadDaoByUsername<T, ID> & UpdateDao<T, ID>> {
+public interface ProfileOperations<
+        T extends UserProfile,
+        ID,
+        D extends CreateDao<T, Long> & ReadDao<T, Long> & ReadDaoByUsername<T, Long> & UpdateDao<T, Long>
+        >{
     Logger LOGGER = LoggerFactory.getLogger(ProfileOperations.class);
 
     String LOG_CREATE_START = "{}: SERVICE - Creating entity: {} {}";
@@ -61,20 +65,20 @@ public interface ProfileOperations<T extends UserEntity<ID>, ID, D extends Creat
         String serviceName = getClass().getSimpleName();
         LOGGER.debug(LOG_CREATE_START,
                 serviceName,
-                item.getUserProfile().getFirstName(),
-                item.getUserProfile().getLastName()
+                item.getFirstName(),
+                item.getLastName()
         );
 
         String username = UsernameGenerator.generateUsername(
-                item.getUserProfile().getFirstName(),
-                item.getUserProfile().getLastName(),
-                usernameToBeChecked -> getDao().findByUsername(item.getUserProfile().getUserName()).isPresent());
+                item.getFirstName(),
+                item.getLastName(),
+                usernameToBeChecked -> getDao().findByUsername(item.getUserName()).isPresent());
         String password = PasswordGenerator.generatePassword();
 
         UserProfile newUser = UserProfile.builder()
                 .userName(username)
-                .firstName(item.getUserProfile().getFirstName())
-                .lastName(item.getUserProfile().getLastName())
+                .firstName(item.getFirstName())
+                .lastName(item.getLastName())
                 .password(password).isActive(true).build();
 
 
@@ -93,12 +97,11 @@ public interface ProfileOperations<T extends UserEntity<ID>, ID, D extends Creat
         getAuthService().authenticateUser(authCredentials);
 
         T existing = findById(authCredentials, item.getId());
-        UserProfile existingUserProfile = existing.getUserProfile();
-        UserProfile newUserProfile = item.getUserProfile();
 
-        Optional.ofNullable(newUserProfile.getFirstName()).ifPresent(existingUserProfile::setFirstName);
-        Optional.ofNullable(newUserProfile.getFirstName()).ifPresent(existingUserProfile::setLastName);
-        existingUserProfile.setIsActive(newUserProfile.getIsActive());
+
+        Optional.ofNullable(existing.getFirstName()).ifPresent(existing::setFirstName);
+        Optional.ofNullable(item.getFirstName()).ifPresent(existing::setLastName);
+        existing.setIsActive(item.getIsActive());
 
         updateProfileSpecificFields(existing, item);
 
@@ -126,7 +129,7 @@ public interface ProfileOperations<T extends UserEntity<ID>, ID, D extends Creat
     }
 
     @Transactional(readOnly = true)
-    default T findById(Credentials authCredentials, ID id) {
+    default T findById(Credentials authCredentials, Long id) {
         String serviceName = getClass().getSimpleName();
         LOGGER.debug(LOG_SEARCH_BY_ID_START, serviceName, id);
 
@@ -150,9 +153,8 @@ public interface ProfileOperations<T extends UserEntity<ID>, ID, D extends Creat
 
         getAuthService().authenticateUser(authCredentials);
         T entity = findByUsername(authCredentials, username);
-        UserProfile userProfile = entity.getUserProfile();
 
-        userProfile.setIsActive(!userProfile.getIsActive());
+        entity.setIsActive(!entity.getIsActive());
 
         try {
             Session session = getDao().getSessionFactory().getCurrentSession();
@@ -173,11 +175,10 @@ public interface ProfileOperations<T extends UserEntity<ID>, ID, D extends Creat
 
         getAuthService().authenticateUser(authCredentials);
         T entity = findByUsername(authCredentials, username);
-        UserProfile userProfile = entity.getUserProfile();
 
 
         String newPassword = PasswordGenerator.generatePassword();
-        userProfile.setPassword(newPassword);
+        entity.setPassword(newPassword);
 
         try {
             Session session = getDao().getSessionFactory().getCurrentSession();

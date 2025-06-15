@@ -1,9 +1,7 @@
 package epamlab.spring.gymapp.model;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.MappedSuperclass;
+import epamlab.spring.gymapp.utils.DatabaseConstants;
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 

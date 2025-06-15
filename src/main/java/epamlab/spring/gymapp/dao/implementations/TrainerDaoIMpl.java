@@ -8,6 +8,7 @@ import epamlab.spring.gymapp.model.Trainee;
 import epamlab.spring.gymapp.model.Trainer;
 import epamlab.spring.gymapp.model.Training;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -28,6 +29,9 @@ public class TrainerDaoIMpl extends BaseDao<Trainer, Long> implements TrainerDao
     private static final String LOG_ERROR_FETCH_UNASSIGNED_TRAINERS = "DAO: Error fetching unassigned trainers for trainee '{}'";
     private static final String LOG_ERROR_FETCH_UNASSIGNED_TRAINERS_TEMPLATE = "DAO: Error fetching unassigned trainers for trainee '%s'";
 
+    public TrainerDaoIMpl(SessionFactory sessionFactory) {
+        super(Trainer.class, sessionFactory);
+    }
 
 
     @Override
@@ -38,8 +42,8 @@ public class TrainerDaoIMpl extends BaseDao<Trainer, Long> implements TrainerDao
             String hql = """
                     select t
                     from Training t
-                    where t.trainer.userProfile.userName = :trainerUsername
-                      and t.trainee.userProfile.userName = :traineeUsername
+                    where t.trainer.userName = :trainerUsername
+                      and t.trainee.userName = :traineeUsername
                       and t.trainingDate between :fromDate and :toDate
                     """;
 
@@ -61,7 +65,7 @@ public class TrainerDaoIMpl extends BaseDao<Trainer, Long> implements TrainerDao
         LOGGER.debug(LOG_FETCH_UNASSIGNED_TRAINERS, traineeUsername);
         try {
             Session session = getSessionFactory().getCurrentSession();
-            String getTraineeHql = "from Trainee t where t.userProfile.userName = :userName";
+            String getTraineeHql = "from Trainee t where t.userName = :userName";
             Trainee trainee = session.createQuery(getTraineeHql, Trainee.class)
                     .setParameter("userName", traineeUsername)
                     .uniqueResult();

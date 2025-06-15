@@ -8,12 +8,13 @@ import lombok.experimental.SuperBuilder;
 import java.util.List;
 
 @Entity
+@Table(name=DatabaseConstants.TABLE_TRAINER)
 @Setter
 @Getter
 @SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Trainer extends UserEntity<Long> {
+public class Trainer extends UserProfile {
 
     @OneToOne
     @JoinColumn(name = DatabaseConstants.COL_SPECIALIZATION)
@@ -31,11 +32,11 @@ public class Trainer extends UserEntity<Long> {
     public String toString() {
         return "Trainer{" +
                 "id=" + getId() +
-                ", firstName='" + userProfile.getFirstName() + '\'' +
-                ", lastName='" + userProfile.getLastName() + '\'' +
-                ", userName='" + userProfile.getUserName() + '\'' +
-                ", password='" + userProfile.getPassword() + '\'' +
-                ", active=" + userProfile.getIsActive() +
+                ", firstName='" + getFirstName() + '\'' +
+                ", lastName='" + getLastName() + '\'' +
+                ", userName='" + getUserName() + '\'' +
+                ", password='" + getPassword() + '\'' +
+                ", active=" + getIsActive() +
                 ", specialization='" + specialization + '\'' +
                 '}';
     }

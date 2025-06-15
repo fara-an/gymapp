@@ -72,7 +72,10 @@ public class TraineeServiceImpl implements TraineeService {
     @Override
     public Trainee buildProfile(UserProfile user, Trainee profile) {
         return Trainee.builder()
-                .userProfile(user)
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .userName(user.getUserName())
+                .isActive(user.getIsActive())
                 .birthday(profile.getBirthday())
                 .address(profile.getAddress())
                 .build();

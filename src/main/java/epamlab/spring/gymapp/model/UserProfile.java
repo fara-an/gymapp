@@ -8,6 +8,7 @@ import lombok.experimental.SuperBuilder;
 @Entity
 @Table(name = "userprofile")
 @Inheritance(strategy = InheritanceType.JOINED)
+@AttributeOverride(name = "id",column = @Column(name = DatabaseConstants.COL_USER_ID))
 @Getter
 @Setter
 @SuperBuilder

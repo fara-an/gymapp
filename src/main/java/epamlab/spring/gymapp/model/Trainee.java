@@ -9,12 +9,13 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
+@Table(name = DatabaseConstants.TABLE_TRAINEE)
 @Getter
 @Setter
 @SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Trainee extends UserEntity<Long> {
+public class Trainee extends UserProfile {
 
     @Column(name = DatabaseConstants.COL_DATE_OF_BIRTH)
     private LocalDateTime birthday;
@@ -24,8 +25,8 @@ public class Trainee extends UserEntity<Long> {
     @ManyToMany
     @JoinTable(
             name = DatabaseConstants.TABLE_TRAINER_TRAINEE,
-            joinColumns = @JoinColumn(name = DatabaseConstants.COL_TRAINEE_ID),
-            inverseJoinColumns = @JoinColumn(name = DatabaseConstants.COL_TRAINER_ID)
+            joinColumns = @JoinColumn(name = DatabaseConstants.COL_TRAINEE_ID, referencedColumnName = DatabaseConstants.COL_USER_ID),
+            inverseJoinColumns = @JoinColumn(name = DatabaseConstants.COL_TRAINER_ID,referencedColumnName = DatabaseConstants.COL_USER_ID)
 
     )
     List<Trainer> trainers;
@@ -37,11 +38,11 @@ public class Trainee extends UserEntity<Long> {
     public String toString() {
         return "Trainee{" +
                 "id=" + getId() +
-                ", firstName='" + userProfile.getFirstName() + '\'' +
-                ", lastName='" + userProfile.getLastName() + '\'' +
-                ", userName='" + userProfile.getUserName() + '\'' +
-                ", password='" + userProfile.getPassword() + '\'' +
-                ", active=" + userProfile.getIsActive() +
+                ", firstName='" + getFirstName() + '\'' +
+                ", lastName='" + getLastName() + '\'' +
+                ", userName='" + getUserName() + '\'' +
+                ", password='" + getPassword() + '\'' +
+                ", active=" + getIsActive() +
                 ", birthday=" + getBirthday() +
                 ", address='" + getAddress() + '\'' +
                 '}';

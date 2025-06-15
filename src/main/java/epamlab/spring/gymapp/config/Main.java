@@ -18,6 +18,6 @@ public class Main {
         LocalDateTime toDate = fromDate.plusMinutes((long) (hours * 60));
 
         List<Training> trainings = facade.getTraineeTrainingsBasedOn(credentials, credentials.username(), fromDate, toDate, "John.Doe", "Strength Training");
-        trainings.forEach(t -> t.getTrainingName());
+        trainings.forEach(t -> System.out.println(t.getTrainingName()));
     }
 }
