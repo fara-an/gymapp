@@ -7,7 +7,6 @@ import epamlab.spring.gymapp.dao.interfaces.UpdateDao;
 import epamlab.spring.gymapp.exceptions.EntityNotFoundException;
 import epamlab.spring.gymapp.exceptions.ServiceException;
 import epamlab.spring.gymapp.dto.Credentials;
-import epamlab.spring.gymapp.model.BaseEntity;
 import epamlab.spring.gymapp.model.UserProfile;
 import epamlab.spring.gymapp.utils.PasswordGenerator;
 import epamlab.spring.gymapp.utils.UsernameGenerator;
@@ -20,7 +19,6 @@ import java.util.Optional;
 
 public interface ProfileOperations<
         T extends UserProfile,
-        ID,
         D extends CreateDao<T, Long> & ReadDao<T, Long> & ReadDaoByUsername<T, Long> & UpdateDao<T, Long>
         >{
     Logger LOGGER = LoggerFactory.getLogger(ProfileOperations.class);
