@@ -4,7 +4,6 @@ import epam.lab.gymapp.model.Trainee;
 import epam.lab.gymapp.model.Trainer;
 import epam.lab.gymapp.model.Training;
 import epam.lab.gymapp.dto.Credentials;
-import epamlab.spring.gymapp.model.*;
 import epam.lab.gymapp.service.interfaces.TraineeService;
 import epam.lab.gymapp.service.interfaces.TrainerService;
 import epam.lab.gymapp.service.interfaces.TrainingService;
@@ -16,9 +15,9 @@ import java.util.List;
 @Component
 public class TrainingManagementFacade {
 
-    TraineeService traineeService;
-    TrainerService trainerService;
-    TrainingService trainingService;
+    private final TraineeService traineeService;
+    private final TrainerService trainerService;
+    private final TrainingService trainingService;
 
 
     public TrainingManagementFacade(TraineeService traineeService, TrainerService trainerService, TrainingService trainingService) {
@@ -93,14 +92,16 @@ public class TrainingManagementFacade {
         traineeService.findByUsername(credentials, traineeUsername);
     }
 
-
-
     public void toggleActiveStatusTrainer(Credentials credentials, String userName){
         trainerService.toggleActiveStatus(credentials, userName);
     }
 
     public void  changePasswordTrainer(Credentials credentials, String userName){
         trainerService.changePassword(credentials,userName);
+    }
+
+    public void addTraining(Credentials credentials, Training training){
+        trainingService.addTraining(credentials, training);
     }
 
 
