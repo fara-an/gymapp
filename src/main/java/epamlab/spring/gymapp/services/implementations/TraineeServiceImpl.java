@@ -20,14 +20,7 @@ import java.util.Optional;
 public class TraineeServiceImpl implements TraineeService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TraineeServiceImpl.class);
-
     private static final String SERVICE_NAME = "TraineeServiceImpl";
-    private static final String LOG_DELETE_START = SERVICE_NAME + " - Deleting trainee by username: {}";
-    private static final String LOG_DELETE_SUCCESS = SERVICE_NAME + " - Deleted trainee: {}";
-
-    private static final String LOG_QUERY_START = SERVICE_NAME + " - Fetching trainings for trainee {} with [from={}, to={}, trainer={}, type={}]";
-    private static final String LOG_QUERY_RESULTS = SERVICE_NAME + " - Retrieved {} trainings for trainee {}";
-
 
     private final TraineeDao traineeDao;
     private final AuthenticationService authenticationService;
@@ -40,21 +33,21 @@ public class TraineeServiceImpl implements TraineeService {
     @Override
     @Transactional
     public void delete(Credentials authCredentials, String username) {
-        LOGGER.debug(LOG_DELETE_START, username);
+        LOGGER.debug(SERVICE_NAME + " - Deleting trainee by username: {}", username);
         authenticationService.authenticateUser(authCredentials);
 
         Long id = findByUsername(authCredentials, username).getId();
         traineeDao.delete(id);
-        LOGGER.debug(LOG_DELETE_SUCCESS, username);
+        LOGGER.debug(SERVICE_NAME + " - Deleted trainee: {}", username);
     }
 
     @Override
     @Transactional
     public List<Training> getTraineeTrainings(Credentials credentials,String traineeUsername, LocalDateTime fromDate, LocalDateTime toDate, String trainerName, String trainingType) {
-        LOGGER.debug(LOG_QUERY_START,traineeUsername,fromDate,toDate,trainerName,trainingType);
+        LOGGER.debug( SERVICE_NAME + " - Fetching trainings for trainee {} with [from={}, to={}, trainer={}, type={}]",traineeUsername,fromDate,toDate,trainerName,trainingType);
         authenticationService.authenticateUser(credentials);
         List<Training> traineeTrainings = traineeDao.getTraineeTrainings(traineeUsername, fromDate, toDate, trainerName, trainingType);
-        LOGGER.debug(LOG_QUERY_RESULTS, traineeTrainings.size(),traineeUsername);
+        LOGGER.debug(SERVICE_NAME + " - Retrieved {} trainings for trainee {}", traineeTrainings.size(),traineeUsername);
         return traineeTrainings;
 
     }

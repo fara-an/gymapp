@@ -21,18 +21,6 @@ public class TrainerServiceImpl implements TrainerService {
     private static final Logger LOGGER = LoggerFactory.getLogger(TrainerServiceImpl.class);
 
     private static final String SERVICE_NAME = "TrainerServiceImpl";
-
-    private static final String LOG_QUERY_START =
-            SERVICE_NAME + " - Fetching trainings for trainer {} with [from={}, to={}, trainee={}]";
-    private static final String LOG_QUERY_RESULTS =
-            SERVICE_NAME + " - Retrieved {} trainings for trainer {}";
-
-    private static final String LOG_UNASSIGNED_SEARCH_START =
-            SERVICE_NAME + " - Initiating search for unassigned trainers (without trainees).";
-    private static final String LOG_UNASSIGNED_SEARCH_SUCCESS =
-            SERVICE_NAME + " - Search completed. Found {} unassigned trainers.";
-
-
     private final TrainerDao trainerDao;
     private final AuthenticationService authenticationService;
 
@@ -44,21 +32,19 @@ public class TrainerServiceImpl implements TrainerService {
     @Override
     @Transactional
     public List<Training> getTrainerTrainings(Credentials credentials, String traineeUsername, LocalDateTime fromDate, LocalDateTime toDate, String trainerName, String trainingType) {
-        LOGGER.debug(LOG_QUERY_START, trainerName, fromDate, toDate, traineeUsername);
+        LOGGER.debug(SERVICE_NAME+" - Fetching trainings for trainer {} with [from={}, to={}, trainee={}]", trainerName, fromDate, toDate, traineeUsername);
         List<Training> trainerTrainings = trainerDao.getTrainerTrainings(credentials, traineeUsername, fromDate, toDate, traineeUsername);
-        LOGGER.debug(LOG_QUERY_RESULTS, trainerTrainings.size(), trainerName);
+        LOGGER.debug(SERVICE_NAME+" - Retrieved {} trainings for trainer {}", trainerTrainings.size(), trainerName);
         return trainerTrainings;
     }
 
     @Override
     @Transactional
     public List<Trainer> trainersNotAssignedToTrainee(String traineeUsername) {
-        LOGGER.debug(LOG_UNASSIGNED_SEARCH_START);
+        LOGGER.debug(SERVICE_NAME+" - Initiating search for unassigned trainers (without trainees).");
         List<Trainer> trainers = trainerDao.trainersNotAssignedToTrainee(traineeUsername);
-        LOGGER.debug(LOG_UNASSIGNED_SEARCH_SUCCESS, trainers.size());
+        LOGGER.debug(SERVICE_NAME+"- Search completed. Found {} unassigned trainers.", trainers.size());
         return trainers;
-
-
     }
 
     @Override

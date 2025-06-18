@@ -1,6 +1,5 @@
 package epamlab.spring.gymapp.model;
 
-import epamlab.spring.gymapp.utils.DatabaseConstants;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;

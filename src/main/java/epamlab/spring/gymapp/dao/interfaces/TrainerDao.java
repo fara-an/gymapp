@@ -9,11 +9,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 @Repository
 public interface TrainerDao extends
-        CreateDao<Trainer, Long>,
-        ReadDao<Trainer, Long>,
-        ReadDaoByUsername<Trainer, Long>,
-        UpdateDao<Trainer, Long>,
-        DeleteDao<Trainer, Long> {
+        CrudDao<Trainer,Long> {
 
     List<Training> getTrainerTrainings(Credentials credentials, String trainerUsername, LocalDateTime fromDate, LocalDateTime toDate, String traineeUsername );
     List<Trainer> trainersNotAssignedToTrainee(String traineeUsername);

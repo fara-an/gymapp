@@ -29,8 +29,8 @@ public class AuthenticationDaoImpl implements AuthenticationDao {
 
     @Override
     public boolean validateCredentials(Credentials credentials) {
-        String username = credentials.username();
-        String password = credentials.password();
+        String username = credentials.getUsername();
+        String password = credentials.getPassword();
         LOGGER.debug(LOG_VALIDATE_TEMPLATE, username);
 
         try {

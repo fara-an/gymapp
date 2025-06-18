@@ -1,6 +1,6 @@
 package epamlab.spring.gymapp.services.implementations;
 
-import epamlab.spring.gymapp.dao.interfaces.CreateDao;
+import epamlab.spring.gymapp.dao.interfaces.CreateReadDao;
 import epamlab.spring.gymapp.dto.Credentials;
 import epamlab.spring.gymapp.model.Trainee;
 import epamlab.spring.gymapp.model.Trainer;
@@ -20,17 +20,13 @@ public class TrainingServiceImpl implements TrainingService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TrainingServiceImpl.class);
     private static final String SERVICE_NAME = "TrainingServiceImpl";
-    private static final String LOG_ADD_START = SERVICE_NAME + " - Starting training creation: {}";
-    private static final String LOG_ADD_SUCCESS = SERVICE_NAME + " - Created training: {}";
-    private static final String ERR_INVALID_SPECIALIZATION =
-            SERVICE_NAME + ": Trainer specialization '%s' does not match required '%s'";
 
-    private final CreateDao<Training, Long> trainingDao;
+    private final CreateReadDao<Training, Long> trainingDao;
     private final AuthenticationService authenticationService;
     private final TraineeService traineeService;
     private final TrainerService trainerService;
 
-    public TrainingServiceImpl(CreateDao<Training, Long> trainingDao, AuthenticationService authenticationService, TraineeService traineeService, TrainerService trainerService) {
+    public TrainingServiceImpl(CreateReadDao<Training, Long> trainingDao, AuthenticationService authenticationService, TraineeService traineeService, TrainerService trainerService) {
         this.trainingDao = trainingDao;
         this.authenticationService = authenticationService;
         this.traineeService = traineeService;
@@ -40,7 +36,7 @@ public class TrainingServiceImpl implements TrainingService {
     @Override
     @Transactional
     public Training addTraining(Credentials credentials, Training training) {
-        LOGGER.debug(LOG_ADD_START, training.getTrainingName());
+        LOGGER.debug(SERVICE_NAME + " - Starting training creation: {}", training.getTrainingName());
         authenticationService.authenticateUser(credentials);
 
         Long trainerId = training.getTrainer().getId();
@@ -59,13 +55,13 @@ public class TrainingServiceImpl implements TrainingService {
                 .build();
 
         Training created = trainingDao.create(newTraining);
-        LOGGER.debug(LOG_ADD_SUCCESS,created);
+        LOGGER.debug(SERVICE_NAME + " - Created training: {}",created);
         return created;
     }
 
    private void validateTrainingType(String actual, String expected) {
         if (!actual.equals(expected)) {
-            String errorMessage = String.format(ERR_INVALID_SPECIALIZATION, actual, expected);
+            String errorMessage = String.format( SERVICE_NAME + ": Trainer specialization '%s' does not match required '%s'", actual, expected);
             LOGGER.error(errorMessage);
             throw new IllegalStateException(errorMessage);
         }
