@@ -24,6 +24,7 @@ public class DatabaseConfig {
     private String jdbcPassword;
 
     @Bean
+    @Profile("prod")
     public DataSource getDataSource() {
         HikariConfig hikariConfig = new HikariConfig();
         hikariConfig.setDriverClassName(driverClassName);

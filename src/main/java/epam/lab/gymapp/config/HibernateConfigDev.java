@@ -10,9 +10,10 @@ import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 
 import javax.sql.DataSource;
 import java.util.Properties;
+
 @Configuration
-@Profile("prod")
-public class HibernateConfig {
+@Profile("dev")
+public class HibernateConfigDev {
 
     @Value("${hibernate.packagesToScan}")
     private String packagesToScan;
@@ -32,12 +33,11 @@ public class HibernateConfig {
     @Value("${hibernate.hbm2ddl.import_files}")
     private String importFiles;
 
-    @Value("${hibernate.dialect}")
-    private String dialect;
+
 
     private final DataSource dataSource;
 
-    public HibernateConfig(DataSource dataSource) {
+    public HibernateConfigDev(DataSource dataSource) {
         this.dataSource = dataSource;
     }
 
@@ -53,7 +53,6 @@ public class HibernateConfig {
         hibernateProperties.put("hibernate.hbm2ddl.import_files", importFiles);
         hibernateProperties.put("hibernate.format_sql", formatSql);
         hibernateProperties.put("hibernate.current_session_context_class", currentSessionContextClass);
-        hibernateProperties.put("hibernate.dialect",dialect);
 
 
         sessionFactoryBean.setHibernateProperties(hibernateProperties);
@@ -64,5 +63,4 @@ public class HibernateConfig {
     public HibernateTransactionManager getTransactionManager(SessionFactory sf) {
         return new HibernateTransactionManager(sf);
     }
-
 }
