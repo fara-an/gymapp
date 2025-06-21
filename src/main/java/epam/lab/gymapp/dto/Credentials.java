@@ -1,19 +1,18 @@
 package epam.lab.gymapp.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class Credentials {
+    @NotNull
+    @NotBlank
     private String username;
     private String password;
 
-    public Credentials(String username, String password) {
-        if (username == null || password == null) {
-            throw new IllegalArgumentException("Username and password must not be null");
-        }
-        this.username = username;
-        this.password = password;
-    }
 }

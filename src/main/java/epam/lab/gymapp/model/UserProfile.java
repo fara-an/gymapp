@@ -1,13 +1,10 @@
 package epam.lab.gymapp.model;
 
-import epam.lab.gymapp.jwt.VerificationToken;
 import epam.lab.gymapp.utils.DatabaseConstants;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table(name = "userprofile")
@@ -34,13 +31,6 @@ public class UserProfile extends BaseEntity<Long> {
 
     @Column(name = DatabaseConstants.COL_IS_ACTIVE, nullable = false)
     private Boolean isActive;
-
-    @Column(name = "email_verified", nullable = false)
-    private Boolean emailVerified = false;
-
-    @OneToMany(mappedBy = "userProfile",cascade = CascadeType.ALL, orphanRemoval = true)
-    @OrderBy("id desc ")
-    private List<VerificationToken> verificationTokens = new ArrayList<>();
 
 
 }
