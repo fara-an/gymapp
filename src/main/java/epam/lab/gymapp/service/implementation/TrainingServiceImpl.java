@@ -1,5 +1,7 @@
 package epam.lab.gymapp.service.implementation;
 
+import epam.lab.gymapp.dao.interfaces.TraineeDao;
+import epam.lab.gymapp.dao.interfaces.TrainerDao;
 import epam.lab.gymapp.model.Trainee;
 import epam.lab.gymapp.model.Trainer;
 import epam.lab.gymapp.model.Training;
@@ -11,6 +13,7 @@ import epam.lab.gymapp.service.interfaces.TrainerService;
 import epam.lab.gymapp.service.interfaces.TrainingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,14 +26,14 @@ public class TrainingServiceImpl implements TrainingService {
 
     private final CreateReadDao<Training, Long> trainingDao;
     private final AuthenticationService authenticationService;
-    private final TraineeService traineeService;
     private final TrainerService trainerService;
+    private final TraineeService traineeService;
 
-    public TrainingServiceImpl(CreateReadDao<Training, Long> trainingDao, AuthenticationService authenticationService, TraineeService traineeService, TrainerService trainerService) {
+    public TrainingServiceImpl(CreateReadDao<Training, Long> trainingDao, AuthenticationService authenticationService, TrainerService trainerService,  TraineeService traineeService) {
         this.trainingDao = trainingDao;
         this.authenticationService = authenticationService;
-        this.traineeService = traineeService;
         this.trainerService = trainerService;
+        this.traineeService = traineeService;
     }
 
     @Override

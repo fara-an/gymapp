@@ -11,16 +11,23 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+
 @Component
 public class CredentialsFilter extends OncePerRequestFilter {
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String path = request.getServletPath();
+        return path.equals("trainee/login") || path.equals("trainer/login"); //skipping for login endpoint
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
             HttpSession session = request.getSession(false);
-            if (session!=null){
+            if (session != null) {
                 Credentials credentials = (Credentials) session.getAttribute("credentials");
-                if (credentials !=null){
+                if (credentials != null) {
                     CredentialsContextHolder.setCredentials(credentials);
                 }
             }

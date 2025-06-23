@@ -2,6 +2,7 @@ package epam.lab.gymapp.service.interfaces;
 
 
 import epam.lab.gymapp.dto.Credentials;
+import epam.lab.gymapp.dto.registration.RegistrationDto;
 import epam.lab.gymapp.model.UserProfile;
 import epam.lab.gymapp.dao.interfaces.CreateReadUpdateDao;
 import epam.lab.gymapp.exceptions.EntityNotFoundException;
@@ -17,7 +18,8 @@ import java.util.Optional;
 
 public interface ProfileOperations<
         T extends UserProfile,
-        D extends CreateReadUpdateDao<T,Long>>{
+        D extends CreateReadUpdateDao<T,Long>,
+        R extends RegistrationDto>{
 
     Logger LOGGER = LoggerFactory.getLogger(ProfileOperations.class);
 
@@ -28,6 +30,7 @@ public interface ProfileOperations<
     T buildProfile(UserProfile user, T profile);
 
     void updateProfileSpecificFields(T existing, T item);
+
 
     @Transactional
     default T createProfile(T item) {
@@ -48,7 +51,9 @@ public interface ProfileOperations<
                 .userName(username)
                 .firstName(item.getFirstName())
                 .lastName(item.getLastName())
-                .password(password).isActive(true).build();
+                .password(password)
+                .isActive(true)
+                .build();
 
 
         T newEntity = buildProfile(newUser, item);

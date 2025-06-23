@@ -20,7 +20,7 @@ public class CheckCredentialsAspect {
     @Autowired
     private AuthenticationService authenticationService;
 
-    @Pointcut("execution(* epam.lab.gymapp.service.implementation)")
+    @Pointcut("@annotation( epam.lab.gymapp.annotation.security.RequiresAuthentication)")
     public void appliedMethods() {
     }
 

@@ -2,6 +2,8 @@ package epam.lab.gymapp.service.implementation;
 
 import epam.lab.gymapp.dao.interfaces.TraineeDao;
 import epam.lab.gymapp.dto.Credentials;
+import epam.lab.gymapp.dto.mapper.TraineeMapper;
+import epam.lab.gymapp.dto.registration.TraineeRegistrationBody;
 import epam.lab.gymapp.model.Trainee;
 import epam.lab.gymapp.model.Training;
 import epam.lab.gymapp.model.UserProfile;
@@ -44,10 +46,10 @@ public class TraineeServiceImpl implements TraineeService {
     @Override
     @Transactional
     public List<Training> getTraineeTrainings(Credentials credentials, String traineeUsername, LocalDateTime fromDate, LocalDateTime toDate, String trainerName, String trainingType) {
-        LOGGER.debug( SERVICE_NAME + " - Fetching trainings for trainee {} with [from={}, to={}, trainer={}, type={}]",traineeUsername,fromDate,toDate,trainerName,trainingType);
+        LOGGER.debug(SERVICE_NAME + " - Fetching trainings for trainee {} with [from={}, to={}, trainer={}, type={}]", traineeUsername, fromDate, toDate, trainerName, trainingType);
         authenticationService.authenticateUser(credentials);
         List<Training> traineeTrainings = traineeDao.getTraineeTrainings(traineeUsername, fromDate, toDate, trainerName, trainingType);
-        LOGGER.debug(SERVICE_NAME + " - Retrieved {} trainings for trainee {}", traineeTrainings.size(),traineeUsername);
+        LOGGER.debug(SERVICE_NAME + " - Retrieved {} trainings for trainee {}", traineeTrainings.size(), traineeUsername);
         return traineeTrainings;
 
     }
@@ -79,4 +81,7 @@ public class TraineeServiceImpl implements TraineeService {
         Optional.ofNullable(item.getBirthday()).ifPresent(existing::setBirthday);
         Optional.ofNullable(item.getAddress()).ifPresent(existing::setAddress);
     }
+
+
+
 }
