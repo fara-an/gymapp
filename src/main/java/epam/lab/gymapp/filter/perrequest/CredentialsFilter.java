@@ -7,18 +7,20 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-@Component
 public class CredentialsFilter extends OncePerRequestFilter {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CredentialsFilter.class);
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String path = request.getServletPath();
-        return path.equals("trainee/login") || path.equals("trainer/login"); //skipping for login endpoint
+        return path.equals("trainer/register"); //skipping for login endpoint
     }
 
     @Override
@@ -26,8 +28,10 @@ public class CredentialsFilter extends OncePerRequestFilter {
         try {
             HttpSession session = request.getSession(false);
             if (session != null) {
+                LOGGER.debug("Getting credentials from session");
                 Credentials credentials = (Credentials) session.getAttribute("credentials");
                 if (credentials != null) {
+                    LOGGER.debug("Setting credentials to contextHolder");
                     CredentialsContextHolder.setCredentials(credentials);
                 }
             }

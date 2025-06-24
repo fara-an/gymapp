@@ -1,6 +1,8 @@
 package epam.lab.gymapp.api.controller;
 
+import epam.lab.gymapp.aspect.CredentialsContextHolder;
 import epam.lab.gymapp.dto.Credentials;
+import epam.lab.gymapp.dto.changePassword.PasswordChangeDto;
 import epam.lab.gymapp.dto.mapper.TraineeMapper;
 import epam.lab.gymapp.dto.registration.TraineeRegistrationBody;
 import epam.lab.gymapp.dto.response.TraineeRegistrationResponse;
@@ -21,7 +23,7 @@ public class TraineeController {
     private final String CONTROLLER = "TraineeController";
 
     private TraineeService traineeService;
-    private  AuthenticationService authenticationService;
+    private AuthenticationService authenticationService;
 
     public TraineeController(TraineeService traineeService, AuthenticationService authenticationService) {
         this.traineeService = traineeService;
@@ -47,6 +49,22 @@ public class TraineeController {
 
     }
 
+    @PutMapping("/changePassword")
+    public ResponseEntity<String> changePassword(@Valid @RequestBody PasswordChangeDto passwordChangeDto) {
+        traineeService.changePassword(passwordChangeDto.getUsername(), passwordChangeDto.getOldPassword(), passwordChangeDto.getNewPassword());
+        return ResponseEntity.ok("Changed password successfuly");
+    }
 
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpSession httpSession){
+        Credentials credentials = (Credentials)httpSession.getAttribute("credentials");
+        LOGGER.debug("Trainee {} is logging out", credentials.getUsername());
+        return ResponseEntity.ok("Trainee logged out");
+    }
+
+    @GetMapping("/{username}")
+    public ResponseEntity<?> getTrainee(@PathVariable String username){
+        traineeService.findByUsername(username);
+    }
 
 }

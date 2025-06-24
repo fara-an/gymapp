@@ -1,6 +1,7 @@
-package epam.lab.gymapp.facade;
+package epam.lab.gymapp.config;
 
-import epam.lab.gymapp.config.ApplicationConfig;
+import epam.lab.gymapp.filter.perrequest.CredentialsFilter;
+import jakarta.servlet.*;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
 public class GymAppWebInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
@@ -18,4 +19,11 @@ public class GymAppWebInitializer extends AbstractAnnotationConfigDispatcherServ
     protected String[] getServletMappings() {
         return new String[]{"/"};
     }
+
+    @Override
+    protected Filter[] getServletFilters() {
+        return new Filter[]{new CredentialsFilter()};
+    }
+
+
 }

@@ -26,20 +26,20 @@ public class TrainingManagementFacade {
         this.trainingService = trainingService;
     }
 
-    public  void findTraineeById(Credentials credentials, Long id){
-        traineeService.findById(credentials,id);
+    public void findTraineeById(Long id) {
+        traineeService.findById(id);
     }
 
-    public void findTraineeByUsername(Credentials credentials, String username){
-        traineeService.findByUsername(credentials,username);
+    public void findTraineeByUsername(Credentials credentials, String username) {
+        traineeService.findByUsername(username);
     }
 
     public void registerTrainee(Trainee trainee) {
         traineeService.createProfile(trainee);
     }
 
-    public void updateTrainee(Credentials credentials, Trainee trainee) {
-        traineeService.updateProfile(credentials, trainee);
+    public void updateTrainee( Trainee trainee) {
+        traineeService.updateProfile( trainee);
     }
 
     public void deleteTrainee(Credentials credentials, String traineeUsername) {
@@ -47,7 +47,7 @@ public class TrainingManagementFacade {
     }
 
     public List<Training> getTraineeTrainingsBasedOn(Credentials credentials, String traineeUsername, LocalDateTime fromDate, LocalDateTime toDate, String trainerName, String trainingType) {
-      return  traineeService.getTraineeTrainings(
+        return traineeService.getTraineeTrainings(
                 credentials,
                 traineeUsername,
                 fromDate,
@@ -56,12 +56,12 @@ public class TrainingManagementFacade {
                 trainingType);
     }
 
-    public void toggleActiveStatusTrainee(Credentials credentials, String userName){
-         traineeService.toggleActiveStatus(credentials, userName);
+    public void toggleActiveStatusTrainee(Credentials credentials, String userName) {
+        traineeService.toggleActiveStatus(userName);
     }
 
-    public void  changePasswordTrainee(Credentials credentials, String userName){
-        traineeService.changePassword(credentials,userName);
+    public void changePasswordTrainee(String userName, String oldPassword, String newPassword) {
+        traineeService.changePassword(userName, oldPassword, newPassword);
     }
 
 
@@ -69,8 +69,8 @@ public class TrainingManagementFacade {
         trainerService.createProfile(trainer);
     }
 
-    public void updateTrainer(Credentials credentials, Trainer trainer) {
-        trainerService.updateProfile(credentials, trainer);
+    public void updateTrainer(Trainer trainer) {
+        trainerService.updateProfile( trainer);
     }
 
 
@@ -84,24 +84,24 @@ public class TrainingManagementFacade {
                 trainingType);
     }
 
-    public  void findTrainerById(Credentials credentials, Long id){
-        trainerService.findById(credentials,id);
+    public void findTrainerById(Long id) {
+        trainerService.findById(id);
     }
 
-    public void findTrainerByUsername(Credentials credentials, String traineeUsername){
-        traineeService.findByUsername(credentials, traineeUsername);
+    public void findTrainerByUsername(String traineeUsername) {
+        traineeService.findByUsername(traineeUsername);
     }
 
-    public void toggleActiveStatusTrainer(Credentials credentials, String userName){
-        trainerService.toggleActiveStatus(credentials, userName);
+    public void toggleActiveStatusTrainer(String userName) {
+        trainerService.toggleActiveStatus(userName);
     }
 
-    public void  changePasswordTrainer(Credentials credentials, String userName){
-        trainerService.changePassword(credentials,userName);
+    public void changePasswordTrainer(String userName, String oldPassword, String newPassword) {
+        trainerService.changePassword(userName, oldPassword, newPassword);
     }
 
-    public void addTraining(Credentials credentials, Training training){
-        trainingService.addTraining(credentials, training);
+    public void addTraining(Training training) {
+        trainingService.addTraining(training);
     }
 
 

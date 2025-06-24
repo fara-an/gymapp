@@ -1,4 +1,4 @@
-package epam.lab.gymapp.facade;
+package epam.lab.gymapp.config;
 
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.startup.Tomcat;
@@ -13,7 +13,7 @@ public class EmbeddedTomcatServer {
 
         String docBase = new java.io.File(".").getAbsolutePath();
         var ctx = tomcat.addWebapp("", docBase);
-        ctx.addApplicationListener("epam.lab.gymapp.facade.GymAppWebInitializer");
+        ctx.addApplicationListener("epam.lab.gymapp.config.GymAppWebInitializer");
 
 
         tomcat.start();

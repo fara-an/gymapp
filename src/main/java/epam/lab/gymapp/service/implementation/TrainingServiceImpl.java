@@ -1,5 +1,6 @@
 package epam.lab.gymapp.service.implementation;
 
+import epam.lab.gymapp.annotation.security.RequiresAuthentication;
 import epam.lab.gymapp.dao.interfaces.TraineeDao;
 import epam.lab.gymapp.dao.interfaces.TrainerDao;
 import epam.lab.gymapp.model.Trainee;
@@ -36,17 +37,17 @@ public class TrainingServiceImpl implements TrainingService {
         this.traineeService = traineeService;
     }
 
+    @RequiresAuthentication
     @Override
     @Transactional
-    public Training addTraining(Credentials credentials, Training training) {
+    public Training addTraining( Training training) {
         LOGGER.debug(SERVICE_NAME + " - Starting training creation: {}", training.getTrainingName());
-        authenticationService.authenticateUser(credentials);
 
         Long trainerId = training.getTrainer().getId();
-        Trainer trainer = trainerService.findById(credentials, trainerId);
+        Trainer trainer = trainerService.findById( trainerId);
 
         Long traineeId = training.getTrainee().getId();
-        Trainee trainee = traineeService.findById(credentials, traineeId);
+        Trainee trainee = traineeService.findById( traineeId);
         validateTrainingType(trainer.getSpecialization().getName(), training.getTrainingType().getName());
         Training newTraining = Training.builder()
                 .id(training.getId())

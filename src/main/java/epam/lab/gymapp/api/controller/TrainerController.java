@@ -1,6 +1,8 @@
 package epam.lab.gymapp.api.controller;
 
+import epam.lab.gymapp.aspect.CredentialsContextHolder;
 import epam.lab.gymapp.dto.Credentials;
+import epam.lab.gymapp.dto.changePassword.PasswordChangeDto;
 import epam.lab.gymapp.dto.mapper.TrainerMapper;
 import epam.lab.gymapp.dto.registration.TrainerRegistrationBody;
 import epam.lab.gymapp.dto.response.TrainerRegistrationResponse;
@@ -28,14 +30,14 @@ public class TrainerController {
         this.authenticationService = authenticationService;
     }
 
-    @GetMapping
+    @GetMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody Credentials credentials, HttpSession session) {
-       performLogin(credentials.getUsername(), credentials.getPassword(),session);
+        performLogin(credentials.getUsername(), credentials.getPassword(), session);
         return ResponseEntity.ok("Login successful");
 
     }
 
-    @PostMapping
+    @PostMapping("/register")
     public ResponseEntity<TrainerRegistrationResponse> register(@Valid @RequestBody TrainerRegistrationBody registrationDto, HttpSession session) {
         Trainer trainer = TrainerMapper.toEntity(registrationDto);
         TrainingType specialization = trainingTypeService.findByName(registrationDto.getTrainingType());
@@ -45,6 +47,13 @@ public class TrainerController {
         TrainerRegistrationResponse response =
                 new TrainerRegistrationResponse(newTrainer.getUserName(), newTrainer.getPassword());
         return ResponseEntity.ok(response);
+    }
+
+
+    @PutMapping("/changePassword")
+    public ResponseEntity<String> changePassword(@Valid @RequestBody PasswordChangeDto passwordChangeDto) {
+        trainerService.changePassword(passwordChangeDto.getUsername(), passwordChangeDto.getOldPassword(), passwordChangeDto.getNewPassword());
+        return ResponseEntity.ok("Changes the password successfully");
     }
 
     private void performLogin(String username, String password, HttpSession session) {

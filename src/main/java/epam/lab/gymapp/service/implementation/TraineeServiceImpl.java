@@ -38,7 +38,7 @@ public class TraineeServiceImpl implements TraineeService {
         LOGGER.debug(SERVICE_NAME + " - Deleting trainee by username: {}", username);
         authenticationService.authenticateUser(authCredentials);
 
-        Long id = findByUsername(authCredentials, username).getId();
+        Long id = findByUsername(username).getId();
         traineeDao.delete(id);
         LOGGER.debug(SERVICE_NAME + " - Deleted trainee: {}", username);
     }

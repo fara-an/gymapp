@@ -13,6 +13,9 @@
     <!-- Set Spring log level to INFO -->
     <logger name="org.springframework" level="INFO"/>
 
+    <logger name="epam.lab.gymapp" level="DEBUG"/>
+
+
     <root level="INFO">
         <appender-ref ref="STDOUT"/>
     </root>

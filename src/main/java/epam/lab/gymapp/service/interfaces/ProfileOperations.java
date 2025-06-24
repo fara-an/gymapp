@@ -1,7 +1,7 @@
 package epam.lab.gymapp.service.interfaces;
 
 
-import epam.lab.gymapp.dto.Credentials;
+import epam.lab.gymapp.annotation.security.RequiresAuthentication;
 import epam.lab.gymapp.dto.registration.RegistrationDto;
 import epam.lab.gymapp.model.UserProfile;
 import epam.lab.gymapp.dao.interfaces.CreateReadUpdateDao;
@@ -18,8 +18,8 @@ import java.util.Optional;
 
 public interface ProfileOperations<
         T extends UserProfile,
-        D extends CreateReadUpdateDao<T,Long>,
-        R extends RegistrationDto>{
+        D extends CreateReadUpdateDao<T, Long>,
+        R extends RegistrationDto> {
 
     Logger LOGGER = LoggerFactory.getLogger(ProfileOperations.class);
 
@@ -63,17 +63,14 @@ public interface ProfileOperations<
         return created;
     }
 
+    @RequiresAuthentication
     @Transactional
-    default T updateProfile(Credentials authCredentials, T item) {
+    default T updateProfile( T item) {
         String serviceName = getClass().getSimpleName();
         LOGGER.debug("{}: SERVICE - Updating entity ID: {}", serviceName, item.getId());
 
-        getAuthService().authenticateUser(authCredentials);
-
-        T existing = findById(authCredentials, item.getId());
-
-
-        Optional.ofNullable(existing.getFirstName()).ifPresent(existing::setFirstName);
+        T existing = findById( item.getId());
+        Optional.ofNullable(item.getFirstName()).ifPresent(existing::setFirstName);
         Optional.ofNullable(item.getFirstName()).ifPresent(existing::setLastName);
         existing.setIsActive(item.getIsActive());
 
@@ -84,13 +81,12 @@ public interface ProfileOperations<
         return updated;
     }
 
+
+    @RequiresAuthentication
     @Transactional(readOnly = true)
-    default T findByUsername(Credentials authCredentials, String username) {
+    default T findByUsername(String username) {
         String serviceName = getClass().getSimpleName();
         LOGGER.debug("{}: SERVICE - Searching entity by username: {}", serviceName, username);
-
-        getAuthService().authenticateUser(authCredentials);
-
         T item = getDao().findByUsername(username)
                 .orElseThrow(() -> {
                     String msg = String.format("%s: Entity with username '%s' not found.", serviceName, username);
@@ -102,12 +98,11 @@ public interface ProfileOperations<
         return item;
     }
 
+    @RequiresAuthentication
     @Transactional(readOnly = true)
-    default T findById(Credentials authCredentials, Long id) {
+    default T findById( Long id) {
         String serviceName = getClass().getSimpleName();
         LOGGER.debug("{}: SERVICE - Searching entity by ID: {}", serviceName, id);
-
-        getAuthService().authenticateUser(authCredentials);
 
         T item = getDao().findByID(id)
                 .orElseThrow(() -> {
@@ -120,14 +115,18 @@ public interface ProfileOperations<
         return item;
     }
 
+    @RequiresAuthentication
     @Transactional
-    default void toggleActiveStatus(Credentials authCredentials, String username) {
+    default void toggleActiveStatus(String username) {
         String serviceName = getClass().getSimpleName();
         LOGGER.debug("{}: SERVICE - Toggling active status for username: {}", serviceName, username);
 
-        getAuthService().authenticateUser(authCredentials);
-        T entity = findByUsername(authCredentials, username);
-
+        T entity = getDao().findByUsername(username)
+                .orElseThrow(() -> {
+                    String msg = String.format("%s: Entity with username '%s' not found.", serviceName, username);
+                    LOGGER.error("{}: SERVICE ERROR - Entity with username '{}' not found", serviceName, username);
+                    return new EntityNotFoundException(msg);
+                });
         entity.setIsActive(!entity.getIsActive());
 
         try {
@@ -142,17 +141,22 @@ public interface ProfileOperations<
         }
     }
 
+    @RequiresAuthentication
     @Transactional
-    default String changePassword(Credentials authCredentials, String username) {
+    default String changePassword(String username, String oldPassword, String newPassword) {
         String serviceName = getClass().getSimpleName();
         LOGGER.debug("{}: SERVICE - Changing password for user: {}", serviceName, username);
 
-        getAuthService().authenticateUser(authCredentials);
-        T entity = findByUsername(authCredentials, username);
+        T entity = getDao().findByUsername(username)
+                .orElseThrow(() -> {
+                    String msg = String.format("%s: Entity with username '%s' not found.", serviceName, username);
+                    LOGGER.error("{}: SERVICE ERROR - Entity with username '{}' not found", serviceName, username);
+                    return new EntityNotFoundException(msg);
+                });
 
-
-        String newPassword = PasswordGenerator.generatePassword();
-        entity.setPassword(newPassword);
+        if (oldPassword.equals(entity.getPassword())) {
+            entity.setPassword(newPassword);
+        }
 
         try {
             Session session = getDao().getSessionFactory().getCurrentSession();

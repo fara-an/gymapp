@@ -26,10 +26,12 @@ public class CheckCredentialsAspect {
 
     @Before("appliedMethods()")
     public void authenticate() {
+        LOGGER.debug("Aspect checking started.");
         Credentials credentials = CredentialsContextHolder.getCredentials();
         if (credentials == null) {
             throw new UnauthorizedException("Missing Credentials");
         }
         authenticationService.authenticateUser(credentials);
+        LOGGER.debug("Aspect checking ended.");
     }
 }
