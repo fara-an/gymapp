@@ -7,6 +7,7 @@ import epam.lab.gymapp.dto.mapper.TrainerMapper;
 import epam.lab.gymapp.dto.request.registration.TrainerRegistrationBody;
 import epam.lab.gymapp.dto.request.update.UpdateTrainerDto;
 import epam.lab.gymapp.dto.response.get.TrainerGetResponse;
+import epam.lab.gymapp.dto.response.get.TrainerWithoutTraineesResponse;
 import epam.lab.gymapp.dto.response.register.TrainerRegistrationResponse;
 import epam.lab.gymapp.model.Trainer;
 import epam.lab.gymapp.model.TrainingType;
@@ -48,9 +49,7 @@ public class TrainerController {
         trainer.setSpecialization(specialization);
         Trainer newTrainer = trainerService.createProfile(trainer);
         performLogin(newTrainer.getUserName(), newTrainer.getPassword(), session);
-        TrainerRegistrationResponse response =
-                new TrainerRegistrationResponse(newTrainer.getUserName(), newTrainer.getPassword());
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(TrainerGetResponseMapper.dtoOnlyUsernameAndPass(trainer));
     }
 
 
@@ -69,7 +68,7 @@ public class TrainerController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<?> updateTrainer(@PathVariable ("id") Long id, @Valid @RequestBody UpdateTrainerDto updateTrainerDto) {
+    public ResponseEntity<?> updateTrainer(@PathVariable("id") Long id, @Valid @RequestBody UpdateTrainerDto updateTrainerDto) {
         Trainer existingTrainer = Trainer.builder()
                 .id(id)
                 .firstName(updateTrainerDto.getFirstName())
@@ -84,9 +83,10 @@ public class TrainerController {
     }
 
     @GetMapping("/notAssignedToTrainee/{username}")
-    public ResponseEntity<?> getTrainersNotAssignedToTrainee(@PathVariable("username")String username){
+    public ResponseEntity<?> getTrainersNotAssignedToTrainee(@PathVariable("username") String username) {
         List<Trainer> trainers = trainerService.trainersNotAssignedToTrainee(username);
-        TrainerGetResponseMapper.toEntity()
+        List<TrainerWithoutTraineesResponse> list = trainers.stream().map(t -> TrainerGetResponseMapper.dtoWithoutTraineeList(t)).toList();
+        return ResponseEntity.ok(list);
     }
 
     private void performLogin(String username, String password, HttpSession session) {
