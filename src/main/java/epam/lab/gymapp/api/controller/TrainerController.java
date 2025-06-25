@@ -1,11 +1,13 @@
 package epam.lab.gymapp.api.controller;
 
-import epam.lab.gymapp.aspect.CredentialsContextHolder;
-import epam.lab.gymapp.dto.Credentials;
-import epam.lab.gymapp.dto.changePassword.PasswordChangeDto;
+import epam.lab.gymapp.dto.mapper.TrainerGetResponseMapper;
+import epam.lab.gymapp.dto.request.login.Credentials;
+import epam.lab.gymapp.dto.request.changePassword.PasswordChangeDto;
 import epam.lab.gymapp.dto.mapper.TrainerMapper;
-import epam.lab.gymapp.dto.registration.TrainerRegistrationBody;
-import epam.lab.gymapp.dto.response.TrainerRegistrationResponse;
+import epam.lab.gymapp.dto.request.registration.TrainerRegistrationBody;
+import epam.lab.gymapp.dto.request.update.UpdateTrainerDto;
+import epam.lab.gymapp.dto.response.get.TrainerGetResponse;
+import epam.lab.gymapp.dto.response.register.TrainerRegistrationResponse;
 import epam.lab.gymapp.model.Trainer;
 import epam.lab.gymapp.model.TrainingType;
 import epam.lab.gymapp.service.interfaces.AuthenticationService;
@@ -15,6 +17,8 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/trainer")
@@ -54,6 +58,35 @@ public class TrainerController {
     public ResponseEntity<String> changePassword(@Valid @RequestBody PasswordChangeDto passwordChangeDto) {
         trainerService.changePassword(passwordChangeDto.getUsername(), passwordChangeDto.getOldPassword(), passwordChangeDto.getNewPassword());
         return ResponseEntity.ok("Changes the password successfully");
+    }
+
+    @GetMapping("/{username}")
+    public ResponseEntity<?> getTrainer(@PathVariable("username") String username) {
+        Trainer trainer = trainerService.findByUsername(username);
+        TrainerGetResponse entity = TrainerGetResponseMapper.dtoWithTraineeList(trainer);
+        return ResponseEntity.ok(entity);
+
+    }
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<?> updateTrainer(@PathVariable ("id") Long id, @Valid @RequestBody UpdateTrainerDto updateTrainerDto) {
+        Trainer existingTrainer = Trainer.builder()
+                .id(id)
+                .firstName(updateTrainerDto.getFirstName())
+                .lastName(updateTrainerDto.getLastName())
+                .userName(updateTrainerDto.getUserName())
+                .isActive(updateTrainerDto.isActive())
+                .build();
+        Trainer updatedTrainer = trainerService.updateProfile(existingTrainer);
+        TrainerGetResponse entity = TrainerGetResponseMapper.dtoWithTraineeList(updatedTrainer);
+        return ResponseEntity.ok(entity);
+
+    }
+
+    @GetMapping("/notAssignedToTrainee/{username}")
+    public ResponseEntity<?> getTrainersNotAssignedToTrainee(@PathVariable("username")String username){
+        List<Trainer> trainers = trainerService.trainersNotAssignedToTrainee(username);
+        TrainerGetResponseMapper.toEntity()
     }
 
     private void performLogin(String username, String password, HttpSession session) {

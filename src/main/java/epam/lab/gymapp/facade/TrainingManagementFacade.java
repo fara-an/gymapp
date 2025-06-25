@@ -3,7 +3,7 @@ package epam.lab.gymapp.facade;
 import epam.lab.gymapp.model.Trainee;
 import epam.lab.gymapp.model.Trainer;
 import epam.lab.gymapp.model.Training;
-import epam.lab.gymapp.dto.Credentials;
+import epam.lab.gymapp.dto.request.login.Credentials;
 import epam.lab.gymapp.service.interfaces.TraineeService;
 import epam.lab.gymapp.service.interfaces.TrainerService;
 import epam.lab.gymapp.service.interfaces.TrainingService;
@@ -42,13 +42,12 @@ public class TrainingManagementFacade {
         traineeService.updateProfile( trainee);
     }
 
-    public void deleteTrainee(Credentials credentials, String traineeUsername) {
-        traineeService.delete(credentials, traineeUsername);
+    public void deleteTrainee( String traineeUsername) {
+        traineeService.delete( traineeUsername);
     }
 
-    public List<Training> getTraineeTrainingsBasedOn(Credentials credentials, String traineeUsername, LocalDateTime fromDate, LocalDateTime toDate, String trainerName, String trainingType) {
+    public List<Training> getTraineeTrainingsBasedOn( String traineeUsername, LocalDateTime fromDate, LocalDateTime toDate, String trainerName, String trainingType) {
         return traineeService.getTraineeTrainings(
-                credentials,
                 traineeUsername,
                 fromDate,
                 toDate,

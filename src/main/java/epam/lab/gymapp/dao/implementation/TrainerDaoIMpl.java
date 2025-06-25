@@ -1,6 +1,6 @@
 package epam.lab.gymapp.dao.implementation;
 
-import epam.lab.gymapp.dto.Credentials;
+import epam.lab.gymapp.dto.request.login.Credentials;
 import epam.lab.gymapp.model.Trainee;
 import epam.lab.gymapp.model.Trainer;
 import epam.lab.gymapp.model.Training;

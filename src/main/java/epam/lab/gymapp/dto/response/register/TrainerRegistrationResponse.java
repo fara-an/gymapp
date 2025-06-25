@@ -1,4 +1,4 @@
-package epam.lab.gymapp.dto.response;
+package epam.lab.gymapp.dto.response.register;
 
 import lombok.AllArgsConstructor;
 

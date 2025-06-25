@@ -2,7 +2,7 @@ package epam.lab.gymapp.service.interfaces;
 
 
 import epam.lab.gymapp.annotation.security.RequiresAuthentication;
-import epam.lab.gymapp.dto.registration.RegistrationDto;
+import epam.lab.gymapp.dto.request.registration.RegistrationDto;
 import epam.lab.gymapp.model.UserProfile;
 import epam.lab.gymapp.dao.interfaces.CreateReadUpdateDao;
 import epam.lab.gymapp.exceptions.EntityNotFoundException;
@@ -31,7 +31,7 @@ public interface ProfileOperations<
 
     void updateProfileSpecificFields(T existing, T item);
 
-
+    @RequiresAuthentication
     @Transactional
     default T createProfile(T item) {
         String serviceName = getClass().getSimpleName();
@@ -65,13 +65,13 @@ public interface ProfileOperations<
 
     @RequiresAuthentication
     @Transactional
-    default T updateProfile( T item) {
+    default T updateProfile(T item) {
         String serviceName = getClass().getSimpleName();
         LOGGER.debug("{}: SERVICE - Updating entity ID: {}", serviceName, item.getId());
 
-        T existing = findById( item.getId());
+        T existing = findById(item.getId());
         Optional.ofNullable(item.getFirstName()).ifPresent(existing::setFirstName);
-        Optional.ofNullable(item.getFirstName()).ifPresent(existing::setLastName);
+        Optional.ofNullable(item.getLastName()).ifPresent(existing::setLastName);
         existing.setIsActive(item.getIsActive());
 
         updateProfileSpecificFields(existing, item);
@@ -100,7 +100,7 @@ public interface ProfileOperations<
 
     @RequiresAuthentication
     @Transactional(readOnly = true)
-    default T findById( Long id) {
+    default T findById(Long id) {
         String serviceName = getClass().getSimpleName();
         LOGGER.debug("{}: SERVICE - Searching entity by ID: {}", serviceName, id);
 

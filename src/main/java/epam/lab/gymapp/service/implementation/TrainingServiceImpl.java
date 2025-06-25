@@ -1,20 +1,16 @@
 package epam.lab.gymapp.service.implementation;
 
 import epam.lab.gymapp.annotation.security.RequiresAuthentication;
-import epam.lab.gymapp.dao.interfaces.TraineeDao;
-import epam.lab.gymapp.dao.interfaces.TrainerDao;
 import epam.lab.gymapp.model.Trainee;
 import epam.lab.gymapp.model.Trainer;
 import epam.lab.gymapp.model.Training;
 import epam.lab.gymapp.dao.interfaces.CreateReadDao;
-import epam.lab.gymapp.dto.Credentials;
 import epam.lab.gymapp.service.interfaces.AuthenticationService;
 import epam.lab.gymapp.service.interfaces.TraineeService;
 import epam.lab.gymapp.service.interfaces.TrainerService;
 import epam.lab.gymapp.service.interfaces.TrainingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

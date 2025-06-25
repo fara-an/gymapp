@@ -1,8 +1,7 @@
-package epam.lab.gymapp.dto.registration;
+package epam.lab.gymapp.dto.request.update;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,20 +11,20 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
-public class TraineeRegistrationBody implements RegistrationDto {
-
+public class UpdateTraineeDto {
+    @NotNull
     @NotBlank
-    @Size(min = 3, max = 100)
+    private String userName;
+    @NotNull
+    @NotBlank
     private String firstName;
-
+    @NotNull
     @NotBlank
-    @Size(min = 3, max = 100)
     private String lastName;
-
-    private LocalDateTime dateOfBirth;
-
+    private LocalDateTime birthday;
     private String address;
+    @NotNull
+    private Boolean isActive;
 
 
 }

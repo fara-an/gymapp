@@ -1,11 +1,13 @@
 package epam.lab.gymapp.api.controller;
 
-import epam.lab.gymapp.aspect.CredentialsContextHolder;
-import epam.lab.gymapp.dto.Credentials;
-import epam.lab.gymapp.dto.changePassword.PasswordChangeDto;
+import epam.lab.gymapp.dto.mapper.TraineeGetResponseMapper;
+import epam.lab.gymapp.dto.request.login.Credentials;
+import epam.lab.gymapp.dto.request.changePassword.PasswordChangeDto;
 import epam.lab.gymapp.dto.mapper.TraineeMapper;
-import epam.lab.gymapp.dto.registration.TraineeRegistrationBody;
-import epam.lab.gymapp.dto.response.TraineeRegistrationResponse;
+import epam.lab.gymapp.dto.request.registration.TraineeRegistrationBody;
+import epam.lab.gymapp.dto.request.update.UpdateTraineeDto;
+import epam.lab.gymapp.dto.response.get.TraineeGetResponse;
+import epam.lab.gymapp.dto.response.register.TraineeRegistrationResponse;
 import epam.lab.gymapp.model.Trainee;
 import epam.lab.gymapp.service.interfaces.AuthenticationService;
 import epam.lab.gymapp.service.interfaces.TraineeService;
@@ -56,15 +58,41 @@ public class TraineeController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<?> logout(HttpSession httpSession){
-        Credentials credentials = (Credentials)httpSession.getAttribute("credentials");
+    public ResponseEntity<?> logout(HttpSession httpSession) {
+        Credentials credentials = (Credentials) httpSession.getAttribute("credentials");
         LOGGER.debug("Trainee {} is logging out", credentials.getUsername());
         return ResponseEntity.ok("Trainee logged out");
     }
 
     @GetMapping("/{username}")
-    public ResponseEntity<?> getTrainee(@PathVariable String username){
-        traineeService.findByUsername(username);
+    public ResponseEntity<?> getTrainee(@PathVariable("username") String username) {
+        Trainee trainee = traineeService.findByUsername(username);
+        TraineeGetResponse traineeResponse = TraineeGetResponseMapper.toEntity(trainee);
+        return ResponseEntity.ok(traineeResponse);
     }
 
+    @PutMapping("/update/{id}")
+    public ResponseEntity<?> updateTrainee(@PathVariable ("id")Long id, @Valid @RequestBody UpdateTraineeDto updateTraineeDto) {
+        Trainee trainee = Trainee.builder()
+                .id(id)
+                .userName(updateTraineeDto.getUserName())
+                .firstName(updateTraineeDto.getFirstName())
+                .lastName(updateTraineeDto.getLastName())
+                .birthday(updateTraineeDto.getBirthday())
+                .address(updateTraineeDto.getAddress())
+                .isActive(updateTraineeDto.getIsActive())
+                .build();
+
+        Trainee updated = traineeService.updateProfile(trainee);
+        TraineeGetResponse entity = TraineeGetResponseMapper.toEntity(updated);
+        return ResponseEntity.ok(entity);
+
+    }
+
+    @DeleteMapping("/delete/{username}")
+    public ResponseEntity<?> deleteTrainee(@PathVariable("username") String username){
+        traineeService.delete(username);
+        return ResponseEntity.ok("Deleted trainee with username  "+username);
+
+    }
 }

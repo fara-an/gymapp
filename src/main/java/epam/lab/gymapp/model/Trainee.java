@@ -22,7 +22,7 @@ public class Trainee extends UserProfile {
 
     private String address;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = DatabaseConstants.TABLE_TRAINER_TRAINEE,
             joinColumns = @JoinColumn(name = DatabaseConstants.COL_TRAINEE_ID, referencedColumnName = DatabaseConstants.COL_USER_ID),

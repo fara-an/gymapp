@@ -1,6 +1,6 @@
 package epam.lab.gymapp.dto.mapper;
 
-import epam.lab.gymapp.dto.registration.TraineeRegistrationBody;
+import epam.lab.gymapp.dto.request.registration.TraineeRegistrationBody;
 import epam.lab.gymapp.model.Trainee;
 
 import java.time.LocalDateTime;

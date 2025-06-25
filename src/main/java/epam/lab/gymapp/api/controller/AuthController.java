@@ -1,6 +1,6 @@
 package epam.lab.gymapp.api.controller;
 
-import epam.lab.gymapp.dto.Credentials;
+import epam.lab.gymapp.dto.request.login.Credentials;
 import epam.lab.gymapp.service.interfaces.AuthenticationService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;

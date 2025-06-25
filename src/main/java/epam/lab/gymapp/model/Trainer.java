@@ -25,7 +25,7 @@ public class Trainer extends UserProfile {
     private List<Training> trainings;
 
 
-    @ManyToMany(mappedBy = "trainers")
+    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "trainers")
     private List<Trainee> trainees;
 
     @Override

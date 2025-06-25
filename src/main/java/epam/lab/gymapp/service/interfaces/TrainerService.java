@@ -1,7 +1,7 @@
 package epam.lab.gymapp.service.interfaces;
 
-import epam.lab.gymapp.dto.Credentials;
-import epam.lab.gymapp.dto.registration.TrainerRegistrationBody;
+import epam.lab.gymapp.dto.request.login.Credentials;
+import epam.lab.gymapp.dto.request.registration.TrainerRegistrationBody;
 import epam.lab.gymapp.model.Trainer;
 import epam.lab.gymapp.model.Training;
 import epam.lab.gymapp.dao.interfaces.TrainerDao;

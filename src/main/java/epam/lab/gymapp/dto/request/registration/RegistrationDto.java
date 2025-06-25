@@ -1,4 +1,4 @@
-package epam.lab.gymapp.dto.registration;
+package epam.lab.gymapp.dto.request.registration;
 
 public interface RegistrationDto {
     String getFirstName();

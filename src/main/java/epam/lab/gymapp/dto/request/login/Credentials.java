@@ -1,4 +1,4 @@
-package epam.lab.gymapp.dto;
+package epam.lab.gymapp.dto.request.login;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

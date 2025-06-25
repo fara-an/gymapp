@@ -1,6 +1,6 @@
 package epam.lab.gymapp.aspect;
 
-import epam.lab.gymapp.dto.Credentials;
+import epam.lab.gymapp.dto.request.login.Credentials;
 import epam.lab.gymapp.exceptions.UnauthorizedException;
 import epam.lab.gymapp.service.interfaces.AuthenticationService;
 import org.aspectj.lang.annotation.Aspect;

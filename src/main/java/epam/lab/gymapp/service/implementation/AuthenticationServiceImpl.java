@@ -1,7 +1,7 @@
 package epam.lab.gymapp.service.implementation;
 
 import epam.lab.gymapp.dao.interfaces.AuthenticationDao;
-import epam.lab.gymapp.dto.Credentials;
+import epam.lab.gymapp.dto.request.login.Credentials;
 import epam.lab.gymapp.exceptions.InvalidCredentialsException;
 import epam.lab.gymapp.service.interfaces.AuthenticationService;
 import org.springframework.stereotype.Service;

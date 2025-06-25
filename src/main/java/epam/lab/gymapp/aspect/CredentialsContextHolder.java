@@ -1,6 +1,6 @@
 package epam.lab.gymapp.aspect;
 
-import epam.lab.gymapp.dto.Credentials;
+import epam.lab.gymapp.dto.request.login.Credentials;
 
 public class CredentialsContextHolder {
 

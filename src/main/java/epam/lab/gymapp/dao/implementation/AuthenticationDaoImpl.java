@@ -1,7 +1,7 @@
 package epam.lab.gymapp.dao.implementation;
 
 import epam.lab.gymapp.dao.interfaces.AuthenticationDao;
-import epam.lab.gymapp.dto.Credentials;
+import epam.lab.gymapp.dto.request.login.Credentials;
 import epam.lab.gymapp.exceptions.DaoException;
 import epam.lab.gymapp.model.UserProfile;
 import org.hibernate.Session;

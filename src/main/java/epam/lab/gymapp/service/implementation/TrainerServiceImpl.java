@@ -1,14 +1,14 @@
 package epam.lab.gymapp.service.implementation;
 
 
+import epam.lab.gymapp.annotation.security.RequiresAuthentication;
 import epam.lab.gymapp.model.Trainer;
 import epam.lab.gymapp.model.Training;
 import epam.lab.gymapp.model.UserProfile;
 import epam.lab.gymapp.dao.interfaces.TrainerDao;
-import epam.lab.gymapp.dto.Credentials;
+import epam.lab.gymapp.dto.request.login.Credentials;
 import epam.lab.gymapp.service.interfaces.AuthenticationService;
 import epam.lab.gymapp.service.interfaces.TrainerService;
-import epam.lab.gymapp.service.interfaces.TrainingTypeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -41,6 +41,7 @@ public class TrainerServiceImpl implements TrainerService {
         return trainerTrainings;
     }
 
+    @RequiresAuthentication
     @Override
     @Transactional
     public List<Trainer> trainersNotAssignedToTrainee(String traineeUsername) {

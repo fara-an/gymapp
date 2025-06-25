@@ -1,4 +1,4 @@
-package epam.lab.gymapp.dto.registration;
+package epam.lab.gymapp.dto.request.registration;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -7,19 +7,25 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-public class TrainerRegistrationBody implements RegistrationDto{
+@AllArgsConstructor
+public class TraineeRegistrationBody implements RegistrationDto {
 
     @NotBlank
-    @Size(min = 8, max = 100)
+    @Size(min = 3, max = 100)
     private String firstName;
 
     @NotBlank
-    @Size(min = 8, max = 100)
+    @Size(min = 3, max = 100)
     private String lastName;
-    @NotBlank
-    private String trainingType;
+
+    private LocalDateTime dateOfBirth;
+
+    private String address;
+
+
 }
