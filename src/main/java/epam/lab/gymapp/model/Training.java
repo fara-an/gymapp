@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 @Entity
@@ -30,11 +31,15 @@ public class Training extends BaseEntity<Long> {
     @JoinColumn(name = DatabaseConstants.COL_TRAINING_TYPE_ID,  nullable = false)
     private TrainingType trainingType;
 
-    @Column(name = DatabaseConstants.COL_TRAINING_DATE, nullable = false)
-    private LocalDateTime trainingDate;
+    @Column(name = DatabaseConstants.COL_TRAINING_DATE_START, nullable = false)
+    private LocalDateTime trainingDateStart;
 
     @Column(name = DatabaseConstants.COL_TRAINING_DURATION, nullable = false)
     private Integer duration;
+
+    @Column(name = DatabaseConstants.COL_TRAINING_DATE_END, nullable = false)
+    private LocalDateTime trainingDateEnd;
+
 
 
     @Override
@@ -45,7 +50,8 @@ public class Training extends BaseEntity<Long> {
                 ", trainee=" + trainee.getUserName() +
                 ", trainingName='" + trainingName + '\'' +
                 ", trainingType=" + trainingType +
-                ", trainingDate=" + trainingDate +
+                ", trainingDateStart=" + trainingDateStart +
+                ", trainingDateEnd=" + trainingDateEnd +
                 ", duration=" + duration +
                 '}';
     }

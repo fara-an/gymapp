@@ -6,7 +6,6 @@ import epam.lab.gymapp.dao.base.BaseDao;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
-
 import java.time.LocalDateTime;
 
 @Repository
@@ -20,13 +19,12 @@ public class TrainingDaoImpl extends BaseDao<Training, Long> implements Training
     @Override
     public boolean existsTrainerConflict(Long trainerId, LocalDateTime newStart, LocalDateTime newEnd) {
         Session session = getSessionFactory().getCurrentSession();
-
         String hql = """
             select count(t.id)
             from   Training t
             where  t.trainer.id = :trainerId
-              and  t.trainingDate < :newEnd
-              and  (t.trainingDate + t.duration) > :newStart
+              and  t.trainingDateStart < :newEnd
+              and  t.trainingDateEnd > :newStart
             """;
 
         Long cnt = session.createQuery(hql, Long.class)
@@ -35,20 +33,19 @@ public class TrainingDaoImpl extends BaseDao<Training, Long> implements Training
                 .setParameter("newEnd",   newEnd)
                 .uniqueResult();
 
-        return cnt != null && cnt > 0;
-    }
+        return cnt != null && cnt > 0;    }
 
     @Override
     public boolean existsTraineeConflict(Long traineeId, LocalDateTime newStart, LocalDateTime newEnd) {
         Session session = getSessionFactory().getCurrentSession();
-
         String hql = """
-                select count(t.id)
-                from   Training t
-                where  t.trainee.id = :traineeId
-                  and  t.trainingDate < :newEnd
-                  and  t.trainingDate + function('INTERVAL', concat(t.duration, ' minutes')) > :newStart
-  """;
+            select count(t.id)
+            from   Training t
+            where  t.trainee.id = :traineeId
+              and  t.trainingDateStart < :newEnd
+              and  t.trainingDateEnd > :newStart
+            """;
+
         Long cnt = session.createQuery(hql, Long.class)
                 .setParameter("traineeId", traineeId)
                 .setParameter("newStart", newStart)

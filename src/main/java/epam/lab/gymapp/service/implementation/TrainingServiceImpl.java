@@ -23,14 +23,12 @@ public class TrainingServiceImpl implements TrainingService {
     private static final String SERVICE_NAME = "TrainingServiceImpl";
 
     private final TrainingDao trainingDao;
-    private final AuthenticationService authenticationService;
     private final TrainerService trainerService;
     private final TraineeService traineeService;
     private final TrainingTypeService trainingTypeService;
 
-    public TrainingServiceImpl(TrainingDao trainingDao, AuthenticationService authenticationService, TrainerService trainerService, TraineeService traineeService, TrainingTypeService trainingTypeService) {
+    public TrainingServiceImpl(TrainingDao trainingDao, TrainerService trainerService, TraineeService traineeService, TrainingTypeService trainingTypeService) {
         this.trainingDao = trainingDao;
-        this.authenticationService = authenticationService;
         this.trainerService = trainerService;
         this.traineeService = traineeService;
         this.trainingTypeService = trainingTypeService;
@@ -70,7 +68,8 @@ public class TrainingServiceImpl implements TrainingService {
                 .trainee(trainee)
                 .trainer(trainer)
                 .duration(trainingAddDto.getDuration())
-                .trainingDate(start)
+                .trainingDateStart(start)
+                .trainingDateEnd(end)
                 .trainingType(trainingType)
                 .build();
 
