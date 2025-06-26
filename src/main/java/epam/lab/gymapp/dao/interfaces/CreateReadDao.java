@@ -10,15 +10,16 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 
-public interface CreateReadDao <T extends BaseEntity<ID>,ID> {
+public interface CreateReadDao<T extends BaseEntity<ID>, ID> {
 
 
     SessionFactory getSessionFactory();
+
     Class<T> getEntityClass();
 
     Logger LOGGER = LoggerFactory.getLogger(CreateReadDao.class);
     String
-            FIND_BY_USERNAME= "FROM %s e WHERE e.userName = :userName";
+            FIND_BY_USERNAME = "FROM %s e WHERE e.userName = :userName";
 
 
     default Optional<T> findByID(ID id) {
@@ -38,7 +39,7 @@ public interface CreateReadDao <T extends BaseEntity<ID>,ID> {
 
     default Optional<T> findByUsername(String userName) {
         String className = getEntityClass().getSimpleName();
-        LOGGER.debug( "{}: DAO READ - Initiating read username for entity {}", className, userName);
+        LOGGER.debug("{}: DAO READ - Initiating read username for entity {}", className, userName);
         try {
 
             Session session = getSessionFactory().getCurrentSession();
@@ -71,9 +72,6 @@ public interface CreateReadDao <T extends BaseEntity<ID>,ID> {
 
         }
     }
-
-
-
 
 
 }

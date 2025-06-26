@@ -32,8 +32,9 @@ public class Training extends BaseEntity<Long> {
 
     @Column(name = DatabaseConstants.COL_TRAINING_DATE, nullable = false)
     private LocalDateTime trainingDate;
+
     @Column(name = DatabaseConstants.COL_TRAINING_DURATION, nullable = false)
-    private Double duration;
+    private Integer duration;
 
 
     @Override

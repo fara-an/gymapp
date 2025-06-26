@@ -1,12 +1,15 @@
 package epam.lab.gymapp.dao.implementation;
 
-import epam.lab.gymapp.dto.request.login.Credentials;
 import epam.lab.gymapp.model.Trainee;
 import epam.lab.gymapp.model.Trainer;
 import epam.lab.gymapp.model.Training;
 import epam.lab.gymapp.dao.base.BaseDao;
 import epam.lab.gymapp.dao.interfaces.TrainerDao;
 import epam.lab.gymapp.exceptions.DaoException;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
@@ -14,15 +17,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 @Repository
 public class TrainerDaoIMpl extends BaseDao<Trainer, Long> implements TrainerDao {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TrainerDaoIMpl.class);
-    private static final String LOG_FETCH_TRAININGS_START = "DAO: Fetching trainings for trainer '{}', trainee '{}', from {} to {}";
-    private static final String LOG_ERROR_FETCH_TRAININGS = "DAO: Error retrieving trainings for trainer '{}', trainee '{}'";
-    private static final String LOG_ERROR_FETCH_TRAININGS_TEMPLATE= "DAO: Error retrieving trainings for trainer '%s', trainee '%s'";
     private static final String LOG_FETCH_UNASSIGNED_TRAINERS = "DAO: Fetching trainers not assigned to trainee '{}'";
     private static final String LOG_TRAINEE_NOT_FOUND = "DAO: No trainee found with username '{}'";
     private static final String LOG_UNASSIGNED_TRAINERS_FOUND_SUCCESS = "DAO: Retrieved Trainers {} not assigned to trainee '{}'";
@@ -35,28 +36,50 @@ public class TrainerDaoIMpl extends BaseDao<Trainer, Long> implements TrainerDao
 
 
     @Override
-    public List<Training> getTrainerTrainings(Credentials credentials, String trainerUsername, LocalDateTime fromDate, LocalDateTime toDate, String traineeUsername) {
-        LOGGER.debug(LOG_FETCH_TRAININGS_START, trainerUsername, traineeUsername, fromDate, toDate);
+    public List<Training> getTrainerTrainings(
+            String trainerUsername,
+            LocalDateTime fromDate,
+            LocalDateTime toDate,
+            String traineeName) {
+
+        LOGGER.debug("DAO: Fetching trainings for trainer='{}' from={} to={} trainee='{}' ",
+                trainerUsername, fromDate, toDate, traineeName);
+
         try {
             Session session = getSessionFactory().getCurrentSession();
-            String hql = """
-                    select t
-                    from Training t
-                    where t.trainer.userName = :trainerUsername
-                      and t.trainee.userName = :traineeUsername
-                      and t.trainingDate between :fromDate and :toDate
-                    """;
+            CriteriaBuilder cb = session.getCriteriaBuilder();
+            CriteriaQuery<Training> cq = cb.createQuery(Training.class);
+            Root<Training> root = cq.from(Training.class);
 
-            return session.createQuery(hql, Training.class)
-                    .setParameter("trainerUsername", trainerUsername)
-                    .setParameter("traineeUsername", traineeUsername)
-                    .setParameter("fromDate", fromDate)
-                    .setParameter("toDate", toDate)
-                    .getResultList();
-        } catch (Exception e) {
-            LOGGER.debug(LOG_ERROR_FETCH_TRAININGS, trainerUsername, traineeUsername, e);
-            String errorMessage = String.format(LOG_ERROR_FETCH_TRAININGS_TEMPLATE, trainerUsername, traineeUsername);
-            throw new DaoException(errorMessage, e);
+            /* ---------- 1. Build predicates dynamically ---------- */
+            List<Predicate> where = new ArrayList<>();
+
+            // mandatory
+            where.add(cb.equal(root.get("trainer").get("userName"), trainerUsername));
+
+            // optional
+
+            if (traineeName != null && !traineeName.isBlank()) {
+                where.add(cb.equal(root.get("trainee").get("userName"), traineeName));
+            }
+            if (fromDate != null) {
+                // session must START no earlier than fromDate
+                where.add(cb.greaterThanOrEqualTo(root.get("trainingDate"), fromDate));
+            }
+            if (toDate != null) {
+                // session must START no later than toDate
+                // (If you really want «session must END before toDate» see note ↓)
+                where.add(cb.lessThanOrEqualTo(root.get("trainingDate"), toDate));
+            }
+
+            /* ---------- 2. Execute ---------- */
+            cq.select(root).where(where.toArray(new Predicate[0]));
+            return session.createQuery(cq).getResultList();
+
+        } catch (Exception ex) {
+            String msg = String.format("DAO: Error retrieving trainings for trainer %s", trainerUsername);
+            LOGGER.error(msg, ex);
+            throw new DaoException(msg, ex);
         }
     }
 

@@ -1,5 +1,6 @@
 package epam.lab.gymapp.service.interfaces;
 
+import epam.lab.gymapp.annotation.security.RequiresAuthentication;
 import epam.lab.gymapp.dto.request.login.Credentials;
 import epam.lab.gymapp.dto.request.registration.TrainerRegistrationBody;
 import epam.lab.gymapp.model.Trainer;
@@ -12,7 +13,9 @@ import java.util.List;
 
 @Service
 public interface TrainerService extends ProfileOperations<Trainer, TrainerDao, TrainerRegistrationBody> {
-    List<Training> getTrainerTrainings(Credentials credentials, String traineeUsername, LocalDateTime fromDate, LocalDateTime toDate, String trainerName, String trainingType);
-     List<Trainer> trainersNotAssignedToTrainee(String traineeUsername);
+    List<Training> getTrainerTrainings(String traineeUsername, LocalDateTime fromDate, LocalDateTime toDate, String trainerName, String trainingType);
+
+    @RequiresAuthentication
+    List<Trainer> trainersNotAssignedToTrainee(String traineeUsername);
 
 }

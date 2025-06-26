@@ -1,6 +1,6 @@
 package epam.lab.gymapp.dto.response.get;
 
-import epam.lab.gymapp.dto.mapper.TraineeGetResponseMapper;
+import epam.lab.gymapp.dto.mapper.TraineeMapper;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
@@ -17,7 +17,7 @@ public class TraineeGetResponse {
     private LocalDateTime birthday;
     private String address;
     private boolean isActive;
-    private List<TraineeGetResponseMapper.TraineeGetsResponseTrainer> trainers;
+    private List<TraineeMapper.TraineeGetsResponseTrainer> trainers;
 
 
 

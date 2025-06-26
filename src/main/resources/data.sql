@@ -22,7 +22,7 @@ INSERT INTO trainer_trainee (trainer_id, trainee_id) VALUES (2, 4);
 INSERT INTO trainer_trainee (trainer_id, trainee_id) VALUES (1, 4);
 
 -- Insert Trainings
-INSERT INTO training (id, trainer_id, trainee_id, training_name, training_type_id, training_date, training_duration) VALUES (1, 1, 3, 'Leg Day', 1, '2025-06-14T08:00:00', 1.5);
-INSERT INTO training (id, trainer_id, trainee_id, training_name, training_type_id, training_date, training_duration) VALUES (2, 2, 4, 'Morning Cardio', 2, '2025-06-14T10:00:00', 1.0);
-INSERT INTO training (id, trainer_id, trainee_id, training_name, training_type_id, training_date, training_duration) VALUES (3, 1, 4, 'Yoga Basics', 3, '2025-06-14T12:00:00', 1.25);
+INSERT INTO training (id, trainer_id, trainee_id, training_name, training_type_id, training_date, training_duration) VALUES (1, 1, 3, 'Leg Day', 1, '2025-06-14T08:00:00', 60);
+INSERT INTO training (id, trainer_id, trainee_id, training_name, training_type_id, training_date, training_duration) VALUES (2, 2, 4, 'Morning Cardio', 2, '2025-06-14T10:00:00', 90);
+INSERT INTO training (id, trainer_id, trainee_id, training_name, training_type_id, training_date, training_duration) VALUES (3, 1, 4, 'Yoga Basics', 3, '2025-06-14T12:00:00', 90);
 

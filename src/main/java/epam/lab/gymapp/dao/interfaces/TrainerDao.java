@@ -11,7 +11,7 @@ import java.util.List;
 public interface TrainerDao extends
         CrudDao<Trainer,Long> {
 
-    List<Training> getTrainerTrainings(Credentials credentials, String trainerUsername, LocalDateTime fromDate, LocalDateTime toDate, String traineeUsername );
+    List<Training> getTrainerTrainings( String trainerUsername, LocalDateTime fromDate, LocalDateTime toDate, String traineeUsername );
     List<Trainer> trainersNotAssignedToTrainee(String traineeUsername);
 
 

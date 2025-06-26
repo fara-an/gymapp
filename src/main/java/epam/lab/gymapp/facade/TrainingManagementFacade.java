@@ -1,5 +1,6 @@
 package epam.lab.gymapp.facade;
 
+import epam.lab.gymapp.dto.request.training.TrainingAddDto;
 import epam.lab.gymapp.model.Trainee;
 import epam.lab.gymapp.model.Trainer;
 import epam.lab.gymapp.model.Training;
@@ -73,9 +74,8 @@ public class TrainingManagementFacade {
     }
 
 
-    public void getTrainerTrainingsBasedOn(Credentials credentials, String trainerUsername, LocalDateTime fromDate, LocalDateTime toDate, String trainerName, String trainingType) {
+    public void getTrainerTrainingsBasedOn(String trainerUsername, LocalDateTime fromDate, LocalDateTime toDate, String trainerName, String trainingType) {
         trainerService.getTrainerTrainings(
-                credentials,
                 trainerUsername,
                 fromDate,
                 toDate,
@@ -99,8 +99,8 @@ public class TrainingManagementFacade {
         trainerService.changePassword(userName, oldPassword, newPassword);
     }
 
-    public void addTraining(Training training) {
-        trainingService.addTraining(training);
+    public void addTraining(TrainingAddDto trainingAddDto) {
+        trainingService.addTraining(trainingAddDto);
     }
 
 

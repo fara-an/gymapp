@@ -1,14 +1,15 @@
 package epam.lab.gymapp.api.controller;
 
-import epam.lab.gymapp.dto.mapper.TraineeGetResponseMapper;
+import epam.lab.gymapp.dto.mapper.TraineeMapper;
+import epam.lab.gymapp.dto.mapper.TrainingMapper;
 import epam.lab.gymapp.dto.request.login.Credentials;
 import epam.lab.gymapp.dto.request.changePassword.PasswordChangeDto;
-import epam.lab.gymapp.dto.mapper.TraineeMapper;
 import epam.lab.gymapp.dto.request.registration.TraineeRegistrationBody;
 import epam.lab.gymapp.dto.request.update.UpdateTraineeDto;
-import epam.lab.gymapp.dto.response.get.TraineeGetResponse;
 import epam.lab.gymapp.dto.response.register.TraineeRegistrationResponse;
+import epam.lab.gymapp.dto.response.training.TrainingResponse;
 import epam.lab.gymapp.model.Trainee;
+import epam.lab.gymapp.model.Training;
 import epam.lab.gymapp.service.interfaces.AuthenticationService;
 import epam.lab.gymapp.service.interfaces.TraineeService;
 import jakarta.servlet.http.HttpSession;
@@ -18,14 +19,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 @RestController
 @RequestMapping("/trainee")
 public class TraineeController {
     private final Logger LOGGER = LoggerFactory.getLogger(TraineeController.class);
     private final String CONTROLLER = "TraineeController";
 
-    private TraineeService traineeService;
-    private AuthenticationService authenticationService;
+    private final TraineeService traineeService;
+    private final AuthenticationService authenticationService;
 
     public TraineeController(TraineeService traineeService, AuthenticationService authenticationService) {
         this.traineeService = traineeService;
@@ -44,7 +48,7 @@ public class TraineeController {
     @PostMapping("/register")
     public ResponseEntity<TraineeRegistrationResponse> register(@Valid @RequestBody TraineeRegistrationBody traineeRegistrationBody) {
         LOGGER.debug(CONTROLLER + " executing register process");
-        Trainee entity = TraineeMapper.toEntity(traineeRegistrationBody);
+        Trainee entity = TraineeMapper.fromDtoToTrainee(traineeRegistrationBody);
         traineeService.createProfile(entity);
         TraineeRegistrationResponse response = new TraineeRegistrationResponse(entity.getUserName(), entity.getPassword());
         return ResponseEntity.ok(response);
@@ -67,12 +71,11 @@ public class TraineeController {
     @GetMapping("/{username}")
     public ResponseEntity<?> getTrainee(@PathVariable("username") String username) {
         Trainee trainee = traineeService.findByUsername(username);
-        TraineeGetResponse traineeResponse = TraineeGetResponseMapper.toEntity(trainee);
-        return ResponseEntity.ok(traineeResponse);
+        return ResponseEntity.ok(TraineeMapper.traineeWithTrainers(trainee));
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<?> updateTrainee(@PathVariable ("id")Long id, @Valid @RequestBody UpdateTraineeDto updateTraineeDto) {
+    public ResponseEntity<?> updateTrainee(@PathVariable("id") Long id, @Valid @RequestBody UpdateTraineeDto updateTraineeDto) {
         Trainee trainee = Trainee.builder()
                 .id(id)
                 .userName(updateTraineeDto.getUserName())
@@ -84,15 +87,24 @@ public class TraineeController {
                 .build();
 
         Trainee updated = traineeService.updateProfile(trainee);
-        TraineeGetResponse entity = TraineeGetResponseMapper.toEntity(updated);
-        return ResponseEntity.ok(entity);
+        return ResponseEntity.ok(TraineeMapper.traineeWithTrainers(updated));
 
     }
 
     @DeleteMapping("/delete/{username}")
-    public ResponseEntity<?> deleteTrainee(@PathVariable("username") String username){
+    public ResponseEntity<?> deleteTrainee(@PathVariable("username") String username) {
         traineeService.delete(username);
-        return ResponseEntity.ok("Deleted trainee with username  "+username);
+        return ResponseEntity.ok("Deleted trainee with username  " + username);
+    }
 
+    @GetMapping("/getTrainings")
+    public ResponseEntity<?> getTraineeTrainings(@RequestParam("userName") String userName,
+                                                 @RequestParam(value = "from", required = false) LocalDateTime from,
+                                                 @RequestParam(value = "to", required = false) LocalDateTime to,
+                                                 @RequestParam(value = "trainerName", required = false) String trainerName,
+                                                 @RequestParam(value = "trainingType", required = false) String trainingType) {
+        List<Training> trainings = traineeService.getTraineeTrainings(userName, from, to, trainerName, trainingType);
+        List<TrainingResponse> list = trainings.stream().map(t -> TrainingMapper.trainingWithTrainee(t)).toList();
+        return ResponseEntity.ok(list);
     }
 }

@@ -31,17 +31,16 @@ public class TrainerServiceImpl implements TrainerService {
         this.authenticationService = authenticationService;
 
     }
-
+    @RequiresAuthentication
     @Override
     @Transactional
-    public List<Training> getTrainerTrainings(Credentials credentials, String traineeUsername, LocalDateTime fromDate, LocalDateTime toDate, String trainerName, String trainingType) {
-        LOGGER.debug(SERVICE_NAME + " - Fetching trainings for trainer {} with [from={}, to={}, trainee={}]", trainerName, fromDate, toDate, traineeUsername);
-        List<Training> trainerTrainings = trainerDao.getTrainerTrainings(credentials, traineeUsername, fromDate, toDate, traineeUsername);
-        LOGGER.debug(SERVICE_NAME + " - Retrieved {} trainings for trainer {}", trainerTrainings.size(), trainerName);
+    public List<Training> getTrainerTrainings( String trainerUsername, LocalDateTime fromDate, LocalDateTime toDate, String traineeUsername, String trainingType) {
+        LOGGER.debug(SERVICE_NAME + " - Fetching trainings for trainer {} with [from={}, to={}, trainee={}]", trainerUsername, fromDate, toDate, traineeUsername);
+        List<Training> trainerTrainings = trainerDao.getTrainerTrainings( trainerUsername, fromDate, toDate, traineeUsername);
+        LOGGER.debug(SERVICE_NAME + " - Retrieved {} trainings for trainer {}", trainerTrainings.size(), trainerUsername);
         return trainerTrainings;
     }
 
-    @RequiresAuthentication
     @Override
     @Transactional
     public List<Trainer> trainersNotAssignedToTrainee(String traineeUsername) {

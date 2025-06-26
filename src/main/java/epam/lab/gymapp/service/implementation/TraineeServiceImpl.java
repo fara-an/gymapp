@@ -41,6 +41,7 @@ public class TraineeServiceImpl implements TraineeService {
         LOGGER.debug(SERVICE_NAME + " - Deleted trainee: {}", username);
     }
 
+    @RequiresAuthentication
     @Override
     @Transactional
     public List<Training> getTraineeTrainings( String traineeUsername, LocalDateTime fromDate, LocalDateTime toDate, String trainerName, String trainingType) {

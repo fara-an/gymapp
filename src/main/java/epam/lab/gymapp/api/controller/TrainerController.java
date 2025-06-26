@@ -1,15 +1,17 @@
 package epam.lab.gymapp.api.controller;
 
-import epam.lab.gymapp.dto.mapper.TrainerGetResponseMapper;
+import epam.lab.gymapp.dto.mapper.TrainerMapper;
+import epam.lab.gymapp.dto.mapper.TrainingMapper;
 import epam.lab.gymapp.dto.request.login.Credentials;
 import epam.lab.gymapp.dto.request.changePassword.PasswordChangeDto;
-import epam.lab.gymapp.dto.mapper.TrainerMapper;
 import epam.lab.gymapp.dto.request.registration.TrainerRegistrationBody;
 import epam.lab.gymapp.dto.request.update.UpdateTrainerDto;
 import epam.lab.gymapp.dto.response.get.TrainerGetResponse;
 import epam.lab.gymapp.dto.response.get.TrainerWithoutTraineesResponse;
 import epam.lab.gymapp.dto.response.register.TrainerRegistrationResponse;
+import epam.lab.gymapp.dto.response.training.TrainingResponse;
 import epam.lab.gymapp.model.Trainer;
+import epam.lab.gymapp.model.Training;
 import epam.lab.gymapp.model.TrainingType;
 import epam.lab.gymapp.service.interfaces.AuthenticationService;
 import epam.lab.gymapp.service.interfaces.TrainerService;
@@ -19,6 +21,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -44,12 +47,15 @@ public class TrainerController {
 
     @PostMapping("/register")
     public ResponseEntity<TrainerRegistrationResponse> register(@Valid @RequestBody TrainerRegistrationBody registrationDto, HttpSession session) {
-        Trainer trainer = TrainerMapper.toEntity(registrationDto);
+        Trainer trainer = Trainer.builder().
+                firstName(registrationDto.getFirstName()).
+                lastName(registrationDto.getLastName()).
+                build();
         TrainingType specialization = trainingTypeService.findByName(registrationDto.getTrainingType());
         trainer.setSpecialization(specialization);
         Trainer newTrainer = trainerService.createProfile(trainer);
         performLogin(newTrainer.getUserName(), newTrainer.getPassword(), session);
-        return ResponseEntity.ok(TrainerGetResponseMapper.dtoOnlyUsernameAndPass(trainer));
+        return ResponseEntity.ok(TrainerMapper.dtoOnlyUsernameAndPass(trainer));
     }
 
 
@@ -62,7 +68,7 @@ public class TrainerController {
     @GetMapping("/{username}")
     public ResponseEntity<?> getTrainer(@PathVariable("username") String username) {
         Trainer trainer = trainerService.findByUsername(username);
-        TrainerGetResponse entity = TrainerGetResponseMapper.dtoWithTraineeList(trainer);
+        TrainerGetResponse entity = TrainerMapper.dtoWithTraineeList(trainer);
         return ResponseEntity.ok(entity);
 
     }
@@ -77,7 +83,7 @@ public class TrainerController {
                 .isActive(updateTrainerDto.isActive())
                 .build();
         Trainer updatedTrainer = trainerService.updateProfile(existingTrainer);
-        TrainerGetResponse entity = TrainerGetResponseMapper.dtoWithTraineeList(updatedTrainer);
+        TrainerGetResponse entity = TrainerMapper.dtoWithTraineeList(updatedTrainer);
         return ResponseEntity.ok(entity);
 
     }
@@ -85,7 +91,18 @@ public class TrainerController {
     @GetMapping("/notAssignedToTrainee/{username}")
     public ResponseEntity<?> getTrainersNotAssignedToTrainee(@PathVariable("username") String username) {
         List<Trainer> trainers = trainerService.trainersNotAssignedToTrainee(username);
-        List<TrainerWithoutTraineesResponse> list = trainers.stream().map(t -> TrainerGetResponseMapper.dtoWithoutTraineeList(t)).toList();
+        List<TrainerWithoutTraineesResponse> list = trainers.stream().map(t -> TrainerMapper.dtoWithoutTraineeList(t)).toList();
+        return ResponseEntity.ok(list);
+    }
+
+    @GetMapping("/getTrainings")
+    public ResponseEntity<?> getTraineeTrainings(@RequestParam("userName") String userName,
+                                                 @RequestParam(value = "from", required = false) LocalDateTime from,
+                                                 @RequestParam(value = "to", required = false) LocalDateTime to,
+                                                 @RequestParam(value = "trainerName", required = false) String trainerName,
+                                                 @RequestParam(value = "trainingType", required = false) String trainingType) {
+        List<Training> trainings = trainerService.getTrainerTrainings(userName, from, to, trainerName, trainingType);
+        List<TrainingResponse> list = trainings.stream().map(t -> TrainingMapper.trainingWithTrainer(t)).toList();
         return ResponseEntity.ok(list);
     }
 
