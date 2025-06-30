@@ -19,8 +19,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     @Transactional(readOnly = true)
     public void authenticateUser(Credentials credentials) {
-        if (!authenticationDao.validateCredentials(credentials)) {
-            throw new InvalidCredentialsException(credentials.getUsername());
+        if (authenticationDao.validateCredentials(credentials)) {
+            return;
         }
+        throw new InvalidCredentialsException(credentials.getUsername());
     }
 }

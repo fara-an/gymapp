@@ -18,8 +18,7 @@ public interface CreateReadDao<T extends BaseEntity<ID>, ID> {
     Class<T> getEntityClass();
 
     Logger LOGGER = LoggerFactory.getLogger(CreateReadDao.class);
-    String
-            FIND_BY_USERNAME = "FROM %s e WHERE e.userName = :userName";
+    String FIND_BY_USERNAME = "FROM %s e WHERE e.userName = :userName";
 
 
     default Optional<T> findByID(ID id) {
@@ -72,6 +71,4 @@ public interface CreateReadDao<T extends BaseEntity<ID>, ID> {
 
         }
     }
-
-
 }

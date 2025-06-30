@@ -3,6 +3,8 @@ package epam.lab.gymapp.api.controller;
 import epam.lab.gymapp.dto.request.training.TrainingAddDto;
 import epam.lab.gymapp.service.interfaces.TrainingService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,7 +21,8 @@ public class TrainingController {
     }
 
     @PostMapping("/add")
-    public void addTraining(@Valid @RequestBody TrainingAddDto trainingAddDto) {
+    public ResponseEntity<?> addTraining(@Valid @RequestBody TrainingAddDto trainingAddDto) {
         trainingService.addTraining(trainingAddDto);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }

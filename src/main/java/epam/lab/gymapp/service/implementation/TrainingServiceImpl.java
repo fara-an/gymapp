@@ -45,7 +45,7 @@ public class TrainingServiceImpl implements TrainingService {
 
         validateTrainingType(trainer.getSpecialization().getName(), trainingAddDto.getTrainingType());
 
-        LocalDateTime start = trainingAddDto.getTrainingDate();
+        LocalDateTime start = trainingAddDto.getTrainingDateStart();
         LocalDateTime end = start.plusMinutes(trainingAddDto.getDuration());
 
 
@@ -67,6 +67,7 @@ public class TrainingServiceImpl implements TrainingService {
         Training newTraining = Training.builder()
                 .trainee(trainee)
                 .trainer(trainer)
+                .trainingName(trainingAddDto.getTrainingName())
                 .duration(trainingAddDto.getDuration())
                 .trainingDateStart(start)
                 .trainingDateEnd(end)

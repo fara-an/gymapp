@@ -3,10 +3,10 @@ package epam.lab.gymapp.service.interfaces;
 
 import epam.lab.gymapp.annotation.security.RequiresAuthentication;
 import epam.lab.gymapp.dto.request.registration.RegistrationDto;
+import epam.lab.gymapp.exceptions.DaoException;
 import epam.lab.gymapp.model.UserProfile;
 import epam.lab.gymapp.dao.interfaces.CreateReadUpdateDao;
 import epam.lab.gymapp.exceptions.EntityNotFoundException;
-import epam.lab.gymapp.exceptions.ServiceException;
 import epam.lab.gymapp.utils.PasswordGenerator;
 import epam.lab.gymapp.utils.UsernameGenerator;
 import org.hibernate.Session;
@@ -24,8 +24,6 @@ public interface ProfileOperations<
     Logger LOGGER = LoggerFactory.getLogger(ProfileOperations.class);
 
     D getDao();
-
-    AuthenticationService getAuthService();
 
     T buildProfile(UserProfile user, T profile);
 
@@ -137,13 +135,13 @@ public interface ProfileOperations<
         } catch (Exception e) {
             LOGGER.error("{}: SERVICE ERROR - Error toggling active status for username: {}: {}", serviceName, username, e.getMessage(), e);
             String msg = String.format("%s: Error toggling active status for '%s'", serviceName, username);
-            throw new ServiceException(msg, e);
+            throw new DaoException(msg, e);
         }
     }
 
     @RequiresAuthentication
     @Transactional
-    default String changePassword(String username, String oldPassword, String newPassword) {
+    default boolean changePassword(String username, String oldPassword, String newPassword) {
         String serviceName = getClass().getSimpleName();
         LOGGER.debug("{}: SERVICE - Changing password for user: {}", serviceName, username);
 
@@ -154,20 +152,21 @@ public interface ProfileOperations<
                     return new EntityNotFoundException(msg);
                 });
 
-        if (oldPassword.equals(entity.getPassword())) {
-            entity.setPassword(newPassword);
+        if (!oldPassword.equals(entity.getPassword())) {
+            return false;
         }
+        entity.setPassword(newPassword);
 
         try {
             Session session = getDao().getSessionFactory().getCurrentSession();
             session.merge(entity);
             LOGGER.debug("{}: SERVICE - Changing password for user: {}", serviceName, username);
-            return newPassword;
+            return true;
 
         } catch (Exception e) {
             LOGGER.error("{}: SERVICE ERROR - Error changing password for user: {}: {}", serviceName, username, e.getMessage(), e);
 
-            throw new ServiceException("%s: Error changing password for '%s'", e);
+            throw new DaoException("%s: Error changing password for '%s'", e);
         }
     }
 }

@@ -77,5 +77,4 @@ public class TraineeDaoImpl extends BaseDao<Trainee, Long> implements TraineeDao
             throw new DaoException(msg, ex);
         }
     }
-
 }

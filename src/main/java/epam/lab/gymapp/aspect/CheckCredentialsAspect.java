@@ -1,7 +1,7 @@
 package epam.lab.gymapp.aspect;
 
 import epam.lab.gymapp.dto.request.login.Credentials;
-import epam.lab.gymapp.exceptions.UnauthorizedException;
+import epam.lab.gymapp.exceptions.InvalidCredentialsException;
 import epam.lab.gymapp.service.interfaces.AuthenticationService;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
@@ -29,7 +29,7 @@ public class CheckCredentialsAspect {
         LOGGER.debug("Aspect checking started.");
         Credentials credentials = CredentialsContextHolder.getCredentials();
         if (credentials == null) {
-            throw new UnauthorizedException("Missing Credentials");
+            throw new InvalidCredentialsException("Missing Credentials");
         }
         authenticationService.authenticateUser(credentials);
         LOGGER.debug("Aspect checking ended.");

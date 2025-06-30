@@ -12,6 +12,4 @@ public class TrainingTypeDaoImpl extends BaseDao<TrainingType,Long> implements T
     public TrainingTypeDaoImpl( SessionFactory sessionFactory) {
         super(TrainingType.class, sessionFactory);
     }
-
-
 }

@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @SuperBuilder
 public class TrainingResponse {
     private String trainingName;;
-    private LocalDateTime trainingDate;
+    private LocalDateTime trainingDateStart;
     private String trainingType;
     private String trainerName;
     private String traineeName;

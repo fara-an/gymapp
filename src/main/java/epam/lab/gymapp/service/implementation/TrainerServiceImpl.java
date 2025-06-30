@@ -4,10 +4,9 @@ package epam.lab.gymapp.service.implementation;
 import epam.lab.gymapp.annotation.security.RequiresAuthentication;
 import epam.lab.gymapp.model.Trainer;
 import epam.lab.gymapp.model.Training;
+import epam.lab.gymapp.model.TrainingType;
 import epam.lab.gymapp.model.UserProfile;
 import epam.lab.gymapp.dao.interfaces.TrainerDao;
-import epam.lab.gymapp.dto.request.login.Credentials;
-import epam.lab.gymapp.service.interfaces.AuthenticationService;
 import epam.lab.gymapp.service.interfaces.TrainerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,11 +23,9 @@ public class TrainerServiceImpl implements TrainerService {
 
     private static final String SERVICE_NAME = "TrainerServiceImpl";
     private final TrainerDao trainerDao;
-    private final AuthenticationService authenticationService;
 
-    public TrainerServiceImpl(TrainerDao trainerDao, AuthenticationService authenticationService) {
+    public TrainerServiceImpl(TrainerDao trainerDao) {
         this.trainerDao = trainerDao;
-        this.authenticationService = authenticationService;
 
     }
     @RequiresAuthentication
@@ -55,10 +52,6 @@ public class TrainerServiceImpl implements TrainerService {
         return trainerDao;
     }
 
-    @Override
-    public AuthenticationService getAuthService() {
-        return authenticationService;
-    }
 
 
     @Override
@@ -75,8 +68,9 @@ public class TrainerServiceImpl implements TrainerService {
 
     @Override
     public void updateProfileSpecificFields(Trainer existing, Trainer item) {
-        Optional.ofNullable(existing.getSpecialization())
-                .ifPresent(newSpecialization -> existing.setSpecialization(newSpecialization));
+      //  TrainingType newSpecialization = item.getSpecialization();
+        Optional.ofNullable(item.getSpecialization())
+                .ifPresent(newSpecialization->existing.setSpecialization(newSpecialization));
 
     }
 

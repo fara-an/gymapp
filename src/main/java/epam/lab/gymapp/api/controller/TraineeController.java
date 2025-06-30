@@ -16,6 +16,7 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -106,5 +107,11 @@ public class TraineeController {
         List<Training> trainings = traineeService.getTraineeTrainings(userName, from, to, trainerName, trainingType);
         List<TrainingResponse> list = trainings.stream().map(t -> TrainingMapper.trainingWithTrainee(t)).toList();
         return ResponseEntity.ok(list);
+    }
+
+    @PatchMapping("/toggle")
+    public ResponseEntity.BodyBuilder activate(@RequestParam("userName") String userName) {
+        traineeService.toggleActiveStatus(userName);
+        return ResponseEntity.status(HttpStatus.OK);
     }
 }

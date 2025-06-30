@@ -4,7 +4,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 @Builder
 @Getter
@@ -21,7 +20,7 @@ public class TrainingAddDto {
     @NotBlank
     private String trainingType;
     @NotNull
-    private LocalDateTime trainingDate;
+    private LocalDateTime trainingDateStart;
     @NotNull
     private Integer duration;
 

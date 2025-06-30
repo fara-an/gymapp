@@ -23,7 +23,7 @@ public class TrainingMapper {
         return TrainingResponse.builder()
                 .trainingName(training.getTrainingName())
                 .trainingType(training.getTrainingType().getName())
-                .trainingDate(training.getTrainingDate())
+                .trainingDateStart(training.getTrainingDateStart())
                 .build();
 
     }

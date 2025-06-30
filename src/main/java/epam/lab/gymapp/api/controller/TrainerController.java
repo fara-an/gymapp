@@ -18,6 +18,7 @@ import epam.lab.gymapp.service.interfaces.TrainerService;
 import epam.lab.gymapp.service.interfaces.TrainingTypeService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -104,6 +105,12 @@ public class TrainerController {
         List<Training> trainings = trainerService.getTrainerTrainings(userName, from, to, trainerName, trainingType);
         List<TrainingResponse> list = trainings.stream().map(t -> TrainingMapper.trainingWithTrainer(t)).toList();
         return ResponseEntity.ok(list);
+    }
+
+    @PatchMapping("/toggleStatus")
+    public ResponseEntity<?> toggleStatus(@RequestParam String username) {
+        trainerService.toggleActiveStatus(username);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     private void performLogin(String username, String password, HttpSession session) {
