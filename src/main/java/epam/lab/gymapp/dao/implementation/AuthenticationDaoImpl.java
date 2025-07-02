@@ -4,7 +4,6 @@ import epam.lab.gymapp.dao.interfaces.AuthenticationDao;
 import epam.lab.gymapp.dto.request.login.Credentials;
 import epam.lab.gymapp.exceptions.DaoException;
 import epam.lab.gymapp.model.UserProfile;
-import jakarta.validation.Valid;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.slf4j.Logger;

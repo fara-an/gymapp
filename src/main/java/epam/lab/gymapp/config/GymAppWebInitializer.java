@@ -1,6 +1,7 @@
 package epam.lab.gymapp.config;
 
 import epam.lab.gymapp.filter.perrequest.CredentialsFilter;
+import epam.lab.gymapp.filter.perrequest.TransactionIdFilter;
 import jakarta.servlet.*;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
@@ -22,7 +23,7 @@ public class GymAppWebInitializer extends AbstractAnnotationConfigDispatcherServ
 
     @Override
     protected Filter[] getServletFilters() {
-        return new Filter[]{new CredentialsFilter()};
+        return new Filter[]{new CredentialsFilter(), new TransactionIdFilter()};
     }
 
 

@@ -30,6 +30,7 @@ public class TraineeMapper {
                 .build();
 
     }
+
     public static TraineeGetResponse traineeWithTrainers(Trainee trainee) {
         List<TraineeGetsResponseTrainer> responseTrainers = mapListOfTrainers(trainee.getTrainers());
         return TraineeGetResponse.builder()

@@ -1,7 +1,7 @@
 package epam.lab.gymapp.controlleradvice;
 
 import epam.lab.gymapp.dto.error.ErrorResponse;
-import epam.lab.gymapp.exceptions.ApplicationException;
+import epam.lab.gymapp.exceptions.DaoException;
 import epam.lab.gymapp.exceptions.EntityNotFoundException;
 import epam.lab.gymapp.exceptions.InvalidCredentialsException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -34,10 +34,23 @@ public class GlobalExceptionHandler {
                 .build();
     }
 
+    @ExceptionHandler(DaoException.class)
+    public ResponseEntity<ErrorResponse> handleDaoException(DaoException ex, HttpServletRequest request) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(build(
+                        HttpStatus.INTERNAL_SERVER_ERROR,
+                        ex.getMessage(),
+                        request.getRequestURI()));
+    }
+
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleEntityNotFoundException(EntityNotFoundException ex,
                                                                        HttpServletRequest request) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(build(HttpStatus.FOUND, ex.getMessage(), request.getRequestURI()));
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(build(
+                        HttpStatus.FOUND,
+                        ex.getMessage(),
+                        request.getRequestURI()));
     }
 
     @ExceptionHandler(InvalidCredentialsException.class)
@@ -62,13 +75,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public ResponseEntity<ErrorResponse> handleMissingParamException(MissingServletRequestParameterException ex,
-                                                                     HttpServletRequest request){
-       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(build(HttpStatus.BAD_REQUEST, ex.getMessage(), request.getRequestURI()));
+                                                                     HttpServletRequest request) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(build(HttpStatus.BAD_REQUEST, ex.getMessage(), request.getRequestURI()));
     }
 
     @ExceptionHandler(MissingPathVariableException.class)
     public ResponseEntity<ErrorResponse> handleMissingParamException(MissingPathVariableException ex,
-                                                                     HttpServletRequest request){
+                                                                     HttpServletRequest request) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(build(HttpStatus.BAD_REQUEST, ex.getMessage(), request.getRequestURI()));
     }
 
@@ -78,7 +91,7 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(build(
                 HttpStatus.INTERNAL_SERVER_ERROR,
-                "Unexpected error. Please contact support.",
+                ex.getMessage(),
                 request.getRequestURI()));
     }
 }

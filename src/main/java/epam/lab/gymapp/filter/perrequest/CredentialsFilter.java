@@ -17,7 +17,7 @@ public class CredentialsFilter extends OncePerRequestFilter {
     private static final Logger LOGGER = LoggerFactory.getLogger(CredentialsFilter.class);
 
     @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+    protected boolean shouldNotFilter(HttpServletRequest request)  {
         String path = request.getServletPath();
         return path.equals("trainer/register") || path.equals("trainee/register"); //skipping for login endpoint
     }
