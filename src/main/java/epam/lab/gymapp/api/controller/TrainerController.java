@@ -26,12 +26,12 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
-@RequestMapping("/trainer")
+@RequestMapping("/trainers")
 public class TrainerController {
 
-    private TrainerService trainerService;
-    private TrainingTypeService trainingTypeService;
-    private AuthenticationService authenticationService;
+    private final TrainerService trainerService;
+    private final TrainingTypeService trainingTypeService;
+    private final AuthenticationService authenticationService;
 
     public TrainerController(TrainerService trainerService, TrainingTypeService trainingTypeService, AuthenticationService authenticationService) {
         this.trainerService = trainerService;
@@ -97,12 +97,12 @@ public class TrainerController {
     }
 
     @GetMapping("/getTrainings")
-    public ResponseEntity<?> getTraineeTrainings(@RequestParam("userName") String userName,
+    public ResponseEntity<?> getTrainerTrainings(@RequestParam("userName") String userName,
                                                  @RequestParam(value = "from", required = false) LocalDateTime from,
                                                  @RequestParam(value = "to", required = false) LocalDateTime to,
-                                                 @RequestParam(value = "trainerName", required = false) String trainerName,
+                                                 @RequestParam(value = "traineeName", required = false) String traineeName,
                                                  @RequestParam(value = "trainingType", required = false) String trainingType) {
-        List<Training> trainings = trainerService.getTrainerTrainings(userName, from, to, trainerName, trainingType);
+        List<Training> trainings = trainerService.getTrainerTrainings(userName, from, to, traineeName, trainingType);
         List<TrainingResponse> list = trainings.stream().map(t -> TrainingMapper.trainingWithTrainer(t)).toList();
         return ResponseEntity.ok(list);
     }

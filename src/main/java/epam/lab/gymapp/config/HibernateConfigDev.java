@@ -35,8 +35,6 @@ public class HibernateConfigDev {
     @Value("${hibernate.hbm2ddl.import_files}")
     private String importFiles;
 
-
-
     private final DataSource dataSource;
 
     public HibernateConfigDev(DataSource dataSource) {
@@ -55,7 +53,6 @@ public class HibernateConfigDev {
         hibernateProperties.put("hibernate.hbm2ddl.import_files", importFiles);
         hibernateProperties.put("hibernate.format_sql", formatSql);
         hibernateProperties.put("hibernate.current_session_context_class", currentSessionContextClass);
-
 
         sessionFactoryBean.setHibernateProperties(hibernateProperties);
         return sessionFactoryBean;

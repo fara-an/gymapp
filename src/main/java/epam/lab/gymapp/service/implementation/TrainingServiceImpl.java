@@ -3,6 +3,7 @@ package epam.lab.gymapp.service.implementation;
 import epam.lab.gymapp.annotation.security.RequiresAuthentication;
 import epam.lab.gymapp.dao.interfaces.TrainingDao;
 import epam.lab.gymapp.dto.request.training.TrainingAddDto;
+import epam.lab.gymapp.exceptions.UserInputException;
 import epam.lab.gymapp.model.Trainee;
 import epam.lab.gymapp.model.Trainer;
 import epam.lab.gymapp.model.Training;
@@ -50,13 +51,13 @@ public class TrainingServiceImpl implements TrainingService {
 
 
         if (trainingDao.existsTraineeConflict(trainee.getId(), start, end)) {
-            throw new IllegalArgumentException(
+            throw new UserInputException(
                     "Trainee already has a session that overlaps with this time window"
             );
         }
 
         if (trainingDao.existsTrainerConflict(trainer.getId(), start, end)) {
-            throw new IllegalArgumentException(
+            throw new UserInputException(
                     "Trainer already has a session that overlaps with this time window"
             );
         }
@@ -80,13 +81,17 @@ public class TrainingServiceImpl implements TrainingService {
 
     }
 
+    @Override
+    public Trainer reassignTrainer(Long trainingId, String traineeUsername, String newTrainerUsername) {
+      return   trainingDao.updateTrainingTrainer(trainingId, traineeUsername, newTrainerUsername);
+    }
 
 
     private void validateTrainingType(String actual, String expected) {
         if (!actual.equals(expected)) {
             String errorMessage = String.format(SERVICE_NAME + ": Trainer specialization '%s' does not match required '%s'", actual, expected);
             LOGGER.error(errorMessage);
-            throw new IllegalStateException(errorMessage);
+            throw new UserInputException(errorMessage);
         }
     }
 

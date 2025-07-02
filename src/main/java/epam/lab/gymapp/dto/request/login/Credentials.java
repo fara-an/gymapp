@@ -12,6 +12,8 @@ public class Credentials {
     @NotNull
     @NotBlank
     private String username;
+    @NotNull
+    @NotBlank
     private String password;
 
 }

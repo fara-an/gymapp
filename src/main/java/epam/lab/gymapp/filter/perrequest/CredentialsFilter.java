@@ -19,7 +19,7 @@ public class CredentialsFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String path = request.getServletPath();
-        return path.equals("trainer/register"); //skipping for login endpoint
+        return path.equals("trainer/register") || path.equals("trainee/register"); //skipping for login endpoint
     }
 
     @Override

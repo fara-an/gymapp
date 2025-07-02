@@ -4,7 +4,6 @@ package epam.lab.gymapp.service.implementation;
 import epam.lab.gymapp.annotation.security.RequiresAuthentication;
 import epam.lab.gymapp.model.Trainer;
 import epam.lab.gymapp.model.Training;
-import epam.lab.gymapp.model.TrainingType;
 import epam.lab.gymapp.model.UserProfile;
 import epam.lab.gymapp.dao.interfaces.TrainerDao;
 import epam.lab.gymapp.service.interfaces.TrainerService;
@@ -68,7 +67,6 @@ public class TrainerServiceImpl implements TrainerService {
 
     @Override
     public void updateProfileSpecificFields(Trainer existing, Trainer item) {
-      //  TrainingType newSpecialization = item.getSpecialization();
         Optional.ofNullable(item.getSpecialization())
                 .ifPresent(newSpecialization->existing.setSpecialization(newSpecialization));
 

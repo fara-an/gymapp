@@ -24,7 +24,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
-@RequestMapping("/trainee")
+@RequestMapping("/trainees")
 public class TraineeController {
     private final Logger LOGGER = LoggerFactory.getLogger(TraineeController.class);
     private final String CONTROLLER = "TraineeController";
@@ -59,7 +59,7 @@ public class TraineeController {
     @PutMapping("/changePassword")
     public ResponseEntity<String> changePassword(@Valid @RequestBody PasswordChangeDto passwordChangeDto) {
         traineeService.changePassword(passwordChangeDto.getUsername(), passwordChangeDto.getOldPassword(), passwordChangeDto.getNewPassword());
-        return ResponseEntity.ok("Changed password successfuly");
+        return ResponseEntity.ok("Changed password successfully");
     }
 
     @PostMapping("/logout")
@@ -114,4 +114,5 @@ public class TraineeController {
         traineeService.toggleActiveStatus(userName);
         return ResponseEntity.status(HttpStatus.OK);
     }
+
 }

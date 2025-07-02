@@ -59,12 +59,12 @@ public class TraineeDaoImpl extends BaseDao<Trainee, Long> implements TraineeDao
             }
             if (fromDate != null) {
                 // session must START no earlier than fromDate
-                where.add(cb.greaterThanOrEqualTo(root.get("trainingDate"), fromDate));
+                where.add(cb.greaterThanOrEqualTo(root.get("trainingDateStart"), fromDate));
             }
             if (toDate != null) {
                 // session must START no later than toDate
                 // (If you really want «session must END before toDate» see note ↓)
-                where.add(cb.lessThanOrEqualTo(root.get("trainingDate"), toDate));
+                where.add(cb.lessThanOrEqualTo(root.get("trainingDateEnd"), toDate));
             }
 
             /* ---------- 2. Execute ---------- */

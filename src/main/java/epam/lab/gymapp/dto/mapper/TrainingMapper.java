@@ -24,6 +24,7 @@ public class TrainingMapper {
                 .trainingName(training.getTrainingName())
                 .trainingType(training.getTrainingType().getName())
                 .trainingDateStart(training.getTrainingDateStart())
+                .traineeName(training.getTrainee().getUserName())
                 .build();
 
     }

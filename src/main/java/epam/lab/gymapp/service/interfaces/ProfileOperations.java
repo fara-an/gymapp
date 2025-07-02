@@ -165,7 +165,6 @@ public interface ProfileOperations<
 
         } catch (Exception e) {
             LOGGER.error("{}: SERVICE ERROR - Error changing password for user: {}: {}", serviceName, username, e.getMessage(), e);
-
             throw new DaoException("%s: Error changing password for '%s'", e);
         }
     }

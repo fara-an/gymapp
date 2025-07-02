@@ -4,8 +4,6 @@ import epam.lab.gymapp.utils.DatabaseConstants;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-
-import java.time.Duration;
 import java.time.LocalDateTime;
 
 @Entity

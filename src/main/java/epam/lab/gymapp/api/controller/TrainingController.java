@@ -1,17 +1,17 @@
 package epam.lab.gymapp.api.controller;
 
+import epam.lab.gymapp.dto.mapper.TrainerMapper;
 import epam.lab.gymapp.dto.request.training.TrainingAddDto;
+import epam.lab.gymapp.dto.response.get.TrainerWithoutTraineesResponse;
+import epam.lab.gymapp.model.Trainer;
 import epam.lab.gymapp.service.interfaces.TrainingService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/training")
+@RequestMapping("/trainings")
 public class TrainingController {
 
     TrainingService trainingService;
@@ -25,4 +25,13 @@ public class TrainingController {
         trainingService.addTraining(trainingAddDto);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
+
+    @PutMapping("/{trainingId}/changeTrainer")
+    public ResponseEntity<TrainerWithoutTraineesResponse> changeTrainingTrainer(@PathVariable(name = "trainingId") Long id,
+                                                                                @RequestParam String traineeUsername,
+                                                                                @RequestParam String newUsername) {
+        Trainer trainer = trainingService.reassignTrainer(id, traineeUsername, newUsername);
+        return ResponseEntity.ok().body( TrainerMapper.dtoWithoutTraineeList(trainer));
+    }
+
 }
