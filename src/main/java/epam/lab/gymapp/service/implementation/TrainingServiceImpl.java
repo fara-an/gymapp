@@ -80,8 +80,9 @@ public class TrainingServiceImpl implements TrainingService {
         return created;
 
     }
-
+    @RequiresAuthentication
     @Override
+    @Transactional
     public Trainer reassignTrainer(Long trainingId, String traineeUsername, String newTrainerUsername) {
       return   trainingDao.updateTrainingTrainer(trainingId, traineeUsername, newTrainerUsername);
     }

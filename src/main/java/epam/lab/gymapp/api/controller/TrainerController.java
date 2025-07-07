@@ -308,7 +308,7 @@ public class TrainerController {
                     )
             )
     })
-    @PatchMapping("/toggleStatus")
+    @PatchMapping("/toggle")
     public ResponseEntity<?> toggleStatus(
             @RequestParam String username) {
         trainerService.toggleActiveStatus(username);

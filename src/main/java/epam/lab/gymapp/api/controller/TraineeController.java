@@ -79,9 +79,8 @@ public class TraineeController {
                     )
             )
     })
-    @PostMapping("/login")
-    public ResponseEntity<?> login(
-            @Valid @RequestBody Credentials credentials, HttpSession httpSession) {
+    @GetMapping("/login")
+    public ResponseEntity<?> login(@Valid @RequestBody Credentials credentials, HttpSession httpSession) {
         LOGGER.debug(CONTROLLER + " executing login process");
         authenticationService.authenticateUser(credentials);
         httpSession.setAttribute("credentials", credentials);
@@ -331,10 +330,9 @@ public class TraineeController {
             )
     })
     @PatchMapping("/toggle")
-    public ResponseEntity.BodyBuilder activate(
-            @RequestParam("userName") String userName) {
+    public ResponseEntity<?> activate(@RequestParam("userName") String userName) {
         traineeService.toggleActiveStatus(userName);
-        return ResponseEntity.status(HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
 }
