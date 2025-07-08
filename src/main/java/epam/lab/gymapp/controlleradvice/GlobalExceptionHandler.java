@@ -1,6 +1,7 @@
 package epam.lab.gymapp.controlleradvice;
 
 import epam.lab.gymapp.dto.error.ErrorResponse;
+import epam.lab.gymapp.dto.response.textToJson.TextToJson;
 import epam.lab.gymapp.exceptions.DaoException;
 import epam.lab.gymapp.exceptions.EntityNotFoundException;
 import epam.lab.gymapp.exceptions.InvalidCredentialsException;
@@ -12,66 +13,47 @@ import org.springframework.web.bind.MissingPathVariableException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
-
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-   private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
     @ExceptionHandler(DaoException.class)
     public ResponseEntity<ErrorResponse> handleDaoException(DaoException ex, HttpServletRequest request) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(build(
-                        HttpStatus.INTERNAL_SERVER_ERROR,
-                        ex.getMessage(),
-                        request.getRequestURI()));
+                .body(build(ex.getMessage()));
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleEntityNotFoundException(EntityNotFoundException ex,
+    public ResponseEntity<?> handleEntityNotFoundException(EntityNotFoundException ex,
                                                                        HttpServletRequest request) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(build(
-                        HttpStatus.FOUND,
-                        ex.getMessage(),
-                        request.getRequestURI()));
+                .body(new TextToJson(ex.getUserMessage()));
     }
 
     @ExceptionHandler(InvalidCredentialsException.class)
-    public ResponseEntity<ErrorResponse> handleInvalidCredentialsException(InvalidCredentialsException ex,
+    public ResponseEntity<?> handleInvalidCredentialsException(InvalidCredentialsException ex,
                                                                            HttpServletRequest request) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
-                build(HttpStatus.UNAUTHORIZED,
-                        ex.getMessage(),
-                        request.getRequestURI()));
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new TextToJson(ex.getUserMessage()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> handleValidationException(MethodArgumentNotValidException ex, HttpServletRequest request) {
+    public ResponseEntity<?> handleValidationException(MethodArgumentNotValidException ex, HttpServletRequest request) {
         String message = ex.getBindingResult().getFieldErrors().stream()
                 .map(err -> err.getField() + " " + err.getDefaultMessage())
                 .collect(Collectors.joining(";"));
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(build(
-                HttpStatus.BAD_REQUEST,
-                message,
-                request.getRequestURI()));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new TextToJson(message));
     }
 
-    @ExceptionHandler(MissingServletRequestParameterException.class)
-    public ResponseEntity<ErrorResponse> handleMissingParamException(MissingServletRequestParameterException ex,
-                                                                     HttpServletRequest request) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(build(HttpStatus.BAD_REQUEST, ex.getMessage(), request.getRequestURI()));
+    @ExceptionHandler( MissingServletRequestParameterException.class)
+    public ResponseEntity<?> handleMissingParamException(MissingServletRequestParameterException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new TextToJson("Request parameter "+ex.getParameterName()+ "is missing in the  Url"));
     }
 
     @ExceptionHandler(MissingPathVariableException.class)
-    public ResponseEntity<ErrorResponse> handleMissingParamException(MissingPathVariableException ex,
-                                                                     HttpServletRequest request) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(build(HttpStatus.BAD_REQUEST, ex.getMessage(), request.getRequestURI()));
+    public ResponseEntity<?> handlePathVariableException(MissingPathVariableException ex){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new TextToJson("Request parameter "+ex.getVariableName()+"is missing in the Url"));
     }
 
 
@@ -79,19 +61,13 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleValidationException(Exception ex, HttpServletRequest request) {
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(build(
-                HttpStatus.INTERNAL_SERVER_ERROR,
-                ex.getMessage(),
-                request.getRequestURI()));
+                ex.getMessage()));
     }
 
-    private ErrorResponse build(HttpStatus httpStatus, String message, String path) {
+    private ErrorResponse build(String message) {
 
         return ErrorResponse.builder()
-                .instant((LocalDateTime.now().format(formatter)))
-                .statusCode(httpStatus.value())
                 .message(message)
-                .error(httpStatus.getReasonPhrase())
-                .path(path)
                 .build();
     }
 

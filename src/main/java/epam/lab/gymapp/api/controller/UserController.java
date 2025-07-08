@@ -1,11 +1,9 @@
 package epam.lab.gymapp.api.controller;
 
-import epam.lab.gymapp.dao.interfaces.CreateReadDao;
 import epam.lab.gymapp.dto.error.ErrorResponse;
 import epam.lab.gymapp.dto.request.changePassword.PasswordChangeDto;
 import epam.lab.gymapp.dto.request.login.Credentials;
-import epam.lab.gymapp.exceptions.InvalidCredentialsException;
-import epam.lab.gymapp.model.UserProfile;
+import epam.lab.gymapp.dto.response.textToJson.TextToJson;
 import epam.lab.gymapp.service.interfaces.AuthenticationService;
 import epam.lab.gymapp.service.interfaces.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -22,10 +20,10 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/users")
 public class UserController {
 
-    private final UserService<UserProfile, CreateReadDao<UserProfile, Long>> userService;
+    private final UserService userService;
     private final AuthenticationService authenticationService;
 
-    public UserController(UserService<UserProfile, CreateReadDao<UserProfile, Long>> userService, AuthenticationService authenticationService) {
+    public UserController(UserService userService, AuthenticationService authenticationService) {
         this.userService = userService;
         this.authenticationService = authenticationService;
     }
@@ -52,7 +50,7 @@ public class UserController {
     public ResponseEntity<?> login(
             @Valid @RequestBody Credentials credentials, HttpSession session) {
         performLogin(credentials.getUsername(), credentials.getPassword(), session);
-        return ResponseEntity.ok("Login successful");
+        return ResponseEntity.ok(new TextToJson("Login successful"));
 
     }
 
@@ -75,7 +73,7 @@ public class UserController {
             )
     })
     @PatchMapping("/toggleActiveStatus")
-    public ResponseEntity<?> toggleActiveStatus(String username) {
+    public ResponseEntity<?> toggleActiveStatus(@RequestParam("userName") String username) {
         userService.toggleActiveStatus(username);
         return ResponseEntity.ok().build();
     }
@@ -109,10 +107,10 @@ public class UserController {
     })
 
     @PutMapping("/changePassword")
-    public ResponseEntity<String> changePassword(
+    public ResponseEntity<?> changePassword(
             @Valid @RequestBody PasswordChangeDto passwordChangeDto) {
         userService.changePassword(passwordChangeDto.getUsername(), passwordChangeDto.getOldPassword(), passwordChangeDto.getNewPassword());
-        return ResponseEntity.ok("Changed password successfully");
+        return ResponseEntity.ok(new TextToJson("Changed password successfully"));
     }
 
 

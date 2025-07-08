@@ -10,4 +10,5 @@ public abstract class ApplicationException extends RuntimeException {
         super(message, cause);
     }
 
+     public abstract String getUserMessage();
 }

@@ -3,13 +3,11 @@ package epam.lab.gymapp.service.interfaces;
 
 import epam.lab.gymapp.annotation.security.RequiresAuthentication;
 import epam.lab.gymapp.dto.request.registration.RegistrationDto;
-import epam.lab.gymapp.exceptions.DaoException;
 import epam.lab.gymapp.model.UserProfile;
 import epam.lab.gymapp.dao.interfaces.CreateReadUpdateDao;
 import epam.lab.gymapp.exceptions.EntityNotFoundException;
 import epam.lab.gymapp.utils.PasswordGenerator;
 import epam.lab.gymapp.utils.UsernameGenerator;
-import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;

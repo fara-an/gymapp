@@ -1,17 +1,25 @@
 package epam.lab.gymapp.service.implementation;
 
-import epam.lab.gymapp.dao.interfaces.CreateReadDao;
-import epam.lab.gymapp.model.UserProfile;
+import epam.lab.gymapp.dao.interfaces.UserDao;
 import epam.lab.gymapp.service.interfaces.UserService;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserServiceImpl implements UserService<UserProfile, CreateReadDao<UserProfile, Long>> {
+public class UserServiceImpl implements UserService{
 
-    CreateReadDao<UserProfile, Long> createReadDao;
+    UserDao userDao;
+
+    public UserServiceImpl(UserDao userDao) {
+        this.userDao = userDao;
+    }
 
     @Override
-    public CreateReadDao<UserProfile, Long> getDao() {
-      return   createReadDao;
+    public void changePassword(String username, String oldPassword, String newPassword) {
+        userDao.changePassword(username,oldPassword, newPassword);
+    }
+
+    @Override
+    public void toggleActiveStatus(String username) {
+     userDao.toggleActiveStatus(username);
     }
 }

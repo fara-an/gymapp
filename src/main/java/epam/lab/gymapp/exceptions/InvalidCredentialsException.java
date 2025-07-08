@@ -7,4 +7,9 @@ public class InvalidCredentialsException extends ApplicationException {
     public InvalidCredentialsException(String username) {
         super(String.format(INVALID_CREDENTIALS_ERROR_MSG, username));
     }
+
+    @Override
+    public String getUserMessage() {
+        return "Provided credentials are not valid";
+    }
 }

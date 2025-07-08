@@ -2,6 +2,7 @@ package epam.lab.gymapp.exceptions;
 
 public class DaoException extends ApplicationException{
 
+
     public DaoException(String message) {
         super(message);
     }
@@ -9,4 +10,10 @@ public class DaoException extends ApplicationException{
     public DaoException(String message, Throwable cause) {
         super(message, cause);
     }
+
+    @Override
+    public String getUserMessage() {
+        return "Error occurred during database interaction.";
+    }
+
 }
