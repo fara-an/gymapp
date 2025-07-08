@@ -1,9 +1,7 @@
 package epam.lab.gymapp.dao.implementation;
 
 import epam.lab.gymapp.dao.interfaces.TrainingDao;
-import epam.lab.gymapp.exceptions.EntityNotFoundException;
 import epam.lab.gymapp.model.Trainee;
-import epam.lab.gymapp.model.Trainer;
 import epam.lab.gymapp.model.Training;
 import epam.lab.gymapp.dao.base.BaseDao;
 import epam.lab.gymapp.dao.interfaces.TraineeDao;

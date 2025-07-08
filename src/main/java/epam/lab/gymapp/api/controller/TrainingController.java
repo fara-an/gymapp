@@ -1,9 +1,6 @@
 package epam.lab.gymapp.api.controller;
 
-import epam.lab.gymapp.dto.mapper.TrainerMapper;
 import epam.lab.gymapp.dto.request.training.TrainingAddDto;
-import epam.lab.gymapp.dto.response.get.TrainerWithoutTraineesResponse;
-import epam.lab.gymapp.model.Trainer;
 import epam.lab.gymapp.service.interfaces.TrainingService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
