@@ -78,11 +78,6 @@ public class TrainingServiceImpl implements TrainingService {
         return created;
 
     }
-    @Override
-    @Transactional
-    public Trainer reassignTrainer(Long trainingId, String traineeUsername, String newTrainerUsername) {
-      return   trainingDao.updateTrainingTrainer(trainingId, traineeUsername, newTrainerUsername);
-    }
 
 
     private void validateTrainingType(String actual, String expected) {

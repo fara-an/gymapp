@@ -17,4 +17,5 @@ public interface TrainerService extends ProfileOperations<Trainer, TrainerDao, T
 
     List<Trainer> trainersNotAssignedToTrainee(String traineeUsername);
 
+
 }

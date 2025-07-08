@@ -1,11 +1,10 @@
 package epam.lab.gymapp.dao.interfaces;
 
-import epam.lab.gymapp.model.Trainer;
 import epam.lab.gymapp.model.Training;
 
 import java.time.LocalDateTime;
 
-public interface TrainingDao extends CreateReadDao<Training, Long> {
+public interface TrainingDao extends CreateReadUpdateDao<Training, Long> {
 
     boolean existsTrainerConflict(Long trainerId,
                                   LocalDateTime newStart,
@@ -15,9 +14,6 @@ public interface TrainingDao extends CreateReadDao<Training, Long> {
                                   LocalDateTime newStart,
                                   LocalDateTime newEnd);
 
-    Trainer updateTrainingTrainer(Long trainingId,
-                                  String traineeUsername,
-                                  String newTrainerUsername);
 
 
 }

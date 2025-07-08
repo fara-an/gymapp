@@ -1,8 +1,9 @@
 package epam.lab.gymapp.service.interfaces;
 
-import epam.lab.gymapp.dto.request.login.Credentials;
+import epam.lab.gymapp.dto.request.update.UpdateTraineeTrainerList;
 import epam.lab.gymapp.dto.request.registration.TraineeRegistrationBody;
 import epam.lab.gymapp.model.Trainee;
+import epam.lab.gymapp.model.Trainer;
 import epam.lab.gymapp.model.Training;
 import epam.lab.gymapp.dao.interfaces.TraineeDao;
 import jakarta.annotation.Nullable;
@@ -17,6 +18,8 @@ public interface TraineeService extends ProfileOperations<Trainee, TraineeDao, T
     void delete( String username);
 
     List<Training> getTraineeTrainings(String traineeUsername, @Nullable LocalDateTime fromDate, @Nullable LocalDateTime toDate,  @Nullable String trainerName, @Nullable String trainingType);
+
+    List<Trainer> updateTrainer(String traineeUsername, List<UpdateTraineeTrainerList> list);
 
 
 }

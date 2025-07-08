@@ -1,7 +1,12 @@
 package epam.lab.gymapp.service.implementation;
 
 import epam.lab.gymapp.dao.interfaces.TraineeDao;
+import epam.lab.gymapp.dao.interfaces.TrainerDao;
+import epam.lab.gymapp.dao.interfaces.TrainingDao;
+import epam.lab.gymapp.dto.request.update.UpdateTraineeTrainerList;
+import epam.lab.gymapp.exceptions.EntityNotFoundException;
 import epam.lab.gymapp.model.Trainee;
+import epam.lab.gymapp.model.Trainer;
 import epam.lab.gymapp.model.Training;
 import epam.lab.gymapp.model.UserProfile;
 import epam.lab.gymapp.service.interfaces.TraineeService;
@@ -13,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class TraineeServiceImpl implements TraineeService {
@@ -20,9 +26,13 @@ public class TraineeServiceImpl implements TraineeService {
     private static final Logger LOGGER = LoggerFactory.getLogger(TraineeServiceImpl.class);
     private static final String SERVICE_NAME = "TraineeServiceImpl";
     private final TraineeDao traineeDao;
+    private final TrainerDao trainerDao;
+    private final TrainingDao trainingDao;
 
-    public TraineeServiceImpl(TraineeDao traineeDao) {
+    public TraineeServiceImpl(TraineeDao traineeDao, TrainerDao trainerDao, TrainingDao trainingDao) {
         this.traineeDao = traineeDao;
+        this.trainerDao = trainerDao;
+        this.trainingDao = trainingDao;
     }
 
     @Override
@@ -44,6 +54,46 @@ public class TraineeServiceImpl implements TraineeService {
         return traineeTrainings;
 
     }
+
+    @Override
+    public List<Trainer> updateTrainer(String traineeUsername, List<UpdateTraineeTrainerList> list) {
+        Trainee trainee = traineeDao.findByUsername(traineeUsername)
+                .orElseThrow(() -> new EntityNotFoundException("Trainee not found"));
+
+        list.forEach(item -> updateTrainer(trainee, item.trainerUsername(), item.trainingId()));
+
+
+        List<Trainer> trainers = trainee.getTrainings().stream()
+                .map(Training::getTrainer)
+                .distinct()
+                .collect(Collectors.toList());
+        return trainers;
+    }
+
+    private void updateTrainer(Trainee trainee, String trainerUserName, Long trainingId) {
+        // 1. Find the trainee
+
+        // 2. Find the training among the trainee's trainings
+        Optional<Training> trainingOpt = trainee.getTrainings().stream()
+                .filter(t -> t.getId().equals(trainingId))
+                .findFirst();
+
+        if (!trainingOpt.isPresent()) {
+            throw new IllegalArgumentException("This trainee is not enrolled in the specified training");
+        }
+
+        Training training = trainingOpt.get();
+
+        Trainer newTrainer = trainerDao.findByUsername(trainerUserName)
+                .orElseThrow(() -> new EntityNotFoundException("Trainer not found"));
+
+        training.setTrainer(newTrainer);
+        trainingDao.update(training);
+
+
+    }
+
+
 
     @Override
     public TraineeDao getDao() {

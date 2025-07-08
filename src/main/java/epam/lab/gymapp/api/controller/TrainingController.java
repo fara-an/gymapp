@@ -26,12 +26,4 @@ public class TrainingController {
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
-    @PutMapping("/{trainingId}")
-    public ResponseEntity<TrainerWithoutTraineesResponse> changeTrainingTrainer(@PathVariable(name = "trainingId") Long id,
-                                                                                @RequestParam String traineeUsername,
-                                                                                @RequestParam String newUsername) {
-        Trainer trainer = trainingService.reassignTrainer(id, traineeUsername, newUsername);
-        return ResponseEntity.ok().body( TrainerMapper.dtoWithoutTraineeList(trainer));
-    }
-
 }

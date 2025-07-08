@@ -39,7 +39,7 @@ public class AuthenticationDaoImpl implements AuthenticationDao {
                     .setParameter("username", username)
                     .setParameter("password", password)
                     .uniqueResult();
-            return userEntity != null;
+            return userEntity != null &&  Boolean.TRUE.equals(userEntity.getIsActive());
         } catch (Exception e) {
             String errorMessage = String.format(ERROR_MSG_TEMPLATE, username);
             LOGGER.error(LOG_ERROR_TEMPLATE, username, e.getMessage());

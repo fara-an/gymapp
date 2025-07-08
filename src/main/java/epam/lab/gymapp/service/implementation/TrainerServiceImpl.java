@@ -1,6 +1,9 @@
 package epam.lab.gymapp.service.implementation;
 
 
+import epam.lab.gymapp.dao.interfaces.TraineeDao;
+import epam.lab.gymapp.dao.interfaces.TrainingDao;
+
 import epam.lab.gymapp.model.Trainer;
 import epam.lab.gymapp.model.Training;
 import epam.lab.gymapp.model.UserProfile;
@@ -22,6 +25,7 @@ public class TrainerServiceImpl implements TrainerService {
     private static final String SERVICE_NAME = "TrainerServiceImpl";
     private final TrainerDao trainerDao;
 
+
     public TrainerServiceImpl(TrainerDao trainerDao) {
         this.trainerDao = trainerDao;
 
@@ -29,9 +33,9 @@ public class TrainerServiceImpl implements TrainerService {
 
     @Override
     @Transactional
-    public List<Training> getTrainerTrainings( String trainerUsername, LocalDateTime fromDate, LocalDateTime toDate, String traineeUsername, String trainingType) {
+    public List<Training> getTrainerTrainings(String trainerUsername, LocalDateTime fromDate, LocalDateTime toDate, String traineeUsername, String trainingType) {
         LOGGER.debug(SERVICE_NAME + " - Fetching trainings for trainer {} with [from={}, to={}, trainee={}]", trainerUsername, fromDate, toDate, traineeUsername);
-        List<Training> trainerTrainings = trainerDao.getTrainerTrainings( trainerUsername, fromDate, toDate, traineeUsername);
+        List<Training> trainerTrainings = trainerDao.getTrainerTrainings(trainerUsername, fromDate, toDate, traineeUsername);
         LOGGER.debug(SERVICE_NAME + " - Retrieved {} trainings for trainer {}", trainerTrainings.size(), trainerUsername);
         return trainerTrainings;
     }
@@ -45,11 +49,11 @@ public class TrainerServiceImpl implements TrainerService {
         return trainers;
     }
 
+
     @Override
     public TrainerDao getDao() {
         return trainerDao;
     }
-
 
 
     @Override
@@ -67,7 +71,7 @@ public class TrainerServiceImpl implements TrainerService {
     @Override
     public void updateProfileSpecificFields(Trainer existing, Trainer item) {
         Optional.ofNullable(item.getSpecialization())
-                .ifPresent(newSpecialization->existing.setSpecialization(newSpecialization));
+                .ifPresent(newSpecialization -> existing.setSpecialization(newSpecialization));
 
     }
 

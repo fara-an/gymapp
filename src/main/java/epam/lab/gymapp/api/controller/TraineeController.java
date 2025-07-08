@@ -2,14 +2,18 @@ package epam.lab.gymapp.api.controller;
 
 import epam.lab.gymapp.dto.error.ErrorResponse;
 import epam.lab.gymapp.dto.mapper.TraineeMapper;
+import epam.lab.gymapp.dto.mapper.TrainerMapper;
 import epam.lab.gymapp.dto.mapper.TrainingMapper;
+import epam.lab.gymapp.dto.request.update.UpdateTraineeTrainerList;
 import epam.lab.gymapp.dto.request.login.Credentials;
 import epam.lab.gymapp.dto.request.registration.TraineeRegistrationBody;
 import epam.lab.gymapp.dto.request.update.UpdateTraineeDto;
 import epam.lab.gymapp.dto.response.get.TraineeGetResponse;
+import epam.lab.gymapp.dto.response.get.TrainerWithoutTraineesResponse;
 import epam.lab.gymapp.dto.response.register.TraineeRegistrationResponse;
 import epam.lab.gymapp.dto.response.training.TrainingResponse;
 import epam.lab.gymapp.model.Trainee;
+import epam.lab.gymapp.model.Trainer;
 import epam.lab.gymapp.model.Training;
 import epam.lab.gymapp.service.interfaces.TraineeService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -231,5 +235,16 @@ public class TraineeController {
         List<TrainingResponse> list = trainings.stream().map(t -> TrainingMapper.trainingWithTrainee(t)).toList();
         return ResponseEntity.ok(list);
     }
+
+    @PostMapping("/{userName}/trainers")
+    public ResponseEntity<?> assignTrainers(
+            @PathVariable String userName,
+            @RequestBody List<UpdateTraineeTrainerList> assignments) {
+
+        List<Trainer> trainers = traineeService.updateTrainer(userName, assignments);
+        List<TrainerWithoutTraineesResponse> list = trainers.stream().map(t -> TrainerMapper.dtoWithoutTraineeList(t)).toList();
+        return ResponseEntity.ok().body(list);
+    }
+
 
 }

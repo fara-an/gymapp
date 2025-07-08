@@ -8,7 +8,5 @@ import epam.lab.gymapp.model.Training;
 
 public interface TrainingService {
     Training addTraining(TrainingAddDto trainingAddDto);
-    Trainer reassignTrainer(Long trainingId,
-                            String traineeUsername,
-                            String newTrainerUsername);
+
 }
