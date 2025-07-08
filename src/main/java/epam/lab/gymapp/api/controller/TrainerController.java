@@ -68,7 +68,7 @@ public class TrainerController {
                     )
             )
     })
-    @PostMapping("/register")
+    @PostMapping("/")
     public ResponseEntity<TrainerRegistrationResponse> register(
             @Valid @RequestBody TrainerRegistrationBody registrationDto, HttpSession session) {
         Trainer trainer = Trainer.builder().
@@ -144,7 +144,7 @@ public class TrainerController {
                     )
             )
     })
-    @PutMapping("/update/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<?> updateTrainer(
             @PathVariable("id") Long id,
             @Valid @RequestBody UpdateTrainerDto updateTrainerDto) {
@@ -184,7 +184,7 @@ public class TrainerController {
                     )
             )
     })
-    @GetMapping("/notAssignedToTrainee/{username}")
+    @GetMapping("/{username}/unassigned-trainers")
     public ResponseEntity<?> getTrainersNotAssignedToTrainee(
             @PathVariable("username") String username) {
         List<Trainer> trainers = trainerService.trainersNotAssignedToTrainee(username);
@@ -216,9 +216,9 @@ public class TrainerController {
             )
     })
 
-    @GetMapping("/getTrainings")
+    @GetMapping("/{username}/trainings")
     public ResponseEntity<?> getTrainerTrainings(
-            @RequestParam("userName") String userName,
+            @PathVariable("userName") String userName,
             @RequestParam(value = "from", required = false) LocalDateTime from,
             @RequestParam(value = "to", required = false) LocalDateTime to,
             @RequestParam(value = "traineeName", required = false) String traineeName,

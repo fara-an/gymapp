@@ -1,7 +1,6 @@
 package epam.lab.gymapp.service.interfaces;
 
 
-import epam.lab.gymapp.annotation.security.RequiresAuthentication;
 import epam.lab.gymapp.dto.request.registration.RegistrationDto;
 import epam.lab.gymapp.model.UserProfile;
 import epam.lab.gymapp.dao.interfaces.CreateReadUpdateDao;
@@ -27,7 +26,6 @@ public interface ProfileOperations<
 
     void updateProfileSpecificFields(T existing, T item);
 
-    @RequiresAuthentication
     @Transactional
     default T createProfile(T item) {
         String serviceName = getClass().getSimpleName();
@@ -59,7 +57,6 @@ public interface ProfileOperations<
         return created;
     }
 
-    @RequiresAuthentication
     @Transactional
     default T updateProfile(T item) {
         String serviceName = getClass().getSimpleName();
@@ -78,7 +75,6 @@ public interface ProfileOperations<
     }
 
 
-    @RequiresAuthentication
     @Transactional(readOnly = true)
     default T findByUsername(String username) {
         String serviceName = getClass().getSimpleName();
@@ -94,7 +90,6 @@ public interface ProfileOperations<
         return item;
     }
 
-    @RequiresAuthentication
     @Transactional(readOnly = true)
     default T findById(Long id) {
         String serviceName = getClass().getSimpleName();

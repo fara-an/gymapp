@@ -1,7 +1,6 @@
 package epam.lab.gymapp.service.implementation;
 
 
-import epam.lab.gymapp.annotation.security.RequiresAuthentication;
 import epam.lab.gymapp.model.Trainer;
 import epam.lab.gymapp.model.Training;
 import epam.lab.gymapp.model.UserProfile;
@@ -27,7 +26,7 @@ public class TrainerServiceImpl implements TrainerService {
         this.trainerDao = trainerDao;
 
     }
-    @RequiresAuthentication
+
     @Override
     @Transactional
     public List<Training> getTrainerTrainings( String trainerUsername, LocalDateTime fromDate, LocalDateTime toDate, String traineeUsername, String trainingType) {

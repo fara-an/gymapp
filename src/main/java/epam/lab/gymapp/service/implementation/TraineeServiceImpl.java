@@ -1,6 +1,5 @@
 package epam.lab.gymapp.service.implementation;
 
-import epam.lab.gymapp.annotation.security.RequiresAuthentication;
 import epam.lab.gymapp.dao.interfaces.TraineeDao;
 import epam.lab.gymapp.model.Trainee;
 import epam.lab.gymapp.model.Training;
@@ -28,7 +27,6 @@ public class TraineeServiceImpl implements TraineeService {
 
     @Override
     @Transactional
-    @RequiresAuthentication
     public void delete(String username) {
         LOGGER.debug(SERVICE_NAME + " - Deleting trainee by username: {}", username);
         Long id = findByUsername(username).getId();
@@ -36,7 +34,7 @@ public class TraineeServiceImpl implements TraineeService {
         LOGGER.debug(SERVICE_NAME + " - Deleted trainee: {}", username);
     }
 
-    @RequiresAuthentication
+
     @Override
     @Transactional
     public List<Training> getTraineeTrainings(String traineeUsername, LocalDateTime fromDate, LocalDateTime toDate, String trainerName, String trainingType) {

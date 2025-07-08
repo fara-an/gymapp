@@ -13,6 +13,7 @@ import java.util.List;
 
 @Service
 public interface TraineeService extends ProfileOperations<Trainee, TraineeDao, TraineeRegistrationBody> {
+
     void delete( String username);
 
     List<Training> getTraineeTrainings(String traineeUsername, @Nullable LocalDateTime fromDate, @Nullable LocalDateTime toDate,  @Nullable String trainerName, @Nullable String trainingType);

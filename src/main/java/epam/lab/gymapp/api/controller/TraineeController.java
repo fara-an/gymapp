@@ -30,11 +30,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/trainees")
-@Tag(name = "Trainer operations")
-
+@Tag(name = "Trainee operations")
 public class TraineeController {
     private final Logger LOGGER = LoggerFactory.getLogger(TraineeController.class);
-    private final String CONTROLLER = "TraineeController";
+
 
     private final TraineeService traineeService;
 
@@ -73,10 +72,10 @@ public class TraineeController {
                     )
             )
     })
-    @PostMapping("/register")
+    @PostMapping("/")
     public ResponseEntity<TraineeRegistrationResponse> register(
             @Valid @RequestBody TraineeRegistrationBody traineeRegistrationBody) {
-        LOGGER.debug(CONTROLLER + " executing register process");
+        LOGGER.debug("Executing register process");
         Trainee entity = TraineeMapper.fromDtoToTrainee(traineeRegistrationBody);
         traineeService.createProfile(entity);
         TraineeRegistrationResponse response = new TraineeRegistrationResponse(entity.getUserName(), entity.getPassword());
@@ -152,7 +151,7 @@ public class TraineeController {
                     )
             )
     })
-    @PutMapping("/update/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<?> updateTrainee(
             @PathVariable("id") Long id,
             @Valid @RequestBody UpdateTraineeDto updateTraineeDto) {
@@ -189,7 +188,8 @@ public class TraineeController {
                     )
             )
     })
-    @DeleteMapping("/delete/{username}")
+
+    @DeleteMapping("/{username}")
     public ResponseEntity<?> deleteTrainee(
             @PathVariable("username") String username) {
         traineeService.delete(username);
@@ -221,8 +221,8 @@ public class TraineeController {
             )
     })
 
-    @GetMapping("/getTrainings")
-    public ResponseEntity<?> getTraineeTrainings(@RequestParam("userName") String userName,
+    @GetMapping("/{userName}/trainings")
+    public ResponseEntity<?> getTraineeTrainings(@PathVariable("userName") String userName,
                                                  @RequestParam(value = "from", required = false) LocalDateTime from,
                                                  @RequestParam(value = "to", required = false) LocalDateTime to,
                                                  @RequestParam(value = "trainerName", required = false) String trainerName,

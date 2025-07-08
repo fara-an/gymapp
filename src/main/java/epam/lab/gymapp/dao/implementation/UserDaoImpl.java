@@ -1,6 +1,5 @@
 package epam.lab.gymapp.dao.implementation;
 
-import epam.lab.gymapp.annotation.security.RequiresAuthentication;
 import epam.lab.gymapp.dao.interfaces.CreateReadDao;
 import epam.lab.gymapp.dao.interfaces.UserDao;
 import epam.lab.gymapp.exceptions.DaoException;
@@ -24,7 +23,6 @@ public class UserDaoImpl implements UserDao {
         this.dao = dao;
     }
 
-    @RequiresAuthentication
     @Transactional
     public void changePassword(String username, String oldPassword, String newPassword) {
         String serviceName = getClass().getSimpleName();
@@ -53,7 +51,6 @@ public class UserDaoImpl implements UserDao {
     }
 
 
-    @RequiresAuthentication
     @Transactional
     public void toggleActiveStatus(String username) {
         String serviceName = getClass().getSimpleName();

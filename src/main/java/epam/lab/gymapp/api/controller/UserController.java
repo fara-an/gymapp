@@ -46,7 +46,7 @@ public class UserController {
                     schema = @Schema(implementation = ErrorResponse.class)
             ))
     })
-    @GetMapping("/login")
+    @PostMapping("/auth/login")
     public ResponseEntity<?> login(
             @Valid @RequestBody Credentials credentials, HttpSession session) {
         performLogin(credentials.getUsername(), credentials.getPassword(), session);
@@ -72,8 +72,8 @@ public class UserController {
                     )
             )
     })
-    @PatchMapping("/toggleActiveStatus")
-    public ResponseEntity<?> toggleActiveStatus(@RequestParam("userName") String username) {
+    @PatchMapping("/{userName}")
+    public ResponseEntity<?> toggleActiveStatus(@PathVariable("userName") String username) {
         userService.toggleActiveStatus(username);
         return ResponseEntity.ok().build();
     }
@@ -106,7 +106,7 @@ public class UserController {
             )
     })
 
-    @PutMapping("/changePassword")
+    @PutMapping("/password")
     public ResponseEntity<?> changePassword(
             @Valid @RequestBody PasswordChangeDto passwordChangeDto) {
         userService.changePassword(passwordChangeDto.getUsername(), passwordChangeDto.getOldPassword(), passwordChangeDto.getNewPassword());
