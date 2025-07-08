@@ -35,6 +35,4 @@ public interface TrainingTypeDao <T extends BaseEntity<ID>,ID> {
             throw new RuntimeException(errorMessage, e);
         }
     }
-
-
 }

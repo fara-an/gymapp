@@ -6,12 +6,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
 import javax.sql.DataSource;
 
 @Configuration
+@PropertySource("classpath:application.properties")   // <‑‑ add this
 public class DatabaseConfig {
 
     @Value("${spring.datasource.driver-class-name}")
@@ -24,7 +26,6 @@ public class DatabaseConfig {
     private String jdbcPassword;
 
     @Bean
-    @Profile("prod")
     public DataSource getDataSource() {
         HikariConfig hikariConfig = new HikariConfig();
         hikariConfig.setDriverClassName(driverClassName);
@@ -34,16 +35,7 @@ public class DatabaseConfig {
         return new HikariDataSource(hikariConfig);
     }
 
-    @Bean
-    @Profile("dev")
-    public DataSource embeddedDatasource(){
 
-        return new EmbeddedDatabaseBuilder()
-                .setType(EmbeddedDatabaseType.H2)
-                .setName("testdb")
-                .build();
-
-    }
 
 
 

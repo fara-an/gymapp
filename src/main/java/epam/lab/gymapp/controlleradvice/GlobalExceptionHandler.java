@@ -23,17 +23,6 @@ public class GlobalExceptionHandler {
 
    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-    private ErrorResponse build(HttpStatus httpStatus, String message, String path) {
-
-        return ErrorResponse.builder()
-                .instant((LocalDateTime.now().format(formatter)))
-                .statusCode(httpStatus.value())
-                .message(message)
-                .error(httpStatus.getReasonPhrase())
-                .path(path)
-                .build();
-    }
-
     @ExceptionHandler(DaoException.class)
     public ResponseEntity<ErrorResponse> handleDaoException(DaoException ex, HttpServletRequest request) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -94,4 +83,16 @@ public class GlobalExceptionHandler {
                 ex.getMessage(),
                 request.getRequestURI()));
     }
+
+    private ErrorResponse build(HttpStatus httpStatus, String message, String path) {
+
+        return ErrorResponse.builder()
+                .instant((LocalDateTime.now().format(formatter)))
+                .statusCode(httpStatus.value())
+                .message(message)
+                .error(httpStatus.getReasonPhrase())
+                .path(path)
+                .build();
+    }
+
 }

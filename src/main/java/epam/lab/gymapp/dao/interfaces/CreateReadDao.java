@@ -31,7 +31,7 @@ public interface CreateReadDao<T extends BaseEntity<ID>, ID> {
         } catch (Exception e) {
             LOGGER.error("{}: DAO READ - Failed to read id entity {} – {}", className, id, e.getMessage());
             String errorMessage = String.format("%s: DAO READ - Failed to read entity %s", className, id);
-            throw new RuntimeException(errorMessage, e);
+            throw new DaoException(errorMessage, e);
 
         }
     }
@@ -49,7 +49,7 @@ public interface CreateReadDao<T extends BaseEntity<ID>, ID> {
         } catch (Exception e) {
             LOGGER.error("{}: DAO READ - Failed to read username for entity  {} – {}", className, userName, e.getMessage());
             String errorMessage = String.format("%s: DAO READ - Failed to read entity %s", className, userName);
-            throw new RuntimeException(errorMessage, e);
+            throw new DaoException(errorMessage, e);
         }
     }
 

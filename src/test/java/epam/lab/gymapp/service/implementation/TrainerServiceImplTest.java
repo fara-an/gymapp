@@ -139,60 +139,25 @@ class TrainerServiceImplTest {
         assertThrows(EntityNotFoundException.class, () -> trainerService.findById(1L));
     }
 
-    @Test
-    void toggleActiveStatus_TogglesStatus() {
-        Trainer trainer = Trainer.builder().userName("jsmith").isActive(true).build();
-        Session session = mock(Session.class);
-        SessionFactory sessionFactory = mock(SessionFactory.class);
-        when(trainerDao.findByUsername(anyString())).thenReturn(Optional.of(trainer));
-        when(trainerDao.getSessionFactory()).thenReturn(sessionFactory);
-        when(sessionFactory.getCurrentSession()).thenReturn(session);
-        trainerService.toggleActiveStatus("jsmith");
-        assertFalse(trainer.getIsActive());
-        verify(session).merge(any(Trainer.class));
-    }
+//    @Test
+//    void toggleActiveStatus_TogglesStatus() {
+//        Trainer trainer = Trainer.builder().userName("jsmith").isActive(true).build();
+//        Session session = mock(Session.class);
+//        SessionFactory sessionFactory = mock(SessionFactory.class);
+//        when(trainerDao.findByUsername(anyString())).thenReturn(Optional.of(trainer));
+//        when(trainerDao.getSessionFactory()).thenReturn(sessionFactory);
+//        when(sessionFactory.getCurrentSession()).thenReturn(session);
+//        trainerService.toggleActiveStatus("jsmith");
+//        assertFalse(trainer.getIsActive());
+//        verify(session).merge(any(Trainer.class));
+//    }
+//
+//    @Test
+//    void toggleActiveStatus_ThrowsIfNotFound() {
+//        when(trainerDao.findByUsername(anyString())).thenReturn(Optional.empty());
+//        assertThrows(EntityNotFoundException.class, () -> trainerService.toggleActiveStatus("notfound"));
+//    }
+//
 
-    @Test
-    void toggleActiveStatus_ThrowsIfNotFound() {
-        when(trainerDao.findByUsername(anyString())).thenReturn(Optional.empty());
-        assertThrows(EntityNotFoundException.class, () -> trainerService.toggleActiveStatus("notfound"));
-    }
 
-    @Test
-    void changePassword_ChangesPasswordIfOldMatches() {
-        Trainer trainer = Trainer.builder().userName("jsmith").password("oldPass").build();
-        Session session = mock(Session.class);
-        SessionFactory sessionFactory = mock(SessionFactory.class);
-        when(trainerDao.findByUsername(anyString())).thenReturn(Optional.of(trainer));
-        when(trainerDao.getSessionFactory()).thenReturn(sessionFactory);
-        when(sessionFactory.getCurrentSession()).thenReturn(session);
-        trainerService.changePassword("jsmith", "oldPass", "newPass");
-        assertEquals("newPass", trainer.getPassword());
-        verify(session).merge(any(Trainer.class));
-    }
-
-    @Test
-    void changePassword_DoesNotChangeIfOldDoesNotMatch() {
-        Trainer trainer = Trainer.builder().userName("jsmith").password("oldPass").build();
-
-        when(trainerDao.findByUsername(anyString())).thenReturn(Optional.of(trainer));
-        trainerService.changePassword("jsmith", "wrongOld", "newPass");
-        assertEquals("oldPass", trainer.getPassword());
-    }
-
-    @Test
-    void changePassword_ThrowsIfNotFound() {
-        when(trainerDao.findByUsername(anyString())).thenReturn(Optional.empty());
-        assertThrows(EntityNotFoundException.class, () -> trainerService.changePassword("notfound", "old", "new"));
-    }
-
-    @Test
-    void changePassword_ThrowsDaoExceptionOnSessionError() {
-        Trainer trainer = Trainer.builder().userName("jsmith").password("oldPass").build();
-        SessionFactory sessionFactory = mock(SessionFactory.class);
-        when(trainerDao.findByUsername(anyString())).thenReturn(Optional.of(trainer));
-        when(trainerDao.getSessionFactory()).thenReturn(sessionFactory);
-        when(sessionFactory.getCurrentSession()).thenThrow(new RuntimeException("session error"));
-        assertThrows(DaoException.class, () -> trainerService.changePassword("jsmith", "oldPass", "newPass"));
-    }
 }

@@ -2,6 +2,7 @@ package epam.lab.gymapp.service.implementation;
 
 import epam.lab.gymapp.dao.interfaces.TrainingDao;
 import epam.lab.gymapp.dto.request.training.TrainingAddDto;
+import epam.lab.gymapp.exceptions.UserInputException;
 import epam.lab.gymapp.model.Trainee;
 import epam.lab.gymapp.model.Trainer;
 import epam.lab.gymapp.model.Training;
@@ -52,29 +53,24 @@ class TrainingServiceTest {
         startTime = LocalDateTime.of(2024, 1, 15, 10, 0);
         endTime = startTime.plusMinutes(60);
 
-        // Setup specialization
         TrainingType specialization = new TrainingType();
         specialization.setName("FITNESS");
 
-        // Setup trainer
         trainer = Trainer.builder()
                 .id(1L)
                 .userName("trainer123")
                 .specialization(specialization)
                 .build();
 
-        // Setup trainee
         trainee = Trainee.builder()
                 .id(2L)
                 .userName("trainee123")
                 .build();
 
-        // Setup training type
         trainingType = new TrainingType();
         trainingType.setName("FITNESS");
 
 
-        // Setup DTO
         trainingAddDto = TrainingAddDto.builder()
                 .trainingName("Morning Workout")
                 .trainerUserName("trainer123")
@@ -139,7 +135,7 @@ class TrainingServiceTest {
 
         // When & Then
          assertThrows(
-                IllegalStateException.class,
+                UserInputException.class,
                 () -> trainingService.addTraining(trainingAddDto)
         );
 
@@ -152,14 +148,13 @@ class TrainingServiceTest {
     @Test
     @DisplayName("Should throw IllegalArgumentException when trainee has conflicting session")
     void addTraining_TraineeConflict() {
-        // Given
+
         when(trainerService.findByUsername("trainer123")).thenReturn(trainer);
         when(traineeService.findByUsername("trainee123")).thenReturn(trainee);
         when(trainingDao.existsTraineeConflict(2L, startTime, endTime)).thenReturn(true);
 
-        // When & Then
-        IllegalArgumentException exception = assertThrows(
-                IllegalArgumentException.class,
+        UserInputException exception = assertThrows(
+                UserInputException.class,
                 () -> trainingService.addTraining(trainingAddDto)
         );
 
@@ -181,8 +176,8 @@ class TrainingServiceTest {
         when(trainingDao.existsTrainerConflict(1L, startTime, endTime)).thenReturn(true);
 
         // When & Then
-        IllegalArgumentException exception = assertThrows(
-                IllegalArgumentException.class,
+        UserInputException exception = assertThrows(
+                UserInputException.class,
                 () -> trainingService.addTraining(trainingAddDto)
         );
 

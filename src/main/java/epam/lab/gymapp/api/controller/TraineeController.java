@@ -4,16 +4,13 @@ import epam.lab.gymapp.dto.error.ErrorResponse;
 import epam.lab.gymapp.dto.mapper.TraineeMapper;
 import epam.lab.gymapp.dto.mapper.TrainingMapper;
 import epam.lab.gymapp.dto.request.login.Credentials;
-import epam.lab.gymapp.dto.request.changePassword.PasswordChangeDto;
 import epam.lab.gymapp.dto.request.registration.TraineeRegistrationBody;
 import epam.lab.gymapp.dto.request.update.UpdateTraineeDto;
 import epam.lab.gymapp.dto.response.get.TraineeGetResponse;
 import epam.lab.gymapp.dto.response.register.TraineeRegistrationResponse;
 import epam.lab.gymapp.dto.response.training.TrainingResponse;
-import epam.lab.gymapp.exceptions.InvalidCredentialsException;
 import epam.lab.gymapp.model.Trainee;
 import epam.lab.gymapp.model.Training;
-import epam.lab.gymapp.service.interfaces.AuthenticationService;
 import epam.lab.gymapp.service.interfaces.TraineeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -25,7 +22,6 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,51 +37,11 @@ public class TraineeController {
     private final String CONTROLLER = "TraineeController";
 
     private final TraineeService traineeService;
-    private final AuthenticationService authenticationService;
 
-    public TraineeController(TraineeService traineeService, AuthenticationService authenticationService) {
+    public TraineeController(TraineeService traineeService) {
         this.traineeService = traineeService;
-        this.authenticationService = authenticationService;
-
     }
 
-    @Operation(
-            summary = "Log in",                              // ← short title
-            description = "Validates user credentials and stores them in the HTTP session on success."
-    )
-    @ApiResponses({
-            @ApiResponse(
-                    responseCode = "200",
-                    description  = "Login successful",
-                    content      = @Content(
-                            mediaType = "text/plain",
-                            schema = @Schema(implementation = String.class)
-                    )
-            ),
-            @ApiResponse(
-                    responseCode = "400",
-                    description  = "Invalid request body (validation failed)",
-                    content      = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorResponse.class)
-                    )
-            ),
-            @ApiResponse(
-                    responseCode = "401",
-                    description  = "Invalid credentials",
-                    content      = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorResponse.class)
-                    )
-            )
-    })
-    @GetMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody Credentials credentials, HttpSession httpSession) {
-        LOGGER.debug(CONTROLLER + " executing login process");
-        authenticationService.authenticateUser(credentials);
-        httpSession.setAttribute("credentials", credentials);
-        return ResponseEntity.ok("Login successful");
-    }
 
     @Operation(
             summary = "Register a new trainee",
@@ -129,42 +85,6 @@ public class TraineeController {
     }
 
 
-    @ApiResponses({
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Password changed successfully",
-                    content = @Content(
-                            mediaType = "text/plain",
-                            schema = @Schema(implementation = String.class)
-            )
-            ),
-            @ApiResponse(
-                    responseCode = "400",
-                    description = "Validation failed (e.g., blank new password)",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorResponse.class)
-                    )
-            ),
-            @ApiResponse(
-                    responseCode = "401",
-                    description = "Old password is incorrect",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorResponse.class)
-                    )
-                    )
-    })
-
-    @PutMapping("/changePassword")
-    public ResponseEntity<String> changePassword(
-            @Valid @RequestBody PasswordChangeDto passwordChangeDto) {
-        boolean passwordChanged = traineeService.changePassword(passwordChangeDto.getUsername(), passwordChangeDto.getOldPassword(), passwordChangeDto.getNewPassword());
-       if (!passwordChanged){
-           throw new InvalidCredentialsException(passwordChangeDto.getUsername());
-       }
-        return ResponseEntity.ok("Changed password successfully");
-    }
 
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpSession httpSession) {
@@ -310,29 +230,6 @@ public class TraineeController {
         List<Training> trainings = traineeService.getTraineeTrainings(userName, from, to, trainerName, trainingType);
         List<TrainingResponse> list = trainings.stream().map(t -> TrainingMapper.trainingWithTrainee(t)).toList();
         return ResponseEntity.ok(list);
-    }
-
-    @Operation(
-            summary = "Toggle trainee active status",
-            description = "Flips the trainee’s <em>isActive</em> flag (activate ⇄ deactivate)."
-    )
-    @ApiResponses({
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Status toggled successfully"
-            ),
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "Trainee not found",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorResponse.class)
-                    )
-            )
-    })
-    @PatchMapping("/toggle")
-    public ResponseEntity<?> activate(@RequestParam("userName") String userName) {
-        traineeService.toggleActiveStatus(userName);
-        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
 }

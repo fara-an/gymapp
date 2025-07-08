@@ -20,6 +20,7 @@ public class TrainerRegistrationBody implements RegistrationDto{
     @NotBlank
     @Size(min = 8, max = 100)
     private String lastName;
+
     @NotBlank
     private String trainingType;
 }
