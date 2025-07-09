@@ -11,6 +11,7 @@ import epam.lab.gymapp.dto.request.update.UpdateTraineeDto;
 import epam.lab.gymapp.dto.response.get.TraineeGetResponse;
 import epam.lab.gymapp.dto.response.get.TrainerWithoutTraineesResponse;
 import epam.lab.gymapp.dto.response.register.TraineeRegistrationResponse;
+import epam.lab.gymapp.dto.response.textToJson.TextToJson;
 import epam.lab.gymapp.dto.response.training.TrainingResponse;
 import epam.lab.gymapp.model.Trainee;
 import epam.lab.gymapp.model.Trainer;
@@ -197,7 +198,7 @@ public class TraineeController {
     public ResponseEntity<?> deleteTrainee(
             @PathVariable("username") String username) {
         traineeService.delete(username);
-        return ResponseEntity.ok("Deleted trainee with username  " + username);
+        return ResponseEntity.ok(new TextToJson("Deleted trainee with username  " + username));
     }
 
     @Operation(
