@@ -218,7 +218,7 @@ public class TrainerController {
 
     @GetMapping("/{username}/trainings")
     public ResponseEntity<?> getTrainerTrainings(
-            @PathVariable("userName") String userName,
+            @PathVariable("username") String userName,
             @RequestParam(value = "from", required = false) LocalDateTime from,
             @RequestParam(value = "to", required = false) LocalDateTime to,
             @RequestParam(value = "traineeName", required = false) String traineeName,

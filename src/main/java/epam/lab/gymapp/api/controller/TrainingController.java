@@ -17,7 +17,7 @@ public class TrainingController {
         this.trainingService = trainingService;
     }
 
-    @PostMapping("/")
+    @PostMapping
     public ResponseEntity<?> addTraining(@Valid @RequestBody TrainingAddDto trainingAddDto) {
         trainingService.addTraining(trainingAddDto);
         return ResponseEntity.status(HttpStatus.OK).build();

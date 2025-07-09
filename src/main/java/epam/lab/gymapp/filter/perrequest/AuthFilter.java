@@ -23,7 +23,7 @@ public class AuthFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String path = request.getServletPath();
-        return path.equals("trainers/register") || path.equals("trainees/register") || path.equals("/users/login");
+        return path.equals("/trainers") || path.equals("/trainees") || path.equals("/users/login");
 
     }
 

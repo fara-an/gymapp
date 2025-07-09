@@ -76,7 +76,7 @@ public class TraineeController {
                     )
             )
     })
-    @PostMapping("/")
+    @PostMapping
     public ResponseEntity<TraineeRegistrationResponse> register(
             @Valid @RequestBody TraineeRegistrationBody traineeRegistrationBody) {
         LOGGER.debug("Executing register process");
@@ -236,9 +236,9 @@ public class TraineeController {
         return ResponseEntity.ok(list);
     }
 
-    @PostMapping("/{userName}/trainers")
+    @PatchMapping("/{userName}/trainers")
     public ResponseEntity<?> assignTrainers(
-            @PathVariable String userName,
+            @PathVariable("userName") String userName,
             @RequestBody List<UpdateTraineeTrainerList> assignments) {
 
         List<Trainer> trainers = traineeService.updateTrainer(userName, assignments);

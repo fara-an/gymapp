@@ -46,7 +46,7 @@ public class UserController {
                     schema = @Schema(implementation = ErrorResponse.class)
             ))
     })
-    @PostMapping("/auth/login")
+    @PostMapping("/login")
     public ResponseEntity<?> login(
             @Valid @RequestBody Credentials credentials, HttpSession session) {
         performLogin(credentials.getUsername(), credentials.getPassword(), session);

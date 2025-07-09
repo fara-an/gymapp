@@ -56,6 +56,7 @@ public class TraineeServiceImpl implements TraineeService {
     }
 
     @Override
+    @Transactional
     public List<Trainer> updateTrainer(String traineeUsername, List<UpdateTraineeTrainerList> list) {
         Trainee trainee = traineeDao.findByUsername(traineeUsername)
                 .orElseThrow(() -> new EntityNotFoundException("Trainee not found"));
