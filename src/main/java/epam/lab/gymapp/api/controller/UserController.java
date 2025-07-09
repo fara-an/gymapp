@@ -56,8 +56,8 @@ public class UserController {
 
 
     @Operation(
-            summary = "Toggle trainee active status",
-            description = "Flips the trainee’s <em>isActive</em> flag (activate ⇄ deactivate)."
+            summary = "Toggle user active status",
+            description = "Flips the user’s <em>isActive</em> flag (activate ⇄ deactivate)."
     )
     @ApiResponses({
             @ApiResponse(
@@ -66,7 +66,7 @@ public class UserController {
             ),
             @ApiResponse(
                     responseCode = "404",
-                    description = "Trainee not found",
+                    description = "User not found",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ErrorResponse.class)
                     )
