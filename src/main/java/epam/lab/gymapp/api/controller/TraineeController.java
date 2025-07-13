@@ -1,6 +1,6 @@
 package epam.lab.gymapp.api.controller;
 
-import epam.lab.gymapp.dto.error.ErrorResponse;
+import epam.lab.gymapp.dto.MessageResponse;
 import epam.lab.gymapp.dto.mapper.TraineeMapper;
 import epam.lab.gymapp.dto.mapper.TrainerMapper;
 import epam.lab.gymapp.dto.mapper.TrainingMapper;
@@ -11,7 +11,6 @@ import epam.lab.gymapp.dto.request.update.UpdateTraineeDto;
 import epam.lab.gymapp.dto.response.get.TraineeGetResponse;
 import epam.lab.gymapp.dto.response.get.TrainerWithoutTraineesResponse;
 import epam.lab.gymapp.dto.response.register.TraineeRegistrationResponse;
-import epam.lab.gymapp.dto.response.textToJson.TextToJson;
 import epam.lab.gymapp.dto.response.training.TrainingResponse;
 import epam.lab.gymapp.model.Trainee;
 import epam.lab.gymapp.model.Trainer;
@@ -57,7 +56,7 @@ public class TraineeController {
                     description = "Registration successful",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorResponse.class)
+                            schema = @Schema(implementation = MessageResponse.class)
                     )
             ),
             @ApiResponse(
@@ -65,7 +64,7 @@ public class TraineeController {
                     description = "Validation failed (malformed body or policy violations)",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorResponse.class)
+                            schema = @Schema(implementation = MessageResponse.class)
                     )
             ),
             @ApiResponse(
@@ -73,7 +72,7 @@ public class TraineeController {
                     description = "Invalid credentials supplied",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorResponse.class)
+                            schema = @Schema(implementation = MessageResponse.class)
                     )
             )
     })
@@ -88,14 +87,6 @@ public class TraineeController {
 
     }
 
-
-
-    @PostMapping("/logout")
-    public ResponseEntity<?> logout(HttpSession httpSession) {
-        Credentials credentials = (Credentials) httpSession.getAttribute("credentials");
-        LOGGER.debug("Trainee {} is logging out", credentials.getUsername());
-        return ResponseEntity.ok("Trainee logged out");
-    }
 
 
     @Operation(
@@ -116,7 +107,7 @@ public class TraineeController {
                     description = "Trainee not found",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorResponse.class)
+                            schema = @Schema(implementation = MessageResponse.class)
                     )
             )
     })
@@ -136,7 +127,7 @@ public class TraineeController {
                     description = "Trainee updated successfully",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorResponse.class)
+                            schema = @Schema(implementation = MessageResponse.class)
                     )
             ),
             @ApiResponse(
@@ -144,7 +135,7 @@ public class TraineeController {
                     description = "Validation failed",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorResponse.class)
+                            schema = @Schema(implementation = MessageResponse.class)
                     )
             ),
             @ApiResponse(
@@ -152,7 +143,7 @@ public class TraineeController {
                     description = "Trainee not found",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorResponse.class)
+                            schema = @Schema(implementation = MessageResponse.class)
                     )
             )
     })
@@ -189,7 +180,7 @@ public class TraineeController {
                     description = "Trainee not found",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorResponse.class)
+                            schema = @Schema(implementation = MessageResponse.class)
                     )
             )
     })
@@ -198,7 +189,7 @@ public class TraineeController {
     public ResponseEntity<?> deleteTrainee(
             @PathVariable("username") String username) {
         traineeService.delete(username);
-        return ResponseEntity.ok(new TextToJson("Deleted trainee with username  " + username));
+        return ResponseEntity.ok(new MessageResponse("Deleted trainee with username  " + username));
     }
 
     @Operation(
@@ -221,7 +212,7 @@ public class TraineeController {
                     description = "Trainee not found",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorResponse.class)
+                            schema = @Schema(implementation = MessageResponse.class)
                     )
             )
     })

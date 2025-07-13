@@ -3,14 +3,17 @@ package epam.lab.gymapp.service.implementation;
 import epam.lab.gymapp.dao.interfaces.TraineeDao;
 import epam.lab.gymapp.dao.interfaces.TrainerDao;
 import epam.lab.gymapp.dao.interfaces.TrainingDao;
+import epam.lab.gymapp.dto.request.registration.RegistrationDto;
 import epam.lab.gymapp.dto.request.update.UpdateTraineeTrainerList;
 import epam.lab.gymapp.exceptions.EntityNotFoundException;
 import epam.lab.gymapp.model.Trainee;
 import epam.lab.gymapp.model.Trainer;
 import epam.lab.gymapp.model.Training;
 import epam.lab.gymapp.model.UserProfile;
+import epam.lab.gymapp.service.interfaces.AbstractProfileOperations;
 import epam.lab.gymapp.service.interfaces.TraineeService;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +24,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class TraineeServiceImpl implements TraineeService {
+public class TraineeServiceImpl extends AbstractProfileOperations<Trainee, TraineeDao> implements TraineeService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TraineeServiceImpl.class);
     private static final String SERVICE_NAME = "TraineeServiceImpl";
@@ -29,7 +32,8 @@ public class TraineeServiceImpl implements TraineeService {
     private final TrainerDao trainerDao;
     private final TrainingDao trainingDao;
 
-    public TraineeServiceImpl(TraineeDao traineeDao, TrainerDao trainerDao, TrainingDao trainingDao) {
+    public TraineeServiceImpl(TraineeDao traineeDao, TrainerDao trainerDao, TrainingDao trainingDao, PasswordEncoder passwordEncoder) {
+        super(passwordEncoder);
         this.traineeDao = traineeDao;
         this.trainerDao = trainerDao;
         this.trainingDao = trainingDao;
@@ -93,8 +97,6 @@ public class TraineeServiceImpl implements TraineeService {
 
 
     }
-
-
 
     @Override
     public TraineeDao getDao() {

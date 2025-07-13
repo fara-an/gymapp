@@ -1,6 +1,6 @@
 package epam.lab.gymapp.api.controller;
 
-import epam.lab.gymapp.dto.error.ErrorResponse;
+import epam.lab.gymapp.dto.MessageResponse;
 import epam.lab.gymapp.dto.mapper.TrainerMapper;
 import epam.lab.gymapp.dto.mapper.TrainingMapper;
 import epam.lab.gymapp.dto.request.registration.TrainerRegistrationBody;
@@ -56,7 +56,7 @@ public class TrainerController {
                     description = "Validation failed",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorResponse.class)
+                            schema = @Schema(implementation = MessageResponse.class)
                     )
             ),
             @ApiResponse(
@@ -64,7 +64,7 @@ public class TrainerController {
                     description = "Invalid credentials ",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorResponse.class)
+                            schema = @Schema(implementation = MessageResponse.class)
                     )
             )
     })
@@ -101,7 +101,7 @@ public class TrainerController {
                     description= "trainer not found",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorResponse.class)
+                            schema = @Schema(implementation = MessageResponse.class)
                     )
             )
     })
@@ -132,7 +132,7 @@ public class TrainerController {
                     description = "Validation failed",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorResponse.class)
+                            schema = @Schema(implementation = MessageResponse.class)
                     )
             ),
             @ApiResponse(
@@ -140,7 +140,7 @@ public class TrainerController {
                     description = "Trainer not found",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorResponse.class)
+                            schema = @Schema(implementation = MessageResponse.class)
                     )
             )
     })
@@ -180,7 +180,7 @@ public class TrainerController {
                     description = "Internal server error (DAO failure)",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorResponse.class)
+                            schema = @Schema(implementation = MessageResponse.class)
                     )
             )
     })
@@ -211,7 +211,7 @@ public class TrainerController {
                     description = "Trainer not found",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorResponse.class)
+                            schema = @Schema(implementation = MessageResponse.class)
                     )
             )
     })

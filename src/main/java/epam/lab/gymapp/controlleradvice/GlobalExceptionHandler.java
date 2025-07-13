@@ -1,7 +1,6 @@
 package epam.lab.gymapp.controlleradvice;
 
-import epam.lab.gymapp.dto.error.ErrorResponse;
-import epam.lab.gymapp.dto.response.textToJson.TextToJson;
+import epam.lab.gymapp.dto.MessageResponse;
 import epam.lab.gymapp.exceptions.DaoException;
 import epam.lab.gymapp.exceptions.EntityNotFoundException;
 import epam.lab.gymapp.exceptions.InvalidCredentialsException;
@@ -19,22 +18,22 @@ import java.util.stream.Collectors;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(DaoException.class)
-    public ResponseEntity<ErrorResponse> handleDaoException(DaoException ex, HttpServletRequest request) {
+    public ResponseEntity<MessageResponse> handleDaoException(DaoException ex) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(build(ex.getMessage()));
+                .body(build(ex.getUserMessage()));
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<?> handleEntityNotFoundException(EntityNotFoundException ex,
                                                                        HttpServletRequest request) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(new TextToJson(ex.getUserMessage()));
+                .body(build(ex.getUserMessage()));
     }
 
     @ExceptionHandler(InvalidCredentialsException.class)
     public ResponseEntity<?> handleInvalidCredentialsException(InvalidCredentialsException ex,
                                                                            HttpServletRequest request) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new TextToJson(ex.getUserMessage()));
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(build(ex.getUserMessage()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -42,31 +41,31 @@ public class GlobalExceptionHandler {
         String message = ex.getBindingResult().getFieldErrors().stream()
                 .map(err -> err.getField() + " " + err.getDefaultMessage())
                 .collect(Collectors.joining(";"));
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new TextToJson(message));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(build(message));
     }
 
     @ExceptionHandler( MissingServletRequestParameterException.class)
     public ResponseEntity<?> handleMissingParamException(MissingServletRequestParameterException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new TextToJson("Request parameter "+ex.getParameterName()+ "is missing in the  Url"));
+                .body(build("Request parameter "+ex.getParameterName()+ "is missing in the  Url"));
     }
 
     @ExceptionHandler(MissingPathVariableException.class)
     public ResponseEntity<?> handlePathVariableException(MissingPathVariableException ex){
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new TextToJson("Request parameter "+ex.getVariableName()+"is missing in the Url"));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(build("Request parameter "+ex.getVariableName()+"is missing in the Url"));
     }
 
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleValidationException(Exception ex, HttpServletRequest request) {
+    public ResponseEntity<MessageResponse> handleValidationException(Exception ex, HttpServletRequest request) {
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(build(
                 ex.getMessage()));
     }
 
-    private ErrorResponse build(String message) {
+    private MessageResponse build(String message) {
 
-        return ErrorResponse.builder()
+        return MessageResponse.builder()
                 .message(message)
                 .build();
     }

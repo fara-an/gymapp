@@ -1,11 +1,19 @@
 package epam.lab.gymapp.service.implementation;
 
 import epam.lab.gymapp.dao.interfaces.UserDao;
+import epam.lab.gymapp.model.UserProfile;
 import epam.lab.gymapp.service.interfaces.UserService;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
 
     UserDao userDao;
 
@@ -15,11 +23,25 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public void changePassword(String username, String oldPassword, String newPassword) {
-        userDao.changePassword(username,oldPassword, newPassword);
+        userDao.changePassword(username, oldPassword, newPassword);
     }
 
     @Override
     public void toggleActiveStatus(String username) {
-     userDao.toggleActiveStatus(username);
+        userDao.toggleActiveStatus(username);
+    }
+
+    @Override
+    public UserProfile findByUsername(String username) {
+        return userDao.findByUsername(username);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        UserProfile userProfile = userDao.findByUsername(username);
+        return new User(
+                userProfile.getUserName(),
+                userProfile.getPassword(),
+                List.of(new SimpleGrantedAuthority("ROLE_USER")));
     }
 }

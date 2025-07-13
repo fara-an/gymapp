@@ -12,6 +12,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Repository
 public class UserDaoImpl implements UserDao {
 
@@ -21,6 +23,19 @@ public class UserDaoImpl implements UserDao {
 
     public UserDaoImpl(CreateReadDao<UserProfile, Long> dao) {
         this.dao = dao;
+    }
+
+    @Transactional
+    public UserProfile findByUsername(String username) {
+        String serviceName = getClass().getSimpleName();
+        LOGGER.debug("{}: SERVICE - Finding  user with username: {}", serviceName, username);
+
+        UserProfile userProfile = dao.findByUsername(username).orElseThrow(() -> {
+            String msg = String.format("%s: Entity with username '%s' not found.", serviceName, username);
+            LOGGER.error("{}: SERVICE ERROR - Entity with username '{}' not found", serviceName, username);
+            return new EntityNotFoundException(msg);
+        });
+        return userProfile;
     }
 
     @Transactional
