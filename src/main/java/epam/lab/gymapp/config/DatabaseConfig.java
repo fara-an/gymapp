@@ -29,7 +29,6 @@ public class DatabaseConfig {
     @Value("${spring.datasource.password}")
     private String jdbcPassword;
 
-
     @Value("${hibernate.packagesToScan}")
     private String packagesToScan;
 
