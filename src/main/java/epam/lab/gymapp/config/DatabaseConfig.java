@@ -15,7 +15,6 @@ import javax.sql.DataSource;
 import java.util.Properties;
 
 @Configuration
-@PropertySource("classpath:application.properties")   // <‑‑ add this
 public class DatabaseConfig {
 
     @Value("${spring.datasource.driver-class-name}")
@@ -100,7 +99,7 @@ public class DatabaseConfig {
     }
 
     @Bean
-    @Profile("staging")
+    @Profile("prod")
     public LocalSessionFactoryBean getSessionFactoryProd(){
         LocalSessionFactoryBean sessionFactoryBean = new LocalSessionFactoryBean();
         sessionFactoryBean.setDataSource(getDataSource());

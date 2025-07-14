@@ -10,9 +10,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.filter.DelegatingFilterProxy;
 
 
-@SpringBootApplication(exclude = HibernateJpaAutoConfiguration.class)
+@SpringBootApplication (exclude = HibernateJpaAutoConfiguration.class)
 @EnableTransactionManagement
-
 public class GymApplication {
     public static void main(String[] args) {
         SpringApplication.run(GymApplication.class, args);
