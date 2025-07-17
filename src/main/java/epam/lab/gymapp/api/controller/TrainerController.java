@@ -1,11 +1,9 @@
 package epam.lab.gymapp.api.controller;
 
-import epam.lab.gymapp.dto.MessageResponse;
 import epam.lab.gymapp.dto.mapper.TrainerMapper;
 import epam.lab.gymapp.dto.mapper.TrainingMapper;
 import epam.lab.gymapp.dto.request.registration.TrainerRegistrationBody;
 import epam.lab.gymapp.dto.request.update.UpdateTrainerDto;
-import epam.lab.gymapp.dto.response.get.TraineeGetResponse;
 import epam.lab.gymapp.dto.response.get.TrainerGetResponse;
 import epam.lab.gymapp.dto.response.get.TrainerWithoutTraineesResponse;
 import epam.lab.gymapp.dto.response.register.TrainerRegistrationResponse;
@@ -15,11 +13,6 @@ import epam.lab.gymapp.model.Training;
 import epam.lab.gymapp.model.TrainingType;
 import epam.lab.gymapp.service.interfaces.TrainerService;
 import epam.lab.gymapp.service.interfaces.TrainingTypeService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -41,33 +34,6 @@ public class TrainerController {
     }
 
 
-
-    @ApiResponses({
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Registration successful",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = TrainerRegistrationResponse.class)
-                    )
-            ),
-            @ApiResponse(
-                    responseCode = "400",
-                    description = "Validation failed",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = MessageResponse.class)
-                    )
-            ),
-            @ApiResponse(
-                    responseCode = "401",
-                    description = "Invalid credentials ",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = MessageResponse.class)
-                    )
-            )
-    })
     @PostMapping("/")
     public ResponseEntity<TrainerRegistrationResponse> register(
             @Valid @RequestBody TrainerRegistrationBody registrationDto, HttpSession session) {
@@ -82,29 +48,6 @@ public class TrainerController {
     }
 
 
-
-    @Operation(
-            summary = "Fetch trainer profile",
-            description = "Looks up a trainer by username and returns their profile along with assigned trainers."
-    )
-    @ApiResponses({
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "trainer found",
-                    content      = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = TrainerGetResponse.class)
-                    )
-            ),
-            @ApiResponse(
-                    responseCode = "404",
-                    description= "trainer not found",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = MessageResponse.class)
-                    )
-            )
-    })
     @GetMapping("/{username}")
     public ResponseEntity<?> getTrainer(
             @PathVariable("username") String username) {
@@ -114,36 +57,6 @@ public class TrainerController {
 
     }
 
-    @Operation(
-            summary = "Update trainer profile",
-            description = "Overwrites selected fields of the trainer identified by ID and returns the updated profile."
-    )
-    @ApiResponses({
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Trainer updated successfully",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = TraineeGetResponse.class)
-                    )
-            ),
-            @ApiResponse(
-                    responseCode = "400",
-                    description = "Validation failed",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = MessageResponse.class)
-                    )
-            ),
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "Trainer not found",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = MessageResponse.class)
-                    )
-            )
-    })
     @PutMapping("/{id}")
     public ResponseEntity<?> updateTrainer(
             @PathVariable("id") Long id,
@@ -161,29 +74,7 @@ public class TrainerController {
 
     }
 
-    @Operation(
-            summary = "List unassigned trainers",
-            description = "Returns all trainers not currently assigned to the given trainee."
-    )
-    @ApiResponses({
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "List retrieved successfully",
-                    content      = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = TrainerWithoutTraineesResponse.class)
-                    )
 
-            ),
-            @ApiResponse(
-                    responseCode = "500",
-                    description = "Internal server error (DAO failure)",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = MessageResponse.class)
-                    )
-            )
-    })
     @GetMapping("/{username}/unassigned-trainers")
     public ResponseEntity<?> getTrainersNotAssignedToTrainee(
             @PathVariable("username") String username) {
@@ -191,30 +82,6 @@ public class TrainerController {
         List<TrainerWithoutTraineesResponse> list = trainers.stream().map(t -> TrainerMapper.dtoWithoutTraineeList(t)).toList();
         return ResponseEntity.ok(list);
     }
-
-    @Operation(
-            summary = "List trainer trainings",
-            description = "Returns all trainings led by the specified trainer. "
-                    + "Optional filters: date range (`from`, `to`), trainer name, training type."
-    )
-    @ApiResponses({
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Trainings fetched successfully",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = TrainingResponse.class)
-                    )
-            ),
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "Trainer not found",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = MessageResponse.class)
-                    )
-            )
-    })
 
     @GetMapping("/{username}/trainings")
     public ResponseEntity<?> getTrainerTrainings(

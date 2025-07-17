@@ -6,6 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Profile;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.filter.DelegatingFilterProxy;
 
@@ -18,6 +19,7 @@ public class GymApplication {
     }
 
     @Bean
+    @Profile("!test")
     FilterRegistrationBean<DelegatingFilterProxy> authFilterRegistration() {
         FilterRegistrationBean<DelegatingFilterProxy> registration = new FilterRegistrationBean<>();
         registration.setFilter(new DelegatingFilterProxy("jwtAuthFilter"));
@@ -27,6 +29,7 @@ public class GymApplication {
     }
 
     @Bean
+    @Profile("!test")
     FilterRegistrationBean<DelegatingFilterProxy> transactionIdFilterRegistration() {
         FilterRegistrationBean<DelegatingFilterProxy> registration = new FilterRegistrationBean<>();
         registration.setFilter(new DelegatingFilterProxy("transactionIdFilter"));

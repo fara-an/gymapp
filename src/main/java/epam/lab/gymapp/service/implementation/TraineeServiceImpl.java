@@ -76,9 +76,7 @@ public class TraineeServiceImpl extends AbstractProfileOperations<Trainee, Train
     }
 
     private void updateTrainer(Trainee trainee, String trainerUserName, Long trainingId) {
-        // 1. Find the trainee
 
-        // 2. Find the training among the trainee's trainings
         Optional<Training> trainingOpt = trainee.getTrainings().stream()
                 .filter(t -> t.getId().equals(trainingId))
                 .findFirst();

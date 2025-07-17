@@ -5,7 +5,7 @@ INSERT INTO training_type (id, training_type_name) VALUES (3, 'Yoga');
 
 INSERT INTO userprofile (user_id, first_name, last_name, user_name, password, is_active) VALUES (1, 'John', 'Doe', 'John.Doe', 'pass123', true);
 INSERT INTO userprofile (user_id, first_name, last_name, user_name, password, is_active) VALUES (2, 'Jane', 'Smith', 'Jane.Smith', '$2a$12$6gje1w1tueyUwcsOcCW5H.NPrAG6E9VM12KppiCTvRecvavckBiva', true);
-INSERT INTO userprofile (user_id, first_name, last_name, user_name, password, is_active) VALUES (3, 'Emily', 'Brown', 'Emily.Brown', 'pass789', true);
+INSERT INTO userprofile (user_id, first_name, last_name, user_name, password, is_active) VALUES (3, 'Emily', 'Brown', 'Emily.Brown', '$2a$12$tiYThuCaupso8folIuope.tQF7ifzKoLbi.jiat1Y0RanTLCyd1v6', true);
 INSERT INTO userprofile (user_id, first_name, last_name, user_name, password, is_active) VALUES (4, 'Michael', 'White', 'Michael.White', 'pass999', true);
 INSERT INTO userprofile (user_id, first_name, last_name, user_name, password, is_active) VALUES (5, 'Clementine', 'Krujencki', 'Clementine.Krujencki', 'pass000',true);
 -- Insert Trainers
