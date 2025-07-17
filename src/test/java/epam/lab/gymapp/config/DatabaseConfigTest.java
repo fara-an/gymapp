@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -32,12 +31,10 @@ class DatabaseConfigTest {
 
         @Test
         void testProdDataSource() {
-            // Act
             DataSource dataSource = databaseConfig.getDataSource();
 
-            // Assert
             assertNotNull(dataSource, "DataSource should not be null");
-            assertTrue(dataSource instanceof HikariDataSource, "Should be HikariDataSource in production");
+            assertInstanceOf(HikariDataSource.class, dataSource, "Should be HikariDataSource in production");
             
             try (HikariDataSource hikariDataSource = (HikariDataSource) dataSource) {
                 assertEquals("org.h2.Driver", hikariDataSource.getDriverClassName());
@@ -71,7 +68,7 @@ class DatabaseConfigTest {
 
             // Assert
             assertNotNull(dataSource, "DataSource should not be null in test profile");
-            assertTrue(dataSource instanceof HikariDataSource, "Should be HikariDataSource in test profile");
+            assertInstanceOf(HikariDataSource.class, dataSource, "Should be HikariDataSource in test profile");
             
             try (HikariDataSource hikariDataSource = (HikariDataSource) dataSource) {
                 assertEquals("jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;MODE=PostgreSQL", hikariDataSource.getJdbcUrl());
