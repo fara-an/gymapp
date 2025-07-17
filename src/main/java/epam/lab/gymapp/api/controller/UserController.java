@@ -5,7 +5,6 @@ import epam.lab.gymapp.dto.request.changePassword.PasswordChangeDto;
 import epam.lab.gymapp.dto.request.login.Credentials;
 import epam.lab.gymapp.dto.response.login.LoginResponse;
 import epam.lab.gymapp.jwt.JwtService;
-import epam.lab.gymapp.service.interfaces.AuthenticationService;
 import epam.lab.gymapp.service.interfaces.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -25,14 +24,12 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserService userService;
-    private final AuthenticationService authenticationService;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
 
 
-    public UserController(UserService userService, AuthenticationService authenticationService, AuthenticationManager authenticationManager, JwtService jwtService) {
+    public UserController(UserService userService,  AuthenticationManager authenticationManager, JwtService jwtService) {
         this.userService = userService;
-        this.authenticationService = authenticationService;
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
     }

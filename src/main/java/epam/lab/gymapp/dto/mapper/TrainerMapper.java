@@ -21,7 +21,7 @@ public class TrainerMapper {
         return TrainerGetResponse.builder()
                 .firstName(trainer.getFirstName())
                 .lastName(trainer.getLastName())
-                .isActive(trainer.getIsActive())
+                .active(trainer.getIsActive())
                 .specialization(trainer.getSpecialization())
                 .trainees(responseTrainers)
                 .build();
