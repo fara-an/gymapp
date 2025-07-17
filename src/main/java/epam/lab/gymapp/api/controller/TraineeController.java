@@ -32,7 +32,6 @@ import java.util.List;
 public class TraineeController {
     private final Logger LOGGER = LoggerFactory.getLogger(TraineeController.class);
 
-
     private final TraineeService traineeService;
     private final MeterRegistry meterRegistry;
 

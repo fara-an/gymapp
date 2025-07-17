@@ -13,6 +13,7 @@ import epam.lab.gymapp.model.Training;
 import epam.lab.gymapp.model.TrainingType;
 import epam.lab.gymapp.service.interfaces.TrainerService;
 import epam.lab.gymapp.service.interfaces.TrainingTypeService;
+import io.micrometer.core.annotation.Timed;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -83,6 +84,7 @@ public class TrainerController {
     }
 
     @GetMapping("/{username}/trainings")
+    @Timed(value = "api_endpoint_getTrainerTrainings_time", description = "Time to get Trainer's trainings")
     public ResponseEntity<?> getTrainerTrainings(
             @PathVariable("username") String userName,
             @RequestParam(value = "from", required = false) LocalDateTime from,
