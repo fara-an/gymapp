@@ -45,7 +45,7 @@ public class UserControllerTest {
 
     @Test
     void login_ShouldReturn200AndToken() throws Exception {
-        // Given
+
         String username = "johndoe";
         String password = "password123";
         String token = "mocked-jwt-token";
@@ -62,7 +62,6 @@ public class UserControllerTest {
         when(userService.loadUserByUsername(username)).thenReturn(userDetails);
         when(jwtService.generateToken(userDetails)).thenReturn(token);
 
-        // When & Then
         mockMvc.perform(post("/users/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(credentials)))
@@ -76,23 +75,20 @@ public class UserControllerTest {
     }
     @Test
     void toggleActiveStatus_ShouldReturn200() throws Exception {
-        // Given
+
         String username = "johndoe";
 
-        // No need to stub userService.toggleActiveStatus, it's void
         doNothing().when(userService).toggleActiveStatus(username);
 
-        // When & Then
         mockMvc.perform(patch("/users/{userName}", username))
                 .andExpect(status().isOk())
-                .andExpect(content().string("")); // empty body
+                .andExpect(content().string(""));
 
-        // Verify that service method was called
         verify(userService).toggleActiveStatus(username);
     }
     @Test
     void changePassword_ShouldReturn200AndSuccessMessage() throws Exception {
-        // Given
+
         PasswordChangeDto dto = PasswordChangeDto.builder()
                 .username("johndoe")
                 .oldPassword("oldPass123")

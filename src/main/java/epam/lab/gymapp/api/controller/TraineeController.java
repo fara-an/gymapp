@@ -16,7 +16,6 @@ import epam.lab.gymapp.model.Training;
 import epam.lab.gymapp.service.interfaces.TraineeService;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;

@@ -24,7 +24,6 @@ class DatabaseConfigTest {
         private final DatabaseConfig databaseConfig = new DatabaseConfig();
 
         {
-            // Initialize with production-like properties
             ReflectionTestUtils.setField(databaseConfig, "driverClassName", "org.h2.Driver");
             ReflectionTestUtils.setField(databaseConfig, "jdbcUrl", "jdbc:h2:mem:prodDb;DB_CLOSE_DELAY=-1;MODE=PostgreSQL");
             ReflectionTestUtils.setField(databaseConfig, "jdbcUsername", "prod_user");

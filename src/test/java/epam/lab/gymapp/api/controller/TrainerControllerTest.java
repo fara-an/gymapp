@@ -1,6 +1,5 @@
 package epam.lab.gymapp.api.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import epam.lab.gymapp.dto.mapper.TrainerMapper;
 import epam.lab.gymapp.dto.mapper.TrainingMapper;
@@ -10,7 +9,6 @@ import epam.lab.gymapp.dto.response.get.TrainerGetResponse;
 import epam.lab.gymapp.dto.response.get.TrainerWithoutTraineesResponse;
 import epam.lab.gymapp.dto.response.training.TrainingResponse;
 import epam.lab.gymapp.exceptions.EntityNotFoundException;
-import epam.lab.gymapp.model.Trainee;
 import epam.lab.gymapp.model.Trainer;
 import epam.lab.gymapp.model.Training;
 import epam.lab.gymapp.model.TrainingType;
@@ -32,7 +30,6 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -99,17 +96,14 @@ public class TrainerControllerTest {
         registrationDto.setLastName("Doe");
         registrationDto.setTrainingType("Unknown");
 
-        // Simulate that training type is not found
         when(trainingTypeService.findByName("Unknown"))
                 .thenThrow(new EntityNotFoundException("Training type not found"));
 
-        // When
         mockMvc.perform(post("/trainers")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(registrationDto)))
                 .andExpect(status().isNotFound()); // or .isBadRequest() depending on your exception handler
 
-        // Then: Ensure createProfile was **not called**
         verify(trainerService, never()).createProfile(any());
     }
 
@@ -189,16 +183,13 @@ public class TrainerControllerTest {
                 .trainees(Collections.emptyList())
                 .build();
 
-        // Mock trainerService
         when(trainerService.updateProfile(any(Trainer.class)))
                 .thenReturn(updatedTrainer);
 
-        // Mock static method using try-with-resources
         try (MockedStatic<TrainerMapper> mockedStatic = Mockito.mockStatic(TrainerMapper.class)) {
             mockedStatic.when(() -> TrainerMapper.dtoWithTraineeList(updatedTrainer))
                     .thenReturn(response);
 
-            // Perform the request
             mockMvc.perform(put("/trainers/{id}", id)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content("""
@@ -214,7 +205,6 @@ public class TrainerControllerTest {
                     .andExpect(jsonPath("$.lastName").value("Doe"))
                     .andExpect(jsonPath("$.active").value(true));
 
-            // Verify static method was called
             mockedStatic.verify(() -> TrainerMapper.dtoWithTraineeList(updatedTrainer), times(1));
         }
     }
@@ -265,7 +255,6 @@ public class TrainerControllerTest {
             mockedStatic.when(() -> TrainerMapper.dtoWithoutTraineeList(trainer1)).thenReturn(response1);
             mockedStatic.when(() -> TrainerMapper.dtoWithoutTraineeList(trainer2)).thenReturn(response2);
 
-            // When & Then
             mockMvc.perform(get("/trainers/{username}/unassigned-trainers", username))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.length()").value(2))
@@ -283,11 +272,9 @@ public class TrainerControllerTest {
 
     @Test
     public void getTrainerTrainings_ShouldReturnTrainingList() throws Exception {
-        // Given
+
         String username = "trainer1";
-        LocalDateTime from = LocalDateTime.of(2024, 1, 1, 0, 0);
-        LocalDateTime to = LocalDateTime.of(2024, 12, 31, 23, 59);
-        String traineeName = "John";
+           String traineeName = "John";
         String trainingType = "Cardio";
 
         Training training1 = Training.builder()

@@ -13,7 +13,6 @@ import epam.lab.gymapp.model.Training;
 import epam.lab.gymapp.model.TrainingType;
 import epam.lab.gymapp.service.interfaces.TrainerService;
 import epam.lab.gymapp.service.interfaces.TrainingTypeService;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

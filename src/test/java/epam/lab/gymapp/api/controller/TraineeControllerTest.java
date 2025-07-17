@@ -301,7 +301,6 @@ public class TraineeControllerTest {
             mockedStatic.when(() -> TrainerMapper.dtoWithoutTraineeList(trainer1)).thenReturn(response1);
             mockedStatic.when(() -> TrainerMapper.dtoWithoutTraineeList(trainer2)).thenReturn(response2);
 
-            // When & Then
             mockMvc.perform(patch("/trainees/{userName}/trainers", userName)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(assignmentList)))
