@@ -54,7 +54,6 @@ class DatabaseConfigTest {
         private final DatabaseConfig databaseConfig = new DatabaseConfig();
 
         {
-            // Initialize with test properties
             ReflectionTestUtils.setField(databaseConfig, "driverClassName", "org.h2.Driver");
             ReflectionTestUtils.setField(databaseConfig, "jdbcUrl", "jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;MODE=PostgreSQL");
             ReflectionTestUtils.setField(databaseConfig, "jdbcUsername", "test_user");
@@ -63,10 +62,8 @@ class DatabaseConfigTest {
 
         @Test
         void testTestDataSource() {
-            // Act
             DataSource dataSource = databaseConfig.getDataSource();
 
-            // Assert
             assertNotNull(dataSource, "DataSource should not be null in test profile");
             assertInstanceOf(HikariDataSource.class, dataSource, "Should be HikariDataSource in test profile");
             
