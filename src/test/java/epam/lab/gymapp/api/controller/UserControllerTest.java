@@ -14,6 +14,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -40,6 +41,9 @@ public class UserControllerTest {
     @MockitoBean
     private JwtService jwtService;
 
+    @MockitoBean
+    UserDetailsService userDetailsService;
+
     @Autowired
     private ObjectMapper objectMapper;
 
@@ -59,7 +63,7 @@ public class UserControllerTest {
                 .roles("USER")
                 .build();
 
-        when(userService.loadUserByUsername(username)).thenReturn(userDetails);
+        when(userDetailsService.loadUserByUsername(username)).thenReturn(userDetails);
         when(jwtService.generateToken(userDetails)).thenReturn(token);
 
         mockMvc.perform(post("/users/login")
@@ -70,7 +74,7 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.token").value(token));
 
         verify(authenticationManager).authenticate(any(UsernamePasswordAuthenticationToken.class));
-        verify(userService).loadUserByUsername(username);
+        verify(userDetailsService).loadUserByUsername(username);
         verify(jwtService).generateToken(userDetails);
     }
     @Test

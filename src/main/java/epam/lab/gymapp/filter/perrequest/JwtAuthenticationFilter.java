@@ -1,5 +1,6 @@
 package epam.lab.gymapp.filter.perrequest;
 
+import epam.lab.gymapp.service.interfaces.TokenBlacklistService;
 import epam.lab.gymapp.jwt.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -27,6 +28,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private static final Logger LOGGER = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
     private final UserDetailsService userDetailsService;
     private final JwtService jwtService;
+    private final TokenBlacklistService tokenBlacklistService;
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
@@ -45,8 +47,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
+
         final String jwt = authHeader.substring(7);
         final String username = jwtService.extractUsername(jwt);
+
+        if (tokenBlacklistService.isTokenBlacklisted(jwt)) {
+            LOGGER.debug("Token is blacklisted, cannot authenticate user");
+            filterChain.doFilter(request, response);
+        }
+
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);

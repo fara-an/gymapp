@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.time.Instant;
 import java.util.Date;
 import java.util.function.Function;
 
@@ -47,6 +48,10 @@ public class JwtService {
 
     private boolean isTokenExpired(String token) {
         return extractAllClaims(token).getExpiration().before(new Date());
+    }
+
+    public Instant extractExpiration(String token){
+        return extractClaim(token, Claims::getExpiration).toInstant();
     }
 
     private <T> T extractClaim(String token, Function<Claims, T> resolver) {

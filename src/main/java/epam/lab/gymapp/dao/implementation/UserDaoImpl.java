@@ -9,6 +9,7 @@ import epam.lab.gymapp.model.UserProfile;
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,8 +22,11 @@ public class UserDaoImpl implements UserDao {
 
     CreateReadDao<UserProfile, Long> dao;
 
-    public UserDaoImpl(CreateReadDao<UserProfile, Long> dao) {
+    private final PasswordEncoder passwordEncoder;
+
+    public UserDaoImpl(CreateReadDao<UserProfile, Long> dao, PasswordEncoder passwordEncoder) {
         this.dao = dao;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Transactional
@@ -50,10 +54,10 @@ public class UserDaoImpl implements UserDao {
                     return new EntityNotFoundException(msg);
                 });
 
-        if (!oldPassword.equals(entity.getPassword())) {
+        if (!passwordEncoder.matches(oldPassword,entity.getPassword())) {
             throw new InvalidCredentialsException(username);
         }
-        entity.setPassword(newPassword);
+        entity.setPassword(passwordEncoder.encode(newPassword));
         try {
             Session session = dao.getSessionFactory().getCurrentSession();
             session.merge(entity);

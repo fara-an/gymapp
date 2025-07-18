@@ -8,6 +8,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -19,6 +20,9 @@ public class UserServiceImplTest {
 
     @Mock
     private UserDao userDao;
+
+    @Mock
+    private UserDetailsService userDetailsService;
 
     @InjectMocks
     UserServiceImpl userService;
@@ -68,7 +72,7 @@ public class UserServiceImplTest {
 
         when(userDao.findByUsername(username)).thenReturn(userProfile);
 
-        UserDetails userDetails = userService.loadUserByUsername(username);
+        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
         assertEquals(username, userDetails.getUsername());
         assertEquals(password, userDetails.getPassword());
@@ -83,7 +87,7 @@ public class UserServiceImplTest {
         when(userDao.findByUsername(username)).thenThrow(new UsernameNotFoundException("User not found"));
 
         assertThrows(UsernameNotFoundException.class, () -> {
-            userService.loadUserByUsername(username);
+            userDetailsService.loadUserByUsername(username);
         });
     }
 
