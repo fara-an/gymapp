@@ -1,6 +1,7 @@
 package epam.lab.gymapp.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import epam.lab.gymapp.config.metric.MetricsConfig;
 import epam.lab.gymapp.dto.mapper.TraineeMapper;
 import epam.lab.gymapp.dto.mapper.TrainerMapper;
 import epam.lab.gymapp.dto.mapper.TrainingMapper;
@@ -20,6 +21,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
@@ -39,6 +41,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 @WebMvcTest(value = TraineeController.class)
 @Import(NoSecurityConfig.class)
+@ImportAutoConfiguration(exclude = MetricsConfig.class)
 public class TraineeControllerTest {
 
     @Autowired
@@ -255,14 +258,12 @@ public class TraineeControllerTest {
 
     @Test
     void assignTrainers_ShouldReturnTrainerList() throws Exception {
-        // Given
         String userName = "john123";
         List<UpdateTraineeTrainerList> assignmentList = List.of(
                 new UpdateTraineeTrainerList("trainerA", 101L),
                 new UpdateTraineeTrainerList("trainerB", 102L)
         );
 
-        // Mock trainer entities
         Trainer trainer1 = Trainer.builder()
                 .firstName("Alice")
                 .lastName("Smith")

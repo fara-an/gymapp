@@ -1,12 +1,16 @@
 package epam.lab.gymapp.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import epam.lab.gymapp.GymApplication;
+import epam.lab.gymapp.config.metric.MetricsConfig;
 import epam.lab.gymapp.dto.request.changePassword.PasswordChangeDto;
 import epam.lab.gymapp.dto.request.login.Credentials;
 import epam.lab.gymapp.jwt.JwtService;
+import epam.lab.gymapp.service.implementation.TokenBlacklistService;
 import epam.lab.gymapp.service.interfaces.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
@@ -27,6 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 @WebMvcTest(UserController.class)
 @Import(NoSecurityConfig.class)
+@ImportAutoConfiguration(exclude = MetricsConfig.class)
 public class UserControllerTest {
 
     @Autowired
@@ -42,7 +47,10 @@ public class UserControllerTest {
     private JwtService jwtService;
 
     @MockitoBean
-    UserDetailsService userDetailsService;
+    private UserDetailsService userDetailsService;
+
+    @MockitoBean
+    private TokenBlacklistService tokenBlacklistService;
 
     @Autowired
     private ObjectMapper objectMapper;

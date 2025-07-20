@@ -40,8 +40,5 @@ public class GymApplication {
         return registration;
     }
 
-    @Bean
-    public TimedAspect timedAspect(MeterRegistry registry) {
-        return new TimedAspect(registry);
-    }
+
 }

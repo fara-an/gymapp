@@ -1,16 +1,10 @@
 package epam.lab.gymapp.model;
-
-import jakarta.persistence.*;
+import lombok.EqualsAndHashCode;
 
 import java.time.Instant;
 
-@Entity
-@Table(name = "blacklisted_tokens")
+@EqualsAndHashCode
 public class BlacklistedToken {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
     private String token;
 
@@ -21,6 +15,4 @@ public class BlacklistedToken {
         this.expiryDate = expiryDate;
     }
 
-    protected BlacklistedToken() {
-    }
 }

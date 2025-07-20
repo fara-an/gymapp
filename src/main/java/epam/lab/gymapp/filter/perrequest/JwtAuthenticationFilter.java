@@ -1,6 +1,6 @@
 package epam.lab.gymapp.filter.perrequest;
 
-import epam.lab.gymapp.service.interfaces.TokenBlacklistService;
+import epam.lab.gymapp.service.implementation.TokenBlacklistService;
 import epam.lab.gymapp.jwt.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

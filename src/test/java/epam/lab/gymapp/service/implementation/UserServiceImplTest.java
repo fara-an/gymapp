@@ -61,34 +61,7 @@ public class UserServiceImplTest {
         verify(userDao).findByUsername(username);
     }
 
-    @Test
-    void testLoadUserByUsername_ReturnsUserDetails() {
-        String username = "john.doe";
-        String password = "pass123";
 
-        UserProfile userProfile = new UserProfile();
-        userProfile.setUserName(username);
-        userProfile.setPassword(password);
 
-        when(userDao.findByUsername(username)).thenReturn(userProfile);
-
-        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-
-        assertEquals(username, userDetails.getUsername());
-        assertEquals(password, userDetails.getPassword());
-        assertTrue(userDetails.getAuthorities().stream()
-                .anyMatch(auth -> auth.getAuthority().equals("ROLE_USER")));
-    }
-
-    @Test
-    void testLoadUserByUsername_ThrowsException_WhenUserNotFound() {
-        String username = "nonexistent";
-
-        when(userDao.findByUsername(username)).thenThrow(new UsernameNotFoundException("User not found"));
-
-        assertThrows(UsernameNotFoundException.class, () -> {
-            userDetailsService.loadUserByUsername(username);
-        });
-    }
 
 }

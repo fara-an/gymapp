@@ -1,46 +1,35 @@
 package epam.lab.gymapp.dao.implementation;
 
+import epam.lab.gymapp.jwt.JwtService;
 import epam.lab.gymapp.model.BlacklistedToken;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
-
+import org.springframework.stereotype.Component;
 import java.time.Instant;
+import java.util.*;
 
-@Repository
+
+@Component
 @RequiredArgsConstructor
 public class TokenBlacklistDao {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TokenBlacklistDao.class);
-    private final SessionFactory sessionFactory;
+    private final JwtService jwtService;
+    private final Set<BlacklistedToken> blacklistedTokens = new HashSet<>();
 
 
-    @Transactional
     public void save(BlacklistedToken token) {
         LOGGER.debug("Token is being blacklisted ");
-        sessionFactory.getCurrentSession().persist(token);
+        blacklistedTokens.add(token);
+
     }
-    @Transactional(readOnly = true)
+
     public boolean isBlacklisted(String token) {
         LOGGER.debug("Checking whether token is blacklisted or not  ");
-        String hql = "SELECT COUNT(t) FROM BlacklistedToken t WHERE t.token = :token";
-        Long count = sessionFactory.getCurrentSession()
-                .createQuery(hql, Long.class)
-                .setParameter("token", token)
-                .uniqueResult();
-
-        return count != null && count > 0;
+        Instant instant = jwtService.extractExpiration(token);
+        BlacklistedToken jwtToken = new BlacklistedToken(token,instant);
+        return blacklistedTokens.contains(jwtToken);
     }
 
-    @Transactional
-    public void deleteExpiredTokens() {
-        String hql = "DELETE FROM BlacklistedToken t WHERE t.expiryDate < :now";
-        sessionFactory.getCurrentSession()
-                .createQuery(hql)
-                .setParameter("now", Instant.now())
-                .executeUpdate();
-    }
 }

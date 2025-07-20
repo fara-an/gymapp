@@ -1,6 +1,6 @@
 package epam.lab.gymapp.api.controller;
 
-import epam.lab.gymapp.service.interfaces.TokenBlacklistService;
+import epam.lab.gymapp.service.implementation.TokenBlacklistService;
 import epam.lab.gymapp.dto.MessageResponse;
 import epam.lab.gymapp.dto.request.changePassword.PasswordChangeDto;
 import epam.lab.gymapp.dto.request.login.Credentials;
@@ -31,8 +31,6 @@ public class UserController {
     private final TokenBlacklistService tokenBlacklistService;
 
 
-
-
     @PostMapping("/login")
     public ResponseEntity<?> login(
             @Valid @RequestBody Credentials credentials) {
@@ -61,16 +59,10 @@ public class UserController {
     }
 
     @GetMapping("/logout")
-    public  ResponseEntity<?> logout(@RequestHeader("Authorization") String authHeader){
-//        if (authHeader==null || !authHeader.startsWith("Bearer")){
-//            return ResponseEntity.badRequest().build();
-//        }
-
+    public ResponseEntity<?> logout(@RequestHeader("Authorization") String authHeader) {
         String token = authHeader.substring(7);
         Instant expiry = jwtService.extractExpiration(token);
         tokenBlacklistService.blacklistToken(token, expiry);
-        return ResponseEntity.ok("Logged out successfully");
+        return ResponseEntity.ok(new MessageResponse("Logged out successfully"));
     }
-
-
 }

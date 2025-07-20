@@ -4,12 +4,13 @@ import org.springframework.stereotype.Service;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 public class LoginAttemptService {
 
     private static final int MAX_ATTEMPTS = 3;
-    private static final long BLOCK_TIME_MILLIS = 5 * 60 * 1000; // 5 minutes
+    private static final long BLOCK_TIME_MILLIS = 5 * 60 * 1000;
 
     private final Map<String, LoginFailRecord> attemptsCache = new ConcurrentHashMap<>();
 
@@ -30,23 +31,23 @@ public class LoginAttemptService {
 
         long elapsedTime = System.currentTimeMillis() - record.getLastFailedTime();
         if (elapsedTime > BLOCK_TIME_MILLIS) {
-            attemptsCache.remove(username); // unblock after timeout
+            attemptsCache.remove(username);
             return false;
         }
         return true;
     }
 
     private static class LoginFailRecord {
-        private int attempts = 0;
+        private final AtomicInteger attempts = new AtomicInteger(0);
         private long lastFailedTime = System.currentTimeMillis();
 
         void incrementAttempts() {
-            attempts++;
+            attempts.incrementAndGet();
             lastFailedTime = System.currentTimeMillis();
         }
 
         int getAttempts() {
-            return attempts;
+            return attempts.get();
         }
 
         long getLastFailedTime() {

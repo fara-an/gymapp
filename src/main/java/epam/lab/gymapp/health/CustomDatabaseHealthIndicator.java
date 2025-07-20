@@ -23,9 +23,9 @@ public class CustomDatabaseHealthIndicator implements HealthIndicator {
             tx.commit();
 
             if (result != null && result == 1) {
-                return Health.up().withDetail("database", "Available").build();
+                return Health.up().withDetail("database", "Database is up").build();
             } else {
-                return Health.down().withDetail("database", "Unexpected results").build();
+                return Health.down().withDetail("database", "Database is down").build();
             }
         } catch (Exception e) {
             if (tx != null) tx.rollback();

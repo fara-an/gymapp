@@ -1,4 +1,4 @@
-package epam.lab.gymapp.controlleradvice;
+package epam.lab.gymapp.controller.advice;
 
 import epam.lab.gymapp.dto.MessageResponse;
 import epam.lab.gymapp.exceptions.DaoException;
@@ -37,7 +37,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<?> handleValidationException(MethodArgumentNotValidException ex, HttpServletRequest request) {
+    public ResponseEntity<?> handleException(MethodArgumentNotValidException ex, HttpServletRequest request) {
         String message = ex.getBindingResult().getFieldErrors().stream()
                 .map(err -> err.getField() + " " + err.getDefaultMessage())
                 .collect(Collectors.joining(";"));
@@ -57,14 +57,11 @@ public class GlobalExceptionHandler {
 
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<MessageResponse> handleValidationException(Exception ex, HttpServletRequest request) {
-
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(build(
-                ex.getMessage()));
+    public ResponseEntity<MessageResponse> handleException() {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(build("It is not you it is us )"));
     }
 
     private MessageResponse build(String message) {
-
         return MessageResponse.builder()
                 .message(message)
                 .build();

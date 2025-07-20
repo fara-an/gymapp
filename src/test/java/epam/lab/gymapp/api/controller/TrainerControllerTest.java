@@ -14,6 +14,7 @@ import epam.lab.gymapp.model.Training;
 import epam.lab.gymapp.model.TrainingType;
 import epam.lab.gymapp.service.interfaces.TrainerService;
 import epam.lab.gymapp.service.interfaces.TrainingTypeService;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -51,6 +52,9 @@ public class TrainerControllerTest {
 
     @MockitoBean
     TrainingTypeService trainingTypeService;
+
+    @MockitoBean
+    MeterRegistry meterRegistry;
 
     private static final String TRAINING_TYPE_NAME = "Cardio";
     private static final String FIRSTNAME = "John";

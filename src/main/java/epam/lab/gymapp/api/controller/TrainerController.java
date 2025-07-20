@@ -96,10 +96,4 @@ public class TrainerController {
         return ResponseEntity.ok(list);
     }
 
-
-
-
-
-
-
 }

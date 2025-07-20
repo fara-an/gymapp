@@ -1,14 +1,13 @@
-package epam.lab.gymapp.service.interfaces;
+package epam.lab.gymapp.service.implementation;
 
 import epam.lab.gymapp.dao.implementation.TokenBlacklistDao;
 import epam.lab.gymapp.model.BlacklistedToken;
 import lombok.RequiredArgsConstructor;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.time.Instant;
 
-@Service
+@Component
 @RequiredArgsConstructor
 public class TokenBlacklistService {
 
@@ -20,10 +19,5 @@ public class TokenBlacklistService {
 
     public boolean isTokenBlacklisted(String token) {
         return blacklistDao.isBlacklisted(token);
-    }
-
-    @Scheduled(cron = "0 0 * * * *") // Optional cleanup every hour
-    public void cleanupExpiredTokens() {
-        blacklistDao.deleteExpiredTokens();
     }
 }
