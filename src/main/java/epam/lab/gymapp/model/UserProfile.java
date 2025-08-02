@@ -5,10 +5,11 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+
 @Entity
 @Table(name = "userprofile")
 @Inheritance(strategy = InheritanceType.JOINED)
-@AttributeOverride(name = "id",column = @Column(name = DatabaseConstants.COL_USER_ID))
+@AttributeOverride(name = "id", column = @Column(name = DatabaseConstants.COL_USER_ID))
 @Getter
 @Setter
 @SuperBuilder
@@ -30,4 +31,6 @@ public class UserProfile extends BaseEntity<Long> {
 
     @Column(name = DatabaseConstants.COL_IS_ACTIVE, nullable = false)
     private Boolean isActive;
+
+
 }

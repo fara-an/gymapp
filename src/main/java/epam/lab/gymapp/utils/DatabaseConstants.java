@@ -24,7 +24,8 @@ public final class DatabaseConstants {
     public static final String COL_TRAINEE_ID="trainee_id";
 
     public static final String COL_TRAINING_NAME = "training_name";
-    public static final String COL_TRAINING_DATE = "training_date";
+    public static final String COL_TRAINING_DATE_START = "training_date_start";
+    public static final String COL_TRAINING_DATE_END = "training_date_end";
     public static final String COL_TRAINING_DURATION = "training_duration";
     public static final String COL_TRAINING_TYPE_NAME = "training_type_name";
     public static final String COL_TRAINING_TYPE_ID = "training_type_id";

@@ -1,7 +1,7 @@
 package epam.lab.gymapp.dao.implementation;
 
 import epam.lab.gymapp.dao.interfaces.AuthenticationDao;
-import epam.lab.gymapp.dto.Credentials;
+import epam.lab.gymapp.dto.request.login.Credentials;
 import epam.lab.gymapp.exceptions.DaoException;
 import epam.lab.gymapp.model.UserProfile;
 import org.hibernate.Session;
@@ -28,7 +28,7 @@ public class AuthenticationDaoImpl implements AuthenticationDao {
     }
 
     @Override
-    public boolean validateCredentials(Credentials credentials) {
+    public boolean validateCredentials( Credentials credentials) {
         String username = credentials.getUsername();
         String password = credentials.getPassword();
         LOGGER.debug(LOG_VALIDATE_TEMPLATE, username);

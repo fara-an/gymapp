@@ -10,14 +10,15 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 
-public interface CreateReadDao <T extends BaseEntity<ID>,ID> {
+public interface CreateReadDao<T extends BaseEntity<ID>, ID> {
 
 
     SessionFactory getSessionFactory();
+
     Class<T> getEntityClass();
 
     Logger LOGGER = LoggerFactory.getLogger(CreateReadDao.class);
-    String FIND_BY_USERNAME= "FROM %s e WHERE e.user.username = :username";
+    String FIND_BY_USERNAME = "FROM %s e WHERE e.userName = :userName";
 
 
     default Optional<T> findByID(ID id) {
@@ -35,19 +36,19 @@ public interface CreateReadDao <T extends BaseEntity<ID>,ID> {
         }
     }
 
-    default Optional<T> findByUsername(String username) {
+    default Optional<T> findByUsername(String userName) {
         String className = getEntityClass().getSimpleName();
-        LOGGER.debug( "{}: DAO READ - Initiating read username for entity {}", className, username);
+        LOGGER.debug("{}: DAO READ - Initiating read username for entity {}", className, userName);
         try {
 
             Session session = getSessionFactory().getCurrentSession();
             String query = String.format(FIND_BY_USERNAME, className);
-            Query<T> tQuery = session.createQuery(query, getEntityClass()).setParameter("username", username);
+            Query<T> tQuery = session.createQuery(query, getEntityClass()).setParameter("userName", userName);
             return tQuery.uniqueResultOptional();
 
         } catch (Exception e) {
-            LOGGER.error("{}: DAO READ - Failed to read username for entity  {} – {}", className, username, e.getMessage());
-            String errorMessage = String.format("%s: DAO READ - Failed to read entity %s", className, username);
+            LOGGER.error("{}: DAO READ - Failed to read username for entity  {} – {}", className, userName, e.getMessage());
+            String errorMessage = String.format("%s: DAO READ - Failed to read entity %s", className, userName);
             throw new RuntimeException(errorMessage, e);
         }
     }
@@ -70,9 +71,4 @@ public interface CreateReadDao <T extends BaseEntity<ID>,ID> {
 
         }
     }
-
-
-
-
-
 }

@@ -1,11 +1,11 @@
 package epam.lab.gymapp.service.implementation;
 
+
+import epam.lab.gymapp.annotation.security.RequiresAuthentication;
 import epam.lab.gymapp.model.Trainer;
 import epam.lab.gymapp.model.Training;
 import epam.lab.gymapp.model.UserProfile;
 import epam.lab.gymapp.dao.interfaces.TrainerDao;
-import epam.lab.gymapp.dto.Credentials;
-import epam.lab.gymapp.service.interfaces.AuthenticationService;
 import epam.lab.gymapp.service.interfaces.TrainerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,28 +22,27 @@ public class TrainerServiceImpl implements TrainerService {
 
     private static final String SERVICE_NAME = "TrainerServiceImpl";
     private final TrainerDao trainerDao;
-    private final AuthenticationService authenticationService;
 
-    public TrainerServiceImpl(TrainerDao trainerDao, AuthenticationService authenticationService) {
+    public TrainerServiceImpl(TrainerDao trainerDao) {
         this.trainerDao = trainerDao;
-        this.authenticationService = authenticationService;
-    }
 
+    }
+    @RequiresAuthentication
     @Override
     @Transactional
-    public List<Training> getTrainerTrainings(Credentials credentials, String traineeUsername, LocalDateTime fromDate, LocalDateTime toDate, String trainerName, String trainingType) {
-        LOGGER.debug(SERVICE_NAME+" - Fetching trainings for trainer {} with [from={}, to={}, trainee={}]", trainerName, fromDate, toDate, traineeUsername);
-        List<Training> trainerTrainings = trainerDao.getTrainerTrainings(credentials, traineeUsername, fromDate, toDate, traineeUsername);
-        LOGGER.debug(SERVICE_NAME+" - Retrieved {} trainings for trainer {}", trainerTrainings.size(), trainerName);
+    public List<Training> getTrainerTrainings( String trainerUsername, LocalDateTime fromDate, LocalDateTime toDate, String traineeUsername, String trainingType) {
+        LOGGER.debug(SERVICE_NAME + " - Fetching trainings for trainer {} with [from={}, to={}, trainee={}]", trainerUsername, fromDate, toDate, traineeUsername);
+        List<Training> trainerTrainings = trainerDao.getTrainerTrainings( trainerUsername, fromDate, toDate, traineeUsername);
+        LOGGER.debug(SERVICE_NAME + " - Retrieved {} trainings for trainer {}", trainerTrainings.size(), trainerUsername);
         return trainerTrainings;
     }
 
     @Override
     @Transactional
     public List<Trainer> trainersNotAssignedToTrainee(String traineeUsername) {
-        LOGGER.debug(SERVICE_NAME+" - Initiating search for unassigned trainers (without trainees).");
+        LOGGER.debug(SERVICE_NAME + " - Initiating search for unassigned trainers (without trainees).");
         List<Trainer> trainers = trainerDao.trainersNotAssignedToTrainee(traineeUsername);
-        LOGGER.debug(SERVICE_NAME+"- Search completed. Found {} unassigned trainers.", trainers.size());
+        LOGGER.debug(SERVICE_NAME + "- Search completed. Found {} unassigned trainers.", trainers.size());
         return trainers;
     }
 
@@ -52,10 +51,6 @@ public class TrainerServiceImpl implements TrainerService {
         return trainerDao;
     }
 
-    @Override
-    public AuthenticationService getAuthService() {
-        return authenticationService;
-    }
 
 
     @Override
@@ -72,8 +67,9 @@ public class TrainerServiceImpl implements TrainerService {
 
     @Override
     public void updateProfileSpecificFields(Trainer existing, Trainer item) {
-        Optional.ofNullable(existing.getSpecialization())
-                .ifPresent(newSpecialization -> existing.setSpecialization(newSpecialization));
+        Optional.ofNullable(item.getSpecialization())
+                .ifPresent(newSpecialization->existing.setSpecialization(newSpecialization));
 
     }
+
 }
