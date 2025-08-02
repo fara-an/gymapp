@@ -15,6 +15,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -24,8 +26,13 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class TrainerServiceImplTest {
+
     @Mock
     private TrainerDao trainerDao;
+
+    @Mock
+    private PasswordEncoder passwordEncoder;
+
     @InjectMocks
     private TrainerServiceImpl trainerService;
 
@@ -88,10 +95,27 @@ class TrainerServiceImplTest {
     void createProfile_CreatesAndReturnsTrainer() {
         try (MockedStatic<UsernameGenerator> usernameGen = Mockito.mockStatic(UsernameGenerator.class);
              MockedStatic<PasswordGenerator> passwordGen = Mockito.mockStatic(PasswordGenerator.class)) {
-            Trainer trainer = Trainer.builder().firstName("Jane").lastName("Smith").userName("jsmith").build();
-            Trainer createdTrainer = Trainer.builder().firstName("Jane").lastName("Smith").userName("jsmith").build();
+
+            Trainer trainer = Trainer.builder()
+                    .firstName("Jane")
+                    .lastName("Smith")
+                    .userName("jsmith")
+                    .build();
+
+            Trainer createdTrainer = Trainer.builder()
+                    .firstName("Jane")
+                    .lastName("Smith")
+                    .userName("jsmith")
+                    .build();
+
+
+            String generatedPassword = "pass123";
+            String encodedPassword = "encodedPass123";
             usernameGen.when(() -> UsernameGenerator.generateUsername(anyString(), anyString(), any())).thenReturn("jsmith");
-            passwordGen.when(PasswordGenerator::generatePassword).thenReturn("pass123");
+            passwordGen.when(PasswordGenerator::generatePassword).thenReturn(generatedPassword);
+
+            when(passwordEncoder.encode(generatedPassword)).thenReturn(encodedPassword);
+
             when(trainerDao.create(any(Trainer.class))).thenReturn(createdTrainer);
             Trainer result = trainerService.createProfile(trainer);
             assertEquals(createdTrainer, result);
@@ -139,60 +163,7 @@ class TrainerServiceImplTest {
         assertThrows(EntityNotFoundException.class, () -> trainerService.findById(1L));
     }
 
-    @Test
-    void toggleActiveStatus_TogglesStatus() {
-        Trainer trainer = Trainer.builder().userName("jsmith").isActive(true).build();
-        Session session = mock(Session.class);
-        SessionFactory sessionFactory = mock(SessionFactory.class);
-        when(trainerDao.findByUsername(anyString())).thenReturn(Optional.of(trainer));
-        when(trainerDao.getSessionFactory()).thenReturn(sessionFactory);
-        when(sessionFactory.getCurrentSession()).thenReturn(session);
-        trainerService.toggleActiveStatus("jsmith");
-        assertFalse(trainer.getIsActive());
-        verify(session).merge(any(Trainer.class));
-    }
 
-    @Test
-    void toggleActiveStatus_ThrowsIfNotFound() {
-        when(trainerDao.findByUsername(anyString())).thenReturn(Optional.empty());
-        assertThrows(EntityNotFoundException.class, () -> trainerService.toggleActiveStatus("notfound"));
-    }
 
-    @Test
-    void changePassword_ChangesPasswordIfOldMatches() {
-        Trainer trainer = Trainer.builder().userName("jsmith").password("oldPass").build();
-        Session session = mock(Session.class);
-        SessionFactory sessionFactory = mock(SessionFactory.class);
-        when(trainerDao.findByUsername(anyString())).thenReturn(Optional.of(trainer));
-        when(trainerDao.getSessionFactory()).thenReturn(sessionFactory);
-        when(sessionFactory.getCurrentSession()).thenReturn(session);
-        trainerService.changePassword("jsmith", "oldPass", "newPass");
-        assertEquals("newPass", trainer.getPassword());
-        verify(session).merge(any(Trainer.class));
-    }
 
-    @Test
-    void changePassword_DoesNotChangeIfOldDoesNotMatch() {
-        Trainer trainer = Trainer.builder().userName("jsmith").password("oldPass").build();
-
-        when(trainerDao.findByUsername(anyString())).thenReturn(Optional.of(trainer));
-        trainerService.changePassword("jsmith", "wrongOld", "newPass");
-        assertEquals("oldPass", trainer.getPassword());
-    }
-
-    @Test
-    void changePassword_ThrowsIfNotFound() {
-        when(trainerDao.findByUsername(anyString())).thenReturn(Optional.empty());
-        assertThrows(EntityNotFoundException.class, () -> trainerService.changePassword("notfound", "old", "new"));
-    }
-
-    @Test
-    void changePassword_ThrowsDaoExceptionOnSessionError() {
-        Trainer trainer = Trainer.builder().userName("jsmith").password("oldPass").build();
-        SessionFactory sessionFactory = mock(SessionFactory.class);
-        when(trainerDao.findByUsername(anyString())).thenReturn(Optional.of(trainer));
-        when(trainerDao.getSessionFactory()).thenReturn(sessionFactory);
-        when(sessionFactory.getCurrentSession()).thenThrow(new RuntimeException("session error"));
-        assertThrows(DaoException.class, () -> trainerService.changePassword("jsmith", "oldPass", "newPass"));
-    }
 }

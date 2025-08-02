@@ -112,7 +112,7 @@ class TrainerDaoImplTest {
         Query<Trainer> query = mock(Query.class);
         when(session.createQuery(anyString(), eq(Trainer.class))).thenReturn(query);
         when(query.setParameter("userName", trainer.getUserName())).thenReturn(query);
-        when(query.uniqueResultOptional()).thenReturn(Optional.of(new Trainer()));
+        when(query.uniqueResultOptional()).thenReturn(Optional.of(trainer));
 
         Optional<Trainer> optionalTrainer = underTest.findByUsername(trainer.getUserName());
 
@@ -217,6 +217,7 @@ class TrainerDaoImplTest {
 
     @Test
     void getTrainerTrainings_wrapsExceptionAsDaoException() {
+        when(sessionFactory.getCurrentSession()).thenThrow(new DaoException("Session Failed"));
 
         assertThrows(
                 DaoException.class,

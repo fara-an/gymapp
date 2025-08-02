@@ -1,12 +1,19 @@
 package epam.lab.gymapp.service.implementation;
 
-import epam.lab.gymapp.annotation.security.RequiresAuthentication;
 import epam.lab.gymapp.dao.interfaces.TraineeDao;
+import epam.lab.gymapp.dao.interfaces.TrainerDao;
+import epam.lab.gymapp.dao.interfaces.TrainingDao;
+import epam.lab.gymapp.dto.request.registration.RegistrationDto;
+import epam.lab.gymapp.dto.request.update.UpdateTraineeTrainerList;
+import epam.lab.gymapp.exceptions.EntityNotFoundException;
 import epam.lab.gymapp.model.Trainee;
+import epam.lab.gymapp.model.Trainer;
 import epam.lab.gymapp.model.Training;
 import epam.lab.gymapp.model.UserProfile;
+import epam.lab.gymapp.service.interfaces.AbstractProfileOperations;
 import epam.lab.gymapp.service.interfaces.TraineeService;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,21 +21,26 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
-public class TraineeServiceImpl implements TraineeService {
+public class TraineeServiceImpl extends AbstractProfileOperations<Trainee, TraineeDao> implements TraineeService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TraineeServiceImpl.class);
     private static final String SERVICE_NAME = "TraineeServiceImpl";
     private final TraineeDao traineeDao;
+    private final TrainerDao trainerDao;
+    private final TrainingDao trainingDao;
 
-    public TraineeServiceImpl(TraineeDao traineeDao) {
+    public TraineeServiceImpl(TraineeDao traineeDao, TrainerDao trainerDao, TrainingDao trainingDao, PasswordEncoder passwordEncoder) {
+        super(passwordEncoder);
         this.traineeDao = traineeDao;
+        this.trainerDao = trainerDao;
+        this.trainingDao = trainingDao;
     }
 
     @Override
     @Transactional
-    @RequiresAuthentication
     public void delete(String username) {
         LOGGER.debug(SERVICE_NAME + " - Deleting trainee by username: {}", username);
         Long id = findByUsername(username).getId();
@@ -36,7 +48,7 @@ public class TraineeServiceImpl implements TraineeService {
         LOGGER.debug(SERVICE_NAME + " - Deleted trainee: {}", username);
     }
 
-    @RequiresAuthentication
+
     @Override
     @Transactional
     public List<Training> getTraineeTrainings(String traineeUsername, LocalDateTime fromDate, LocalDateTime toDate, String trainerName, String trainingType) {
@@ -44,6 +56,43 @@ public class TraineeServiceImpl implements TraineeService {
         List<Training> traineeTrainings = traineeDao.getTraineeTrainings(traineeUsername, fromDate, toDate, trainerName, trainingType);
         LOGGER.debug(SERVICE_NAME + " - Retrieved {} trainings for trainee {}", traineeTrainings.size(), traineeUsername);
         return traineeTrainings;
+
+    }
+
+    @Override
+    @Transactional
+    public List<Trainer> updateTrainer(String traineeUsername, List<UpdateTraineeTrainerList> list) {
+        Trainee trainee = traineeDao.findByUsername(traineeUsername)
+                .orElseThrow(() -> new EntityNotFoundException("Trainee not found"));
+
+        list.forEach(item -> updateTrainer(trainee, item.trainerUsername(), item.trainingId()));
+
+
+        List<Trainer> trainers = trainee.getTrainings().stream()
+                .map(Training::getTrainer)
+                .distinct()
+                .collect(Collectors.toList());
+        return trainers;
+    }
+
+    private void updateTrainer(Trainee trainee, String trainerUserName, Long trainingId) {
+
+        Optional<Training> trainingOpt = trainee.getTrainings().stream()
+                .filter(t -> t.getId().equals(trainingId))
+                .findFirst();
+
+        if (!trainingOpt.isPresent()) {
+            throw new IllegalArgumentException("This trainee is not enrolled in the specified training");
+        }
+
+        Training training = trainingOpt.get();
+
+        Trainer newTrainer = trainerDao.findByUsername(trainerUserName)
+                .orElseThrow(() -> new EntityNotFoundException("Trainer not found"));
+
+        training.setTrainer(newTrainer);
+        trainingDao.update(training);
+
 
     }
 

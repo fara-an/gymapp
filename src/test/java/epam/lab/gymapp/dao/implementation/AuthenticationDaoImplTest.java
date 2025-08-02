@@ -45,11 +45,12 @@ class AuthenticationDaoImplTest  {
 
     @Test
     void validateCredentials_WithValidCredentials_ReturnsTrue() {
+        UserProfile userProfile = UserProfile.builder().isActive(true).build();
         when(sessionFactory.getCurrentSession()).thenReturn(session);
         when(session.createQuery(AuthenticationDaoImpl.HQL_USERNAME_PASSWORD, UserProfile.class)).thenReturn(query);
         when(query.setParameter("username", credentials.getUsername())).thenReturn(query);
         when(query.setParameter("password", credentials.getPassword())).thenReturn(query);
-        when(query.uniqueResult()).thenReturn(new UserProfile());
+        when(query.uniqueResult()).thenReturn(userProfile);
 
         boolean result = underTest.validateCredentials(credentials);
 

@@ -1,5 +1,6 @@
 package epam.lab.gymapp.dao.implementation;
 
+import epam.lab.gymapp.dao.interfaces.TrainingDao;
 import epam.lab.gymapp.model.Trainee;
 import epam.lab.gymapp.model.Training;
 import epam.lab.gymapp.dao.base.BaseDao;
@@ -22,6 +23,8 @@ import java.util.List;
 @Repository
 public class TraineeDaoImpl extends BaseDao<Trainee, Long> implements TraineeDao {
     private static final Logger LOGGER = LoggerFactory.getLogger(TraineeDaoImpl.class);
+
+    TrainingDao trainingDao;
 
     public TraineeDaoImpl(SessionFactory sessionFactory) {
         super(Trainee.class, sessionFactory);
@@ -71,4 +74,9 @@ public class TraineeDaoImpl extends BaseDao<Trainee, Long> implements TraineeDao
             throw new DaoException(msg, ex);
         }
     }
+
+
+
+
+
 }

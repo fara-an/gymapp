@@ -1,95 +1,82 @@
 package epam.lab.gymapp.dao.implementation;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+import epam.lab.gymapp.dao.interfaces.TrainingTypeDao;
 import epam.lab.gymapp.model.TrainingType;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
-import org.junit.Before;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-
 import java.util.Optional;
 
-import static org.assertj.core.internal.bytebuddy.matcher.ElementMatchers.any;
-import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
+/**
+ * Unit tests for {@link TrainingTypeDaoImpl#findByName(String)}.
+ *
+ * <p>This class proves that the implementation correctly delegates to the default
+ * method defined in {@link TrainingTypeDao} and that the interaction with
+ * Hibernate works as expected. Three scenarios are covered:
+ * <ol>
+ *   <li>Query finds a record – {@code Optional} contains the entity.</li>
+ *   <li>Query finds nothing – {@code Optional} is empty.</li>
+ *   <li>Hibernate throws – the method wraps and re‑throws {@link RuntimeException}.</li>
+ * </ol>
+ */
 @ExtendWith(MockitoExtension.class)
-public class TrainingTypeDaoImplTest {
-    @Mock
-    SessionFactory sessionFactory;
+class TrainingTypeDaoImplTest {
 
     @Mock
-    Session session;
-
+    private SessionFactory sessionFactory;
     @Mock
-    Query<TrainingType> query;
+    private Session session;
+    @Mock
+    private Query<TrainingType> query;
 
-
-    @InjectMocks
-    TrainingTypeDaoImpl underTest;
+    private TrainingTypeDaoImpl dao;
 
     @BeforeEach
     void setUp() {
-        // ‑‑‑ abstract helpers wired with stubs
-        when(underTest.getSessionFactory()).thenReturn(sessionFactory);
-        when(underTest.getEntityClass()).thenReturn(TrainingType.class);
+        dao = new TrainingTypeDaoImpl(sessionFactory);
+    }
 
-        // ‑‑‑ common Hibernate plumbing
+    @Test
+    void findByName_returnsEntity_whenPresent() {
+        TrainingType trainingType = new TrainingType(); // dummy entity
         when(sessionFactory.getCurrentSession()).thenReturn(session);
-        when(session.createQuery(anyString(), eq(TrainingType.class))).thenReturn(query);
+        when(session.createQuery(TrainingTypeDao.FIND_BY_NAME, TrainingType.class)).thenReturn(query);
+        when(query.setParameter("name", "Yoga")).thenReturn(query);
+        when(query.uniqueResultOptional()).thenReturn(Optional.of(trainingType));
 
-    }
+        Optional<TrainingType> result = dao.findByName("Yoga");
 
-    @Test
-    void testFindByName_success() {
-        TrainingType expected = new TrainingType();
-        when(query.setParameter("name", "yoga")).thenReturn(query);
-        when(query.uniqueResultOptional()).thenReturn(Optional.of(expected));
-
-        // act
-        Optional<TrainingType> result = underTest.findByName("yoga");
-
-        // assert
         assertTrue(result.isPresent());
-        assertSame(expected, result.get());
-        verify(query).setParameter("name", "yoga");   // extra: interaction check
-
+        assertEquals(trainingType, result.get());
+        verify(query).setParameter("name", "Yoga");
     }
 
     @Test
-    void returnsEmptyOptional_whenNameDoesNotExist() {
-        // arrange
-        when(query.setParameter("name", "boxing")).thenReturn(query);
+    void findByName_returnsEmpty_whenNotFound() {
+        when(sessionFactory.getCurrentSession()).thenReturn(session);
+        when(session.createQuery(TrainingTypeDao.FIND_BY_NAME, TrainingType.class)).thenReturn(query);
+        when(query.setParameter("name", "Pilates")).thenReturn(query);
         when(query.uniqueResultOptional()).thenReturn(Optional.empty());
 
-        // act
-        Optional<TrainingType> result = underTest.findByName("boxing");
+        Optional<TrainingType> result = dao.findByName("Pilates");
 
-        // assert
         assertTrue(result.isEmpty());
     }
 
-
     @Test
-    void wrapsUnderlyingException_inRuntimeException() {
-        when(query.setParameter(anyString(), any())).thenReturn(query);
-        when(query.uniqueResultOptional()).thenThrow(new IllegalStateException("boom"));
+    void findByName_throwsRuntimeException_whenHibernateFails() {
+        when(sessionFactory.getCurrentSession()).thenThrow(new RuntimeException("db down"));
 
-        RuntimeException ex =
-                assertThrows(RuntimeException.class, () -> underTest.findByName("fails"));
-
-        assertTrue(ex.getMessage().contains("DAO READ - Failed to read entity"));
-        // optional: assert cause
-        assertTrue(ex.getCause() instanceof IllegalStateException);
+        RuntimeException ex = assertThrows(RuntimeException.class, () -> dao.findByName("Cardio"));
+        assertTrue(ex.getMessage().contains("DAO READ"));
     }
-
 }

@@ -1,6 +1,5 @@
 package epam.lab.gymapp.dao.interfaces;
 
-import epam.lab.gymapp.dto.request.login.Credentials;
 import epam.lab.gymapp.model.Trainer;
 import epam.lab.gymapp.model.Training;
 import org.springframework.stereotype.Repository;

@@ -1,6 +1,5 @@
 package epam.lab.gymapp.service.implementation;
 
-import epam.lab.gymapp.annotation.security.RequiresAuthentication;
 import epam.lab.gymapp.dao.interfaces.TrainingDao;
 import epam.lab.gymapp.dto.request.training.TrainingAddDto;
 import epam.lab.gymapp.exceptions.UserInputException;
@@ -34,7 +33,6 @@ public class TrainingServiceImpl implements TrainingService {
         this.traineeService = traineeService;
         this.trainingTypeService = trainingTypeService;
     }
-    @RequiresAuthentication
     @Override
     @Transactional
     public Training addTraining(TrainingAddDto trainingAddDto) {
@@ -79,12 +77,6 @@ public class TrainingServiceImpl implements TrainingService {
         LOGGER.debug(SERVICE_NAME + " - Created training: {}", created);
         return created;
 
-    }
-    @RequiresAuthentication
-    @Override
-    @Transactional
-    public Trainer reassignTrainer(Long trainingId, String traineeUsername, String newTrainerUsername) {
-      return   trainingDao.updateTrainingTrainer(trainingId, traineeUsername, newTrainerUsername);
     }
 
 

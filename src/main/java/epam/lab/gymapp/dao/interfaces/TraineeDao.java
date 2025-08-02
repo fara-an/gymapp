@@ -1,6 +1,7 @@
 package epam.lab.gymapp.dao.interfaces;
 
 import epam.lab.gymapp.model.Trainee;
+import epam.lab.gymapp.model.Trainer;
 import epam.lab.gymapp.model.Training;
 import org.springframework.stereotype.Repository;
 

@@ -15,7 +15,7 @@ public class TrainerGetResponse {
     private String firstName;
     private String lastName;
     private TrainingType specialization;
-    private boolean isActive;
+    private boolean active;
     private List<TrainerMapper.TraineeDto> trainees;
 
 

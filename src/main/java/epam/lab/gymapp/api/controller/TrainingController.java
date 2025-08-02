@@ -1,9 +1,6 @@
 package epam.lab.gymapp.api.controller;
 
-import epam.lab.gymapp.dto.mapper.TrainerMapper;
 import epam.lab.gymapp.dto.request.training.TrainingAddDto;
-import epam.lab.gymapp.dto.response.get.TrainerWithoutTraineesResponse;
-import epam.lab.gymapp.model.Trainer;
 import epam.lab.gymapp.service.interfaces.TrainingService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -20,18 +17,10 @@ public class TrainingController {
         this.trainingService = trainingService;
     }
 
-    @PostMapping("/add")
+    @PostMapping
     public ResponseEntity<?> addTraining(@Valid @RequestBody TrainingAddDto trainingAddDto) {
         trainingService.addTraining(trainingAddDto);
         return ResponseEntity.status(HttpStatus.OK).build();
-    }
-
-    @PutMapping("/{trainingId}/changeTrainer")
-    public ResponseEntity<TrainerWithoutTraineesResponse> changeTrainingTrainer(@PathVariable(name = "trainingId") Long id,
-                                                                                @RequestParam String traineeUsername,
-                                                                                @RequestParam String newUsername) {
-        Trainer trainer = trainingService.reassignTrainer(id, traineeUsername, newUsername);
-        return ResponseEntity.ok().body( TrainerMapper.dtoWithoutTraineeList(trainer));
     }
 
 }
