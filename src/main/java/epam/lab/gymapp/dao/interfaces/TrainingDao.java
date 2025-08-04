@@ -14,6 +14,8 @@ public interface TrainingDao extends CreateReadUpdateDao<Training, Long> {
                                   LocalDateTime newStart,
                                   LocalDateTime newEnd);
 
+    void deleteTraining(Training training);
+    Training findTraining(String trainerUsername, String traineeUsername, LocalDateTime start);
 
 
 }

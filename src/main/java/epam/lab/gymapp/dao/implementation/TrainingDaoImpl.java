@@ -61,9 +61,47 @@ public class TrainingDaoImpl extends BaseDao<Training, Long> implements Training
     }
 
     @Transactional
+    public Training findTraining(String trainerUsername, String traineeUsername, LocalDateTime startTime) {
+
+        Session session = getSessionFactory().getCurrentSession();
+
+        String sql = """
+                    SELECT trn.*
+                    FROM training trn
+                    JOIN trainer t ON trn.trainer_id = t.user_id
+                    JOIN userprofile trainer_profile ON t.user_id = trainer_profile.user_id
+                    JOIN trainee te ON trn.trainee_id = te.user_id
+                    JOIN userprofile trainee_profile ON te.user_id = trainee_profile.user_id
+                    WHERE trainer_profile.user_name = :trainerUsername
+                      AND trainee_profile.user_name = :traineeUsername
+                      AND trn.training_date_start = :startTime
+                """;
+
+        return session.createNativeQuery(sql, Training.class)
+                .setParameter("trainerUsername", trainerUsername)
+                .setParameter("traineeUsername", traineeUsername)
+                .setParameter("startTime", startTime)
+                .uniqueResultOptional()
+                .orElseThrow(() ->
+                     new EntityNotFoundException("Training with traineeUsername '%s';, trainerUsername '%s', starTime '%s' not found" .formatted(trainerUsername, traineeUsername, startTime)));
+
+
+
+    }
+
+    @Override
+    @Transactional
+    public void deleteTraining(Training training) {
+        Session session = getSessionFactory().getCurrentSession();
+         session.createMutationQuery("DELETE FROM Training t WHERE t.id = :id")
+                .setParameter("id", training.getId())
+                .executeUpdate();
+    }
+
+    @Transactional
     public Trainer updateTrainingTrainer(Long trainingId,
-                                      String traineeUsername,
-                                      String newTrainerUsername) {
+                                         String traineeUsername,
+                                         String newTrainerUsername) {
         Session session = getSessionFactory().getCurrentSession();
 
         LOGGER.debug("SERVICE – Re‑assigning training id={} from trainee='{}' to trainer='{}'",
@@ -81,7 +119,7 @@ public class TrainingDaoImpl extends BaseDao<Training, Long> implements Training
                 .getResultStream()
                 .findFirst()
                 .orElseThrow(() ->
-                        new EntityNotFoundException("Training id=%d not found".formatted(trainingId)));
+                        new EntityNotFoundException("Training id=%d not found" .formatted(trainingId)));
 
         if (!training.getTrainee().getUserName().equals(traineeUsername)) {
             System.out.println(training.getTrainee().getUserName());
@@ -101,7 +139,7 @@ public class TrainingDaoImpl extends BaseDao<Training, Long> implements Training
                 .getResultStream()
                 .findFirst()
                 .orElseThrow(() ->
-                        new EntityNotFoundException("Trainer '%s' not found".formatted(newTrainerUsername)));
+                        new EntityNotFoundException("Trainer '%s' not found" .formatted(newTrainerUsername)));
 
         if (!newTrainer.equals(training.getTrainer())) {
             LOGGER.debug("UPDATE – Changing trainer on Training id={} from '{}' to '{}'",
