@@ -13,16 +13,16 @@ import epam.lab.gymapp.service.interfaces.TrainerService;
 import epam.lab.gymapp.service.interfaces.TrainingService;
 import epam.lab.gymapp.service.interfaces.TrainingTypeService;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
-import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
+import io.vavr.control.Try;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
-import org.springframework.cloud.client.loadbalancer.Response;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
+import io.github.resilience4j.circuitbreaker.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.function.Supplier;
@@ -40,16 +40,14 @@ public class TrainingServiceImpl implements TrainingService {
     private final TrainingTypeService trainingTypeService;
     private final RestTemplate restTemplate;
     private final LoadBalancerClient loadBalancerClient;
-    private final CircuitBreakerRegistry circuitBreakerRegistry;
 
-    public TrainingServiceImpl(TrainingDao trainingDao, TrainerService trainerService, TraineeService traineeService, TrainingTypeService trainingTypeService, RestTemplate restTemplate, LoadBalancerClient loadBalancerClient, CircuitBreakerRegistry circuitBreakerRegistry) {
+    public TrainingServiceImpl(TrainingDao trainingDao, TrainerService trainerService, TraineeService traineeService, TrainingTypeService trainingTypeService, RestTemplate restTemplate, LoadBalancerClient loadBalancerClient) {
         this.trainingDao = trainingDao;
         this.trainerService = trainerService;
         this.traineeService = traineeService;
         this.trainingTypeService = trainingTypeService;
         this.restTemplate = restTemplate;
         this.loadBalancerClient = loadBalancerClient;
-        this.circuitBreakerRegistry = circuitBreakerRegistry;
     }
 
     @Override
@@ -109,17 +107,17 @@ public class TrainingServiceImpl implements TrainingService {
     }
 
     @Override
-    public void deleteTraining( String trainerUsername,String traineeUsername, LocalDateTime startTime) {
+    public void deleteTraining(String trainerUsername, String traineeUsername, LocalDateTime startTime) {
         LOGGER.debug(SERVICE_NAME + " - Deleting training ");
         Training training = findTraining(trainerUsername, traineeUsername, startTime);
         LOGGER.debug("Training with id{}, trainerUsername {}, traineeUsername {}", training.getId(), training.getTrainer().getUserName(), training.getTrainee().getUserName());
         trainingDao.deleteTraining(training);
-         callToTrainerWorkloadService(training, "DELETE");
+        callToTrainerWorkloadService(training, "DELETE");
 
 
     }
 
-
+    @io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker(name = "trainerWorkload", fallbackMethod = "fallback")
     ResponseEntity<Void> callToTrainerWorkloadService(Training training, String actionType) {
         TrainerWorkloadRequest trainerWorkloadRequest = TrainerWorkloadRequest.
                 builder().
@@ -141,18 +139,14 @@ public class TrainingServiceImpl implements TrainingService {
         String uri = serviceInstance.getUri().toString();
         String contextPath = serviceInstance.getMetadata().get("contextPath");
         LOGGER.debug("TrainerWorkloadService uri:{}, contextPath:{}", uri, contextPath);
-
-        CircuitBreaker circuitBreaker = CircuitBreakerRegistry.ofDefaults().circuitBreaker("trainerWorkloadCB");
-        Supplier<ResponseEntity<Void>> decoratedSupplier = CircuitBreaker.decorateSupplier(circuitBreaker,()-> restTemplate.postForEntity(uri+contextPath+"/trainer-workload", request, Void.class));
-
-        ResponseEntity<Void> response = restTemplate.postForEntity(uri+contextPath+"/trainer-workload", request, Void.class);
-        if (response.getStatusCode() == HttpStatus.OK) {
-            LOGGER.debug("Successfully sent workload data");
-        } else {
-            LOGGER.warn("Trainer workload service responded with status: {}", response.getStatusCode());
-        }
-        return response;
+        return restTemplate.postForEntity(uri + contextPath + "/trainer-workload", request, Void.class);
     }
+
+    public ResponseEntity<Void> fallback(Training training, String actionType, Throwable ex) {
+        LOGGER.warn("TrainerWorkloadService call failed: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
+    }
+
 
     @Override
     public Training findTraining(String trainerName, String traineeName, LocalDateTime start) {
