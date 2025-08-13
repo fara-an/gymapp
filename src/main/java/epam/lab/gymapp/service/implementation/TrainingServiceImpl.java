@@ -38,16 +38,15 @@ public class TrainingServiceImpl implements TrainingService {
     private final TrainerService trainerService;
     private final TraineeService traineeService;
     private final TrainingTypeService trainingTypeService;
-    private final RestTemplate restTemplate;
-    private final LoadBalancerClient loadBalancerClient;
+    private final TrainerWorkloadClientService trainerWorkloadClientService;
 
-    public TrainingServiceImpl(TrainingDao trainingDao, TrainerService trainerService, TraineeService traineeService, TrainingTypeService trainingTypeService, RestTemplate restTemplate, LoadBalancerClient loadBalancerClient) {
+    public TrainingServiceImpl(TrainingDao trainingDao, TrainerService trainerService, TraineeService traineeService, TrainingTypeService trainingTypeService,TrainerWorkloadClientService trainerWorkloadClientService) {
         this.trainingDao = trainingDao;
         this.trainerService = trainerService;
         this.traineeService = traineeService;
         this.trainingTypeService = trainingTypeService;
-        this.restTemplate = restTemplate;
-        this.loadBalancerClient = loadBalancerClient;
+        this.trainerWorkloadClientService = trainerWorkloadClientService;
+
     }
 
     @Override
@@ -90,7 +89,7 @@ public class TrainingServiceImpl implements TrainingService {
                 .build();
 
         Training createdTraining = trainingDao.create(newTraining);
-        callToTrainerWorkloadService(createdTraining, "ADD");
+        trainerWorkloadClientService.callToTrainerWorkloadService(createdTraining, "ADD");
 
         LOGGER.debug(SERVICE_NAME + " - Created training: {}", createdTraining);
         return createdTraining;
@@ -112,39 +111,9 @@ public class TrainingServiceImpl implements TrainingService {
         Training training = findTraining(trainerUsername, traineeUsername, startTime);
         LOGGER.debug("Training with id{}, trainerUsername {}, traineeUsername {}", training.getId(), training.getTrainer().getUserName(), training.getTrainee().getUserName());
         trainingDao.deleteTraining(training);
-        callToTrainerWorkloadService(training, "DELETE");
+        trainerWorkloadClientService.callToTrainerWorkloadService(training, "DELETE");
 
 
-    }
-
-    @io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker(name = "trainerWorkload", fallbackMethod = "fallback")
-    ResponseEntity<Void> callToTrainerWorkloadService(Training training, String actionType) {
-        TrainerWorkloadRequest trainerWorkloadRequest = TrainerWorkloadRequest.
-                builder().
-                trainerUsername(training.getTrainer().getUserName()).
-                firstName(training.getTrainer().getFirstName()).
-                lastName(training.getTrainer().getLastName()).
-                actionType(actionType).
-                isActive(training.getTrainer().getIsActive()).
-                trainingDate(training.getTrainingDateStart()).
-                duration(training.getDuration()).
-                build();
-
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        HttpEntity<TrainerWorkloadRequest> request = new HttpEntity<>(trainerWorkloadRequest, headers);
-        ServiceInstance serviceInstance = loadBalancerClient.choose("TrainerWorkloadService");
-        String uri = serviceInstance.getUri().toString();
-        String contextPath = serviceInstance.getMetadata().get("contextPath");
-        LOGGER.debug("TrainerWorkloadService uri:{}, contextPath:{}", uri, contextPath);
-        return restTemplate.postForEntity(uri + contextPath + "/trainer-workload", request, Void.class);
-    }
-
-    public ResponseEntity<Void> fallback(Training training, String actionType, Throwable ex) {
-        LOGGER.warn("TrainerWorkloadService call failed: {}", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
     }
 
 
