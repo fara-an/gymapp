@@ -43,7 +43,7 @@ public class TrainerWorkloadClientService {
         String uri = serviceInstance.getUri().toString();
         String contextPath = serviceInstance.getMetadata().get("contextPath");
         LOGGER.debug("TRAINERWORKLOADSERVICE uri:{}, contextPath:{}", uri, contextPath);
-        return restTemplate.postForEntity(uri + contextPath + "/trainer-workload", request, Void.class);
+        return restTemplate.postForEntity(uri + contextPath + "/trainer-workloads", request, Void.class);
     }
 
     public ResponseEntity<Void> fallback(Training training, String actionType, Throwable ex) {
