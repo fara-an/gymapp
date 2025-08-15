@@ -22,7 +22,7 @@ public class TrainerWorkloadClientService {
     }
 
     @io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker(name = "trainerWorkloadCB", fallbackMethod = "fallback")
-    ResponseEntity<Void> callToTrainerWorkloadService(Training training, String actionType) {
+    public ResponseEntity<Void> callToTrainerWorkloadService(Training training, String actionType) {
         TrainerWorkloadRequest trainerWorkloadRequest = TrainerWorkloadRequest.
                 builder().
                 trainerUsername(training.getTrainer().getUserName()).
@@ -40,6 +40,9 @@ public class TrainerWorkloadClientService {
 
         HttpEntity<TrainerWorkloadRequest> request = new HttpEntity<>(trainerWorkloadRequest, headers);
         ServiceInstance serviceInstance = loadBalancerClient.choose("TRAINERWORKLOADSERVICE");
+        if (serviceInstance == null) {
+            throw new RuntimeException("TRAINERWORKLOADSERVICE is not registered in service registry");
+        }
         String uri = serviceInstance.getUri().toString();
         String contextPath = serviceInstance.getMetadata().get("contextPath");
         LOGGER.debug("TRAINERWORKLOADSERVICE uri:{}, contextPath:{}", uri, contextPath);

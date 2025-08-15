@@ -1,7 +1,6 @@
 package epam.lab.gymapp.service.implementation;
 
 import epam.lab.gymapp.dao.interfaces.TrainingDao;
-import epam.lab.gymapp.dto.request.trainerWorkloadRequest.TrainerWorkloadRequest;
 import epam.lab.gymapp.dto.request.training.TrainingAddDto;
 import epam.lab.gymapp.exceptions.UserInputException;
 import epam.lab.gymapp.model.Trainee;
@@ -12,20 +11,13 @@ import epam.lab.gymapp.service.interfaces.TraineeService;
 import epam.lab.gymapp.service.interfaces.TrainerService;
 import epam.lab.gymapp.service.interfaces.TrainingService;
 import epam.lab.gymapp.service.interfaces.TrainingTypeService;
-import io.github.resilience4j.circuitbreaker.CircuitBreaker;
-import io.vavr.control.Try;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cloud.client.ServiceInstance;
-import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
-import io.github.resilience4j.circuitbreaker.annotation.*;
 
 import java.time.LocalDateTime;
-import java.util.function.Supplier;
 
 
 @Service
@@ -40,7 +32,7 @@ public class TrainingServiceImpl implements TrainingService {
     private final TrainingTypeService trainingTypeService;
     private final TrainerWorkloadClientService trainerWorkloadClientService;
 
-    public TrainingServiceImpl(TrainingDao trainingDao, TrainerService trainerService, TraineeService traineeService, TrainingTypeService trainingTypeService,TrainerWorkloadClientService trainerWorkloadClientService) {
+    public TrainingServiceImpl(TrainingDao trainingDao, TrainerService trainerService, TraineeService traineeService, TrainingTypeService trainingTypeService, TrainerWorkloadClientService trainerWorkloadClientService) {
         this.trainingDao = trainingDao;
         this.trainerService = trainerService;
         this.traineeService = traineeService;
@@ -51,7 +43,7 @@ public class TrainingServiceImpl implements TrainingService {
 
     @Override
     @Transactional
-    public Training addTraining(TrainingAddDto trainingAddDto) {
+    public ResponseEntity<?> addTraining(TrainingAddDto trainingAddDto) {
         LOGGER.debug(SERVICE_NAME + " - Starting training creation: {}", trainingAddDto.getTrainingName());
 
         Trainer trainer = trainerService.findByUsername(trainingAddDto.getTrainerUserName());
@@ -89,10 +81,12 @@ public class TrainingServiceImpl implements TrainingService {
                 .build();
 
         Training createdTraining = trainingDao.create(newTraining);
-        trainerWorkloadClientService.callToTrainerWorkloadService(createdTraining, "ADD");
-
+        ResponseEntity<Void> response = trainerWorkloadClientService.callToTrainerWorkloadService(createdTraining, "ADD");
+        if (!response.getStatusCode().is2xxSuccessful()) {
+            return response;
+        }
         LOGGER.debug(SERVICE_NAME + " - Created training: {}", createdTraining);
-        return createdTraining;
+        return ResponseEntity.ok(createdTraining);
 
     }
 

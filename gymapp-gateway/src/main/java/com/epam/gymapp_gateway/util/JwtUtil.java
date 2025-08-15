@@ -5,6 +5,7 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +16,14 @@ import java.security.Key;
 public class JwtUtil {
 
     @Value("${jwt.secret}")
-    private static   String SECRET;
+    private String secretValue;
+
+    private static String SECRET;
+
+    @PostConstruct
+    public void  init(){
+        SECRET=secretValue;
+    }
 
 
     private static Key getSigningKey() {

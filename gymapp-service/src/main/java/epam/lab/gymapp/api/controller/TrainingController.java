@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @RequestMapping("/trainings")
 public class TrainingController {
 
-    TrainingService trainingService;
+    private final TrainingService trainingService;
 
     public TrainingController(TrainingService trainingService) {
         this.trainingService = trainingService;
@@ -22,8 +22,7 @@ public class TrainingController {
 
     @PostMapping
     public ResponseEntity<?> addTraining(@Valid @RequestBody TrainingAddDto trainingAddDto) {
-        trainingService.addTraining(trainingAddDto);
-        return ResponseEntity.status(HttpStatus.OK).build();
+       return trainingService.addTraining(trainingAddDto);
     }
 
     @DeleteMapping
