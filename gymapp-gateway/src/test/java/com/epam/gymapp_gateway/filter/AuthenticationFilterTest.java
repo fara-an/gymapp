@@ -29,7 +29,7 @@ class AuthenticationFilterTest {
 
     @Test
     void openEndpoint_shouldNotRequireAuthHeader() {
-        routeValidator.isSecured = req -> false; // or true depending on case
+        routeValidator.isSecured = req -> false;
 
         MockServerHttpRequest request = MockServerHttpRequest.get("/open").build();
         MockServerWebExchange exchange = MockServerWebExchange.from(request);
@@ -42,7 +42,7 @@ class AuthenticationFilterTest {
 
     @Test
     void securedEndpoint_missingAuthHeader_shouldThrow() {
-        routeValidator.isSecured = req -> true; // or true depending on case
+        routeValidator.isSecured = req -> true;
 
         MockServerHttpRequest request = MockServerHttpRequest.get("/secure").build();
         MockServerWebExchange exchange = MockServerWebExchange.from(request);
@@ -58,7 +58,7 @@ class AuthenticationFilterTest {
 
     @Test
     void securedEndpoint_withValidBearerToken_shouldCallValidateToken() {
-        routeValidator.isSecured = req -> true; // or true depending on case
+        routeValidator.isSecured = req -> true;
 
         try (MockedStatic<JwtUtil> jwtUtilMock = mockStatic(JwtUtil.class)) {
             jwtUtilMock.when(() -> JwtUtil.validateToken("valid-token")).thenAnswer(invocation -> null);
@@ -78,7 +78,7 @@ class AuthenticationFilterTest {
 
     @Test
     void securedEndpoint_withInvalidToken_shouldPropagateException() {
-        routeValidator.isSecured = req -> true; // or true depending on case
+        routeValidator.isSecured = req -> true;
 
         try (MockedStatic<JwtUtil> jwtUtilMock = mockStatic(JwtUtil.class)) {
             jwtUtilMock.when(() -> JwtUtil.validateToken("bad-token"))
