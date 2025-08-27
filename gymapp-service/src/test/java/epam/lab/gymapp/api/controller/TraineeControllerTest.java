@@ -106,7 +106,7 @@ public class TraineeControllerTest {
                 .birthday(LocalDateTime.of(1995, 5, 10, 0, 0))
                 .address("123 Fit Lane")
                 .isActive(true)
-                .trainers(List.of()) // Assume no trainers for simplicity
+                .trainers(List.of())
                 .build();
 
         TraineeGetResponse response = TraineeGetResponse.builder()
@@ -124,7 +124,6 @@ public class TraineeControllerTest {
             mockedStatic.when(() -> TraineeMapper.traineeWithTrainers(Mockito.any(Trainee.class)))
                     .thenReturn(response);
 
-            // then
             mockMvc.perform(get("/trainees/{username}", username)
                             .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
@@ -193,27 +192,6 @@ public class TraineeControllerTest {
         }
     }
 
-//    @Test
-//    void deleteTrainee_ShouldCallServiceAndReturnMessage() throws Exception {
-//        String username = "john123";
-//
-//        Counter mockCounter = mock(Counter.class);
-//
-//        // Mock the counter builder chain
-//        Counter.Builder mockBuilder = mock(Counter.Builder.class);
-//        when(Counter.builder("api_endpoint_delete_trainee_username_counter")).thenReturn(mockBuilder);
-//        when(mockBuilder.tag("traineeUsername", username)).thenReturn(mockBuilder);
-//        when(mockBuilder.description(anyString())).thenReturn(mockBuilder);
-//        when(mockBuilder.register(meterRegistry)).thenReturn(mockCounter);
-//
-//        mockMvc.perform(delete("/trainees/{username}", username)
-//                        .accept(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.message").value("Deleted trainee with username  " + username));
-//
-//        verify(traineeService).delete(username);
-//
-//    }
 
     @Test
     void getTraineeTrainings_ShouldReturnListOfTrainingResponses() throws Exception {
@@ -239,8 +217,7 @@ public class TraineeControllerTest {
         when(traineeService.getTraineeTrainings(eq(traineeName), eq(from), eq(to), eq(trainerName), eq(trainingType)))
                 .thenReturn(mockTrainings);
 
-        // Mock TrainingMapper
-        TrainingResponse mapped = TrainingMapper.trainingWithTrainee(mockTraining); // Optional: or mock this if TrainingMapper is complex
+        TrainingResponse mapped = TrainingMapper.trainingWithTrainee(mockTraining);
 
         mockMvc.perform(get("/trainees/{userName}/trainings", traineeName)
                         .param("from", from.toString())
@@ -280,10 +257,8 @@ public class TraineeControllerTest {
 
         List<Trainer> trainers = List.of(trainer1, trainer2);
 
-        // Mock service response
         when(traineeService.updateTrainer(userName, assignmentList)).thenReturn(trainers);
 
-        // Mock mapper response
         TrainerWithoutTraineesResponse response1 = TrainerWithoutTraineesResponse.builder()
                 .firstName("Alice")
                 .lastName("Smith")

@@ -132,7 +132,6 @@ class TraineeServiceImplTest {
                 .isInstanceOf(EntityNotFoundException.class);
     }
 
-    // ===─┤ findById ├─========================================================
     @Test
     void findById_shouldReturnTraineeWhenExists() {
         when(traineeDao.findByID(1L)).thenReturn(Optional.of(johnDoe));
