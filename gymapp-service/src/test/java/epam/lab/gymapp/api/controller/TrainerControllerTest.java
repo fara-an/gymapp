@@ -94,7 +94,6 @@ public class TrainerControllerTest {
 
     @Test
     public void register_ShouldNotCreateTrainer_WhenTrainingTypeNotFound() throws Exception {
-        // Given
         TrainerRegistrationBody registrationDto = new TrainerRegistrationBody();
         registrationDto.setFirstName("John");
         registrationDto.setLastName("Doe");
@@ -106,7 +105,7 @@ public class TrainerControllerTest {
         mockMvc.perform(post("/trainers")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(registrationDto)))
-                .andExpect(status().isNotFound()); // or .isBadRequest() depending on your exception handler
+                .andExpect(status().isNotFound());
 
         verify(trainerService, never()).createProfile(any());
     }
@@ -163,7 +162,6 @@ public class TrainerControllerTest {
 
     @Test
     public void updateTrainer_ShouldReturnUpdatedTrainer() throws Exception {
-        // Given
         Long id = 1L;
         UpdateTrainerDto updateDto = new UpdateTrainerDto();
         updateDto.setFirstName("John");
@@ -177,7 +175,7 @@ public class TrainerControllerTest {
                 .lastName("Doe")
                 .userName("john.doe")
                 .isActive(true)
-                .trainees(Collections.emptyList()) // important if dtoWithTraineeList uses this
+                .trainees(Collections.emptyList())
                 .build();
 
         TrainerGetResponse response = TrainerGetResponse.builder()
@@ -215,7 +213,6 @@ public class TrainerControllerTest {
 
     @Test
     public void getTrainersNotAssignedToTrainee_ShouldReturnList() throws Exception {
-        // Given
         String username = "trainee1";
         TrainingType specialization = TrainingType.builder().name("Cardio").build();
 
@@ -320,7 +317,6 @@ public class TrainerControllerTest {
             mockedStatic.when(() -> TrainingMapper.trainingWithTrainer(training1)).thenReturn(response1);
             mockedStatic.when(() -> TrainingMapper.trainingWithTrainer(training2)).thenReturn(response2);
 
-            // When & Then
             mockMvc.perform(get("/trainers/{username}/trainings", username)
                             .param("from", "2024-01-01T00:00:00")
                             .param("to", "2024-12-31T23:59:00")

@@ -5,15 +5,19 @@ import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfigurat
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
+import org.springframework.jms.annotation.EnableJms;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.filter.DelegatingFilterProxy;
 
 
 @SpringBootApplication (exclude = HibernateJpaAutoConfiguration.class)
 @EnableTransactionManagement
+@EnableJms
 public class GymApplication {
     public static void main(String[] args) {
         SpringApplication.run(GymApplication.class, args);
+
+
     }
 
     @Bean

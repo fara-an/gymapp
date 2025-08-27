@@ -2,6 +2,7 @@ package epam.lab.gymapp.service.implementation;
 
 import epam.lab.gymapp.dao.interfaces.TrainingDao;
 import epam.lab.gymapp.dto.request.training.TrainingAddDto;
+import epam.lab.gymapp.dto.response.training.TrainingResponse;
 import epam.lab.gymapp.exceptions.UserInputException;
 import epam.lab.gymapp.model.Trainee;
 import epam.lab.gymapp.model.Trainer;
@@ -85,8 +86,16 @@ public class TrainingServiceImpl implements TrainingService {
         if (!response.getStatusCode().is2xxSuccessful()) {
             return response;
         }
+
+        TrainingResponse dto = TrainingResponse.builder()
+                .trainerName(createdTraining.getTrainingName())
+                .traineeName(createdTraining.getTrainee().getUserName())
+                .trainingType(createdTraining.getTrainingType().getName())
+                .trainingName(createdTraining.getTrainingName())
+                .trainingDateStart(createdTraining.getTrainingDateStart())
+                .build();
         LOGGER.debug(SERVICE_NAME + " - Created training: {}", createdTraining);
-        return ResponseEntity.ok(createdTraining);
+        return ResponseEntity.ok(dto);
 
     }
 

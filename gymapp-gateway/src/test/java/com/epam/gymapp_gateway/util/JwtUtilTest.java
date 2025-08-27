@@ -49,7 +49,7 @@ class JwtUtilTest {
 
     @Test
     void validateToken_withExpiredToken_shouldThrowJwtException() {
-        String token = generateToken(-60_000, SECRET); // expired 60 seconds ago
+        String token = generateToken(-60_000, SECRET);
         JwtException ex = assertThrows(JwtException.class, () -> JwtUtil.validateToken(token));
         assertTrue(ex.getMessage().contains("JWT expired"));
     }
