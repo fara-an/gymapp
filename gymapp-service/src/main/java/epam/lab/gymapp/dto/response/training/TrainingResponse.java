@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Setter
 @SuperBuilder
 public class TrainingResponse {
-    private String trainingName;;
+    private String trainingName;
     private LocalDateTime trainingDateStart;
     private String trainingType;
     private String trainerName;

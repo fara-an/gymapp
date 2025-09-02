@@ -233,7 +233,7 @@ class TrainerDaoImplTest {
         when(session.createQuery("from Trainee t where t.userName = :userName", Trainee.class))
                 .thenReturn(traineeQuery);
         when(traineeQuery.setParameter("userName", traineeUsername)).thenReturn(traineeQuery);
-        when(traineeQuery.uniqueResult()).thenReturn(null); // no trainee found
+        when(traineeQuery.uniqueResult()).thenReturn(null);
 
         List<Trainer> result = underTest.trainersNotAssignedToTrainee(traineeUsername);
 
@@ -247,14 +247,12 @@ class TrainerDaoImplTest {
         Trainee trainee = new Trainee();
         trainee.setUserName(traineeUsername);
 
-        // Mock the trainee query
         Query<Trainee> traineeQuery = mock(Query.class);
         when(session.createQuery("from Trainee t where t.userName = :userName", Trainee.class))
                 .thenReturn(traineeQuery);
         when(traineeQuery.setParameter("userName", traineeUsername)).thenReturn(traineeQuery);
         when(traineeQuery.uniqueResult()).thenReturn(trainee);
 
-        // Mock the trainer query
         Query<Trainer> trainerQuery = mock(Query.class);
         when(session.createQuery(anyString(), eq(Trainer.class))).thenReturn(trainerQuery);
         when(trainerQuery.setParameter("trainee", trainee)).thenReturn(trainerQuery);

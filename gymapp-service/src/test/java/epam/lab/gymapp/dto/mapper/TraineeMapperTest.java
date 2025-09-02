@@ -16,17 +16,17 @@ class TraineeMapperTest {
 
     @Test
     void fromDtoToTrainee_ShouldMapCorrectly() {
-        // given
+        
         TraineeRegistrationBody body = new TraineeRegistrationBody();
         body.setFirstName("John");
         body.setLastName("Doe");
         body.setDateOfBirth(LocalDateTime.of(1990, 5, 15, 0, 0));
         body.setAddress("123 Main St");
 
-        // when
+
         Trainee trainee = TraineeMapper.fromDtoToTrainee(body);
 
-        // then
+
         assertEquals("John", trainee.getFirstName());
         assertEquals("Doe", trainee.getLastName());
         assertEquals(LocalDateTime.of(1990, 5, 15, 0, 0), trainee.getBirthday());
@@ -35,7 +35,7 @@ class TraineeMapperTest {
 
     @Test
     void traineeWithTrainers_ShouldMapCorrectly() {
-        // given
+        
         TrainingType yoga = TrainingType.builder().name("Yoga").build();
         TrainingType cardio = TrainingType.builder().name("Cardio").build();
 
@@ -62,10 +62,10 @@ class TraineeMapperTest {
                 .trainers(List.of(trainer1, trainer2))
                 .build();
 
-        // when
+
         TraineeGetResponse response = TraineeMapper.traineeWithTrainers(trainee);
 
-        // then
+
         assertEquals("Jane", response.getFirstName());
         assertEquals("Doe", response.getLastName());
         assertEquals(LocalDateTime.of(1995, 3, 10, 0, 0), response.getBirthday());
@@ -73,7 +73,6 @@ class TraineeMapperTest {
         assertTrue(response.isActive());
         assertEquals(2, response.getTrainers().size());
 
-        // trainer assertions
         TraineeMapper.TraineeGetsResponseTrainer mappedTrainer1 = response.getTrainers().get(0);
         assertEquals("Alice", mappedTrainer1.getFirstName());
         assertEquals("Smith", mappedTrainer1.getLastName());
@@ -89,20 +88,20 @@ class TraineeMapperTest {
 
     @Test
     void traineeWithTrainers_ShouldHandleEmptyTrainerList() {
-        // given
+        
         Trainee trainee = Trainee.builder()
                 .firstName("NoTrainer")
                 .lastName("Person")
                 .birthday(LocalDateTime.of(2000, 1, 1, 0, 0))
                 .address("789 Oak St")
                 .isActive(false)
-                .trainers(List.of()) // no trainers
+                .trainers(List.of())
                 .build();
 
-        // when
+
         TraineeGetResponse response = TraineeMapper.traineeWithTrainers(trainee);
 
-        // then
+
         assertNotNull(response.getTrainers());
         assertTrue(response.getTrainers().isEmpty());
     }

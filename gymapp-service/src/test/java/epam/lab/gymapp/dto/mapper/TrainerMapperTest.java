@@ -16,7 +16,7 @@ class TrainerMapperTest {
 
     @Test
     void dtoWithTraineeList_ShouldMapCorrectly() {
-        // given
+        
         Trainee trainee1 = Trainee.builder()
                 .userName("trainee1")
                 .firstName("Alice")
@@ -39,10 +39,10 @@ class TrainerMapperTest {
                 .trainees(List.of(trainee1, trainee2))
                 .build();
 
-        // when
+
         TrainerGetResponse response = TrainerMapper.dtoWithTraineeList(trainer);
 
-        // then
+
         assertEquals("John", response.getFirstName());
         assertEquals("Doe", response.getLastName());
         assertTrue(response.isActive());
@@ -62,23 +62,23 @@ class TrainerMapperTest {
 
     @Test
     void dtoOnlyUsernameAndPass_ShouldMapCorrectly() {
-        // given
+        
         Trainer trainer = Trainer.builder()
                 .userName("trainer123")
                 .password("secret")
                 .build();
 
-        // when
+
         TrainerRegistrationResponse response = TrainerMapper.dtoOnlyUsernameAndPass(trainer);
 
-        // then
+
         assertEquals("trainer123", response.getUsername());
         assertEquals("secret", response.getPassword());
     }
 
     @Test
     void dtoWithoutTraineeList_ShouldMapCorrectly() {
-        // given
+        
         TrainingType yoga = TrainingType.builder().name("Yoga").build();
 
         Trainer trainer = Trainer.builder()
@@ -88,10 +88,10 @@ class TrainerMapperTest {
                 .specialization(yoga)
                 .build();
 
-        // when
+
         TrainerWithoutTraineesResponse response = TrainerMapper.dtoWithoutTraineeList(trainer);
 
-        // then
+
         assertEquals("Emma", response.getFirstName());
         assertEquals("White", response.getLastName());
         assertEquals("Yoga", response.getSpecialization().getName());
@@ -100,7 +100,7 @@ class TrainerMapperTest {
 
     @Test
     void dtoWithTraineeList_ShouldHandleEmptyTraineeList() {
-        // given
+        
         TrainingType specialization = TrainingType.builder().name("Strength").build();
 
         Trainer trainer = Trainer.builder()
@@ -108,13 +108,13 @@ class TrainerMapperTest {
                 .lastName("Johnson")
                 .isActive(true)
                 .specialization(specialization)
-                .trainees(List.of()) // no trainees
+                .trainees(List.of())
                 .build();
 
-        // when
+
         TrainerGetResponse response = TrainerMapper.dtoWithTraineeList(trainer);
 
-        // then
+
         assertNotNull(response.getTrainees());
         assertTrue(response.getTrainees().isEmpty());
     }

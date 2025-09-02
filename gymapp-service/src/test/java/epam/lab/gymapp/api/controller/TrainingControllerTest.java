@@ -33,7 +33,7 @@ class TrainingControllerTest {
     @Test
     void addTraining_ShouldReturnOk() throws Exception {
         TrainingAddDto dto = new TrainingAddDto();
-        // mock behavior
+        mock behavior
         Mockito.when(trainingService.addTraining(any(TrainingAddDto.class))) .thenReturn((ResponseEntity)ResponseEntity.ok("training added"));
 
         mockMvc.perform(post("/trainings")

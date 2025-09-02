@@ -41,33 +41,33 @@ class TrainingMapperTest {
 
     @Test
     void trainingWithTrainee_ShouldMapCorrectly() {
-        // given
+        
         Training training = createSampleTraining();
 
-        // when
+
         TrainingResponse response = TrainingMapper.trainingWithTrainee(training);
 
-        // then
+
         assertEquals("Morning Cardio", response.getTrainingName());
         assertEquals("Cardio", response.getTrainingType());
         assertEquals(LocalDateTime.of(2025, 9, 2, 10, 0), response.getTrainingDateStart());
         assertEquals("trainee123", response.getTraineeName());
-        assertEquals("trainer456", response.getTrainerName()); // comes from trainingResponse base mapping
+        assertEquals("trainer456", response.getTrainerName());
     }
 
     @Test
     void trainingWithTrainer_ShouldMapCorrectly() {
-        // given
+        
         Training training = createSampleTraining();
 
-        // when
+
         TrainingResponse response = TrainingMapper.trainingWithTrainer(training);
 
-        // then
+
         assertEquals("Morning Cardio", response.getTrainingName());
         assertEquals("Cardio", response.getTrainingType());
         assertEquals(LocalDateTime.of(2025, 9, 2, 10, 0), response.getTrainingDateStart());
-        assertEquals("trainee123", response.getTraineeName()); // comes from trainingResponse base mapping
+        assertEquals("trainee123", response.getTraineeName());
         assertEquals("trainer456", response.getTrainerName());
     }
 }

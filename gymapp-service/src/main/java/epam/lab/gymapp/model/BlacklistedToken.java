@@ -8,9 +8,9 @@ import java.time.Instant;
 @Getter
 public class BlacklistedToken {
 
-    private String token;
+    private final String token;
 
-    private Instant expiryDate;
+    private final Instant expiryDate;
 
     public BlacklistedToken(String token, Instant expiryDate) {
         this.token = token;
