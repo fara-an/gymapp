@@ -16,6 +16,7 @@ import epam.lab.gymapp.model.Trainer;
 import epam.lab.gymapp.model.Training;
 import epam.lab.gymapp.model.TrainingType;
 import epam.lab.gymapp.service.interfaces.TraineeService;
+import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
@@ -288,6 +289,29 @@ public class TraineeControllerTest {
             verify(traineeService).updateTrainer(userName, assignmentList);
 
             mockedStatic.verify(() -> TrainerMapper.dtoWithoutTraineeList(any(Trainer.class)), times(2));
+        }
+    }
+
+    @Test
+    void deleteTrainee_ShouldReturnMessageResponseAndIncrementCounter() throws Exception {
+        String username = "john123";
+
+        Counter mockCounter = mock(Counter.class);
+
+        Counter.Builder builder = mock(Counter.Builder.class);
+        when(builder.tag(anyString(), anyString())).thenReturn(builder);
+        when(builder.description(anyString())).thenReturn(builder);
+        when(builder.register(any())).thenReturn(mockCounter);
+
+
+        try (MockedStatic<Counter> mockedStatic = Mockito.mockStatic(Counter.class)) {
+            mockedStatic.when(() -> Counter.builder(anyString())).thenReturn(builder);
+            mockMvc.perform(delete("/trainees/{username}", username))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.message").value("Deleted trainee with username  " + username));
+
+            verify(traineeService).delete(username);
+            verify(mockCounter).increment();
         }
     }
 }

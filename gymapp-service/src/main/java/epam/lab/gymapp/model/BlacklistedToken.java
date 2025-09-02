@@ -1,9 +1,11 @@
 package epam.lab.gymapp.model;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
 import java.time.Instant;
 
 @EqualsAndHashCode
+@Getter
 public class BlacklistedToken {
 
     private String token;

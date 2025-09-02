@@ -14,11 +14,11 @@ public class TrainerWorkloadClientService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TrainerWorkloadClientService.class);
     private final JmsTemplate jmsTemplate;
-    @Value("${queue.trainerWorkload}")
-    private String destinationOfQueue;
+    private final String destinationOfQueue;
 
-    public TrainerWorkloadClientService(JmsTemplate jmsTemplate) {
+    public TrainerWorkloadClientService(JmsTemplate jmsTemplate, @Value("${queue.trainerWorkload}") String destinationOfQueue) {
         this.jmsTemplate = jmsTemplate;
+        this.destinationOfQueue=destinationOfQueue;
     }
 
     @io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker(name = "trainerWorkloadCB", fallbackMethod = "fallback")
@@ -34,7 +34,12 @@ public class TrainerWorkloadClientService {
                 duration(training.getDuration()).
                 build();
         jmsTemplate.convertAndSend(destinationOfQueue,trainerWorkloadRequest);
-        LOGGER.debug("Message is sent to the queue");
+        LOGGER.debug("Sent message to queue {}: trainerUsername={}, actionType={}, trainingDate={}, duration={}",
+                destinationOfQueue,
+                trainerWorkloadRequest.getTrainerUsername(),
+                trainerWorkloadRequest.getActionType(),
+                trainerWorkloadRequest.getTrainingDate(),
+                trainerWorkloadRequest.getDuration());
         return ResponseEntity.accepted().build();
     }
 
