@@ -70,11 +70,4 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private void sendResponse(HttpServletResponse response, String message) throws IOException {
-        response.setContentType("application/json");
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        response.getWriter().write("{\"error\":\"" + message + "\"}");
-        response.getWriter().flush();
-
-    }
 }

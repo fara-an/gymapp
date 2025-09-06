@@ -41,10 +41,8 @@ class UsernameGeneratorTest {
         String firstName = "John";
         String lastName = "Doe";
 
-        // When
         String result = UsernameGenerator.generateUsername(firstName, lastName, usernameExistsChecker);
 
-        // Then
         assertEquals("John.Doe1", result);
     }
 
@@ -67,7 +65,7 @@ class UsernameGeneratorTest {
         when(usernameExistsChecker.apply(anyString())).thenReturn(false);
         String firstName = "";
         String lastName = "";
-        String expectedUsername = ".";  // Empty strings with just the separator
+        String expectedUsername = ".";
 
         String result = UsernameGenerator.generateUsername(firstName, lastName, usernameExistsChecker);
 

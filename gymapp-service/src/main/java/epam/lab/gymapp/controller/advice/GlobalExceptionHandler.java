@@ -45,12 +45,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler( MissingServletRequestParameterException.class)
     public ResponseEntity<?> handleMissingParamException(MissingServletRequestParameterException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(build("Request parameter "+ex.getParameterName()+ "is missing in the  Url"));
+                .body(build("Request parameter "+ex.getParameterName()+ " is missing in the  Url"));
     }
 
     @ExceptionHandler(MissingPathVariableException.class)
     public ResponseEntity<?> handlePathVariableException(MissingPathVariableException ex){
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(build("Request parameter "+ex.getVariableName()+"is missing in the Url"));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(build("Request parameter "+ex.getVariableName()+" is missing in the Url"));
     }
 
 

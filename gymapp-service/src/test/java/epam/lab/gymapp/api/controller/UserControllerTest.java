@@ -23,6 +23,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.Instant;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -118,5 +120,22 @@ public class UserControllerTest {
 
         verify(userService).changePassword(dto.getUsername(), dto.getOldPassword(), dto.getNewPassword());
     }
+
+    @Test
+    void logout_ShouldReturn200AndSuccessMessage() throws Exception {
+        String token = "mocked-jwt-token";
+        Instant expiry = Instant.now().plusSeconds(3600);
+
+        when(jwtService.extractExpiration(token)).thenReturn(expiry);
+
+        mockMvc.perform(get("/users/logout")
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value("Logged out successfully"));
+
+        verify(jwtService).extractExpiration(token);
+        verify(tokenBlacklistService).blacklistToken(token, expiry);
+    }
+
 
 }

@@ -1,6 +1,7 @@
 package epam.lab.gymapp.service.implementation;
 
 import epam.lab.gymapp.dao.interfaces.UserDao;
+import epam.lab.gymapp.exceptions.EntityNotFoundException;
 import epam.lab.gymapp.model.UserProfile;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -22,10 +23,14 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserProfile userProfile = userDao.findByUsername(username);
-        return new User(
-                userProfile.getUserName(),
-                userProfile.getPassword(),
-                List.of(new SimpleGrantedAuthority("ROLE_USER")));
+        try {
+            UserProfile userProfile = userDao.findByUsername(username);
+            return new User(
+                    userProfile.getUserName(),
+                    userProfile.getPassword(),
+                    List.of(new SimpleGrantedAuthority("ROLE_USER")));
+        } catch (EntityNotFoundException ex) {
+            throw new UsernameNotFoundException("User with username : " + username + " not found", ex);
+        }
     }
 }

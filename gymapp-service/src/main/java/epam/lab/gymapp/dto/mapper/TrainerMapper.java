@@ -14,8 +14,6 @@ import java.util.List;
 
 public class TrainerMapper {
 
-
-
     public static TrainerGetResponse dtoWithTraineeList(Trainer trainer) {
         List<TraineeDto> responseTrainers = mapListOfTrainees(trainer.getTrainees());
         return TrainerGetResponse.builder()
