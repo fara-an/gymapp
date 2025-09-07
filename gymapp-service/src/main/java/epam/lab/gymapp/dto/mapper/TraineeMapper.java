@@ -15,7 +15,6 @@ import java.util.List;
 
 public class TraineeMapper {
 
-
     public static Trainee fromDtoToTrainee(TraineeRegistrationBody registrationBody) {
         String firstName = registrationBody.getFirstName();
         String lastName = registrationBody.getLastName();

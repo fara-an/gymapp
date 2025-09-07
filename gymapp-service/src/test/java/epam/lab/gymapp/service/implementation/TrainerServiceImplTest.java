@@ -90,7 +90,6 @@ class TrainerServiceImplTest {
         assertEquals(trainingTypeUpdated, existing.getSpecialization());
     }
 
-    // --- Tests for ProfileOperations default methods ---
     @Test
     void createProfile_CreatesAndReturnsTrainer() {
         try (MockedStatic<UsernameGenerator> usernameGen = Mockito.mockStatic(UsernameGenerator.class);

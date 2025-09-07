@@ -1,7 +1,9 @@
 package epam.lab.gymapp.service.implementation;
 
 import epam.lab.gymapp.dao.interfaces.TrainingDao;
+import epam.lab.gymapp.dto.mapper.TrainingMapper;
 import epam.lab.gymapp.dto.request.training.TrainingAddDto;
+import epam.lab.gymapp.dto.response.training.TrainingResponse;
 import epam.lab.gymapp.exceptions.UserInputException;
 import epam.lab.gymapp.model.Trainee;
 import epam.lab.gymapp.model.Trainer;
@@ -54,40 +56,46 @@ public class TrainingServiceImpl implements TrainingService {
         LocalDateTime start = trainingAddDto.getTrainingDateStart();
         LocalDateTime end = start.plusMinutes(trainingAddDto.getDuration());
 
-
-        if (trainingDao.existsTraineeConflict(trainee.getId(), start, end)) {
-            throw new UserInputException(
-                    "Trainee already has a session that overlaps with this time window"
-            );
-        }
-
-        if (trainingDao.existsTrainerConflict(trainer.getId(), start, end)) {
-            throw new UserInputException(
-                    "Trainer already has a session that overlaps with this time window"
-            );
-        }
+        checkScheduleConflicts(trainer, trainee, start, end);
 
         TrainingType trainingType = trainingTypeService.findByName(trainingAddDto.getTrainingType());
 
-
-        Training newTraining = Training.builder()
-                .trainee(trainee)
-                .trainer(trainer)
-                .trainingName(trainingAddDto.getTrainingName())
-                .duration(trainingAddDto.getDuration())
-                .trainingDateStart(start)
-                .trainingDateEnd(end)
-                .trainingType(trainingType)
-                .build();
+        Training newTraining = buildTraining(trainingAddDto, trainer, trainee, start, end, trainingType);
 
         Training createdTraining = trainingDao.create(newTraining);
         ResponseEntity<Void> response = trainerWorkloadClientService.callToTrainerWorkloadService(createdTraining, "ADD");
         if (!response.getStatusCode().is2xxSuccessful()) {
             return response;
         }
-        LOGGER.debug(SERVICE_NAME + " - Created training: {}", createdTraining);
-        return ResponseEntity.ok(createdTraining);
+        TrainingResponse dto = TrainingMapper.trainingWithTrainer(createdTraining);
 
+        LOGGER.debug(SERVICE_NAME + " - Created training: {}", createdTraining);
+        return ResponseEntity.ok(dto);
+
+    }
+
+    private Training buildTraining(TrainingAddDto dto, Trainer trainer, Trainee trainee,
+                                   LocalDateTime start, LocalDateTime end, TrainingType type) {
+        return Training.builder()
+                .trainee(trainee)
+                .trainer(trainer)
+                .trainingName(dto.getTrainingName())
+                .duration(dto.getDuration())
+                .trainingDateStart(start)
+                .trainingDateEnd(end)
+                .trainingType(type)
+                .build();
+    }
+
+    private void checkScheduleConflicts(Trainer trainer, Trainee trainee,
+                                        LocalDateTime start, LocalDateTime end) {
+        if (trainingDao.existsTraineeConflict(trainee.getId(), start, end)) {
+            throw new UserInputException("Trainee already has a session that overlaps with this time window");
+        }
+
+        if (trainingDao.existsTrainerConflict(trainer.getId(), start, end)) {
+            throw new UserInputException("Trainer already has a session that overlaps with this time window");
+        }
     }
 
 

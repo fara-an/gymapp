@@ -5,8 +5,6 @@ import epam.lab.gymapp.model.Training;
 
 public class TrainingMapper {
 
-
-
     public static TrainingResponse trainingWithTrainee(Training training) {
         TrainingResponse trainingResponse = trainingResponse(training);
         trainingResponse.setTraineeName(training.getTrainee().getUserName());

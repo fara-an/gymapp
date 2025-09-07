@@ -8,6 +8,6 @@ public class EntityNotFoundException extends DaoException {
 
     @Override
     public String getUserMessage() {
-        return "Requested entity  was not found ";
+        return "Requested entity  was not found";
     }
 }

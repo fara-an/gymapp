@@ -47,7 +47,7 @@ class TrainingTypeDaoImplTest {
 
     @Test
     void findByName_returnsEntity_whenPresent() {
-        TrainingType trainingType = new TrainingType(); // dummy entity
+        TrainingType trainingType = new TrainingType();
         when(sessionFactory.getCurrentSession()).thenReturn(session);
         when(session.createQuery(TrainingTypeDao.FIND_BY_NAME, TrainingType.class)).thenReturn(query);
         when(query.setParameter("name", "Yoga")).thenReturn(query);

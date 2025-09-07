@@ -160,7 +160,7 @@ class TraineeDaoImplTest {
         Trainee trainee = Trainee.builder()
                 .firstName("Ann")
                 .lastName("Example")
-                .userName("ann")      // field in your entity
+                .userName("ann")
                 .build();
         when(sessionFactory.getCurrentSession()).thenThrow(new DaoException("Session Failed"));
 
@@ -201,10 +201,8 @@ class TraineeDaoImplTest {
         List<Training> actual = underTest.getTraineeTrainings(
                 "ann", from, to, "coach1", "CARDIO");
 
-        // Assert
         assertEquals(expected, actual);
 
-        // Optional: verify that CriteriaBuilder predicates used the parameters you expect:
         verify(session.getCriteriaBuilder()).createQuery(Training.class);
     }
 

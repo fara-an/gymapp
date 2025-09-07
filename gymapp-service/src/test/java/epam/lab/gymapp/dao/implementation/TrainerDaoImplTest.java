@@ -225,4 +225,59 @@ class TrainerDaoImplTest {
         );
     }
 
+    @Test
+    void trainersNotAssignedToTrainee_returnsEmptyList_whenTraineeNotFound() {
+        String traineeUsername = "ghostUser";
+
+        Query<Trainee> traineeQuery = mock(Query.class);
+        when(session.createQuery("from Trainee t where t.userName = :userName", Trainee.class))
+                .thenReturn(traineeQuery);
+        when(traineeQuery.setParameter("userName", traineeUsername)).thenReturn(traineeQuery);
+        when(traineeQuery.uniqueResult()).thenReturn(null);
+
+        List<Trainer> result = underTest.trainersNotAssignedToTrainee(traineeUsername);
+
+        assertTrue(result.isEmpty(), "Expected empty list when trainee not found");
+        verify(traineeQuery).uniqueResult();
+    }
+
+    @Test
+    void trainersNotAssignedToTrainee_returnsTrainers_whenTraineeFound() {
+        String traineeUsername = "validUser";
+        Trainee trainee = new Trainee();
+        trainee.setUserName(traineeUsername);
+
+        Query<Trainee> traineeQuery = mock(Query.class);
+        when(session.createQuery("from Trainee t where t.userName = :userName", Trainee.class))
+                .thenReturn(traineeQuery);
+        when(traineeQuery.setParameter("userName", traineeUsername)).thenReturn(traineeQuery);
+        when(traineeQuery.uniqueResult()).thenReturn(trainee);
+
+        Query<Trainer> trainerQuery = mock(Query.class);
+        when(session.createQuery(anyString(), eq(Trainer.class))).thenReturn(trainerQuery);
+        when(trainerQuery.setParameter("trainee", trainee)).thenReturn(trainerQuery);
+        List<Trainer> expected = List.of(new Trainer(), new Trainer());
+        when(trainerQuery.getResultList()).thenReturn(expected);
+
+        List<Trainer> result = underTest.trainersNotAssignedToTrainee(traineeUsername);
+
+        assertEquals(expected, result);
+        verify(trainerQuery).getResultList();
+    }
+
+    @Test
+    void trainersNotAssignedToTrainee_wrapsExceptionAsDaoException() {
+        String traineeUsername = "brokenUser";
+
+        when(sessionFactory.getCurrentSession()).thenThrow(new RuntimeException("DB broken"));
+
+        DaoException ex = assertThrows(
+                DaoException.class,
+                () -> underTest.trainersNotAssignedToTrainee(traineeUsername)
+        );
+
+        assertTrue(ex.getMessage().contains(traineeUsername));
+    }
+
+
 }

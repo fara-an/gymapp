@@ -19,11 +19,14 @@ import java.util.function.Function;
 @Service
 public class JwtService {
 
-    @Value("${jwt.secret}")
-    private String secret;
+    private final String secret;
 
-    @Value("${jwt.lifetime}")
-    private Duration lifetime;
+    private final Duration lifetime;
+
+    public JwtService( @Value("${jwt.secret}") String secret, @Value("${jwt.lifetime}")Duration lifetime) {
+        this.secret = secret;
+        this.lifetime = lifetime;
+    }
 
     public String generateToken(UserDetails userDetails) {
         Date issuedDate = new Date();

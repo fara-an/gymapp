@@ -1,8 +1,13 @@
 package epam.lab.gymapp.dao.implementation;
 
+import epam.lab.gymapp.exceptions.EntityNotFoundException;
+import epam.lab.gymapp.model.Trainee;
+import epam.lab.gymapp.model.Trainer;
 import epam.lab.gymapp.model.Training;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.query.MutationQuery;
+import org.hibernate.query.NativeQuery;
 import org.hibernate.query.Query;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,6 +31,10 @@ class TrainingDaoImplTest {
     private Query<Long> countQuery;
     @Mock
     private Query<Training> trainingQuery;
+    @Mock
+    private NativeQuery<Training> nativeQuery;
+    @Mock
+    private MutationQuery mutationQuery;
 
     @InjectMocks
     private TrainingDaoImpl trainingDao;
@@ -122,4 +131,127 @@ class TrainingDaoImplTest {
 
         assertFalse(result.isPresent());
     }
+
+    @Test
+    void deleteTraining_ShouldExecuteDeleteQuery() {
+        Training training = new Training();
+        training.setId(99L);
+
+        when(session.createMutationQuery(anyString())).thenReturn(mutationQuery);
+        when(mutationQuery.setParameter("id", training.getId())).thenReturn(mutationQuery);
+
+        trainingDao.deleteTraining(training);
+
+        verify(mutationQuery).executeUpdate();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    void updateTrainingTrainer_ShouldUpdateTrainer_WhenDifferentTrainer() {
+        Training training = new Training();
+        Trainee trainee = new Trainee();
+        trainee.setUserName("traineeUser");
+        Trainer oldTrainer = new Trainer();
+        oldTrainer.setUserName("oldTrainer");
+        training.setTrainee(trainee);
+        training.setTrainer(oldTrainer);
+
+        Trainer newTrainer = new Trainer();
+        newTrainer.setUserName("newTrainer");
+
+        when(session.createQuery(startsWith("SELECT  tr"), eq(Training.class))).thenReturn(trainingQuery);
+        when(trainingQuery.setParameter(eq("id"), any())).thenReturn(trainingQuery);
+        when(trainingQuery.getResultStream()).thenReturn(java.util.stream.Stream.of(training));
+
+        Query<Trainer> trainerQuery = mock(Query.class);
+        when(session.createQuery(startsWith("SELECT  t"), eq(Trainer.class))).thenReturn(trainerQuery);
+        when(trainerQuery.setParameter(eq("uname"), any())).thenReturn(trainerQuery);
+        when(trainerQuery.getResultStream()).thenReturn(java.util.stream.Stream.of(newTrainer));
+
+        Trainer result = trainingDao.updateTrainingTrainer(1L, "traineeUser", "newTrainer");
+
+        assertEquals(newTrainer, result);
+        assertEquals(newTrainer, training.getTrainer());
+    }
+
+
+    @Test
+    void updateTrainingTrainer_ShouldThrow_WhenTrainingNotFound() {
+        when(session.createQuery(startsWith("SELECT  tr"), eq(Training.class))).thenReturn(trainingQuery);
+        when(trainingQuery.setParameter(eq("id"), any())).thenReturn(trainingQuery);
+        when(trainingQuery.getResultStream()).thenReturn(java.util.stream.Stream.empty());
+
+        assertThrows(EntityNotFoundException.class,
+                () -> trainingDao.updateTrainingTrainer(1L, "traineeUser", "newTrainer"));
+    }
+
+    @Test
+    void updateTrainingTrainer_ShouldThrow_WhenTraineeMismatch() {
+        Training training = new Training();
+        Trainee trainee = new Trainee();
+        trainee.setUserName("differentUser");
+        training.setTrainee(trainee);
+
+        when(session.createQuery(startsWith("SELECT  tr"), eq(Training.class))).thenReturn(trainingQuery);
+        when(trainingQuery.setParameter(eq("id"), any())).thenReturn(trainingQuery);
+        when(trainingQuery.getResultStream()).thenReturn(java.util.stream.Stream.of(training));
+
+        assertThrows(EntityNotFoundException.class,
+                () -> trainingDao.updateTrainingTrainer(1L, "expectedUser", "newTrainer"));
+    }
+
+    @Test
+    void updateTrainingTrainer_ShouldThrow_WhenNewTrainerNotFound() {
+        Training training = new Training();
+        Trainee trainee = new Trainee();
+        trainee.setUserName("traineeUser");
+        Trainer oldTrainer = new Trainer();
+        oldTrainer.setUserName("oldTrainer");
+        training.setTrainee(trainee);
+        training.setTrainer(oldTrainer);
+
+        Trainer newTrainer = new Trainer();
+        newTrainer.setUserName("newTrainer");
+
+        when(session.createQuery(startsWith("SELECT  tr"), eq(Training.class))).thenReturn(trainingQuery);
+        when(trainingQuery.setParameter(eq("id"), any())).thenReturn(trainingQuery);
+        when(trainingQuery.getResultStream()).thenReturn(java.util.stream.Stream.of(training));
+
+        @SuppressWarnings("unchecked")
+        Query<Trainer> trainerQuery = mock(Query.class);
+        when(session.createQuery(startsWith("SELECT  t"), eq(Trainer.class))).thenReturn(trainerQuery);
+        when(trainerQuery.setParameter(eq("uname"), any())).thenReturn(trainerQuery);
+        when(trainerQuery.getResultStream()).thenReturn(java.util.stream.Stream.of(newTrainer));
+
+        Trainer result = trainingDao.updateTrainingTrainer(1L, "traineeUser", "newTrainer");
+
+        assertEquals(newTrainer, result);
+        assertEquals(newTrainer, training.getTrainer());    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    void updateTrainingTrainer_ShouldNotUpdate_WhenTrainerSame() {
+        Training training = new Training();
+        Trainee trainee = new Trainee();
+        trainee.setUserName("traineeUser");
+        Trainer sameTrainer = new Trainer();
+        sameTrainer.setUserName("sameTrainer");
+        training.setTrainee(trainee);
+        training.setTrainer(sameTrainer);
+
+        when(session.createQuery(startsWith("SELECT  tr"), eq(Training.class))).thenReturn(trainingQuery);
+        when(trainingQuery.setParameter(eq("id"), any())).thenReturn(trainingQuery);
+        when(trainingQuery.getResultStream()).thenReturn(java.util.stream.Stream.of(training));
+
+        Query<Trainer> trainerQuery = mock(Query.class);
+        when(session.createQuery(startsWith("SELECT  t"), eq(Trainer.class))).thenReturn(trainerQuery);
+        when(trainerQuery.setParameter(eq("uname"), any())).thenReturn(trainerQuery);
+        when(trainerQuery.getResultStream()).thenReturn(java.util.stream.Stream.of(sameTrainer));
+
+        Trainer result = trainingDao.updateTrainingTrainer(1L, "traineeUser", "sameTrainer");
+
+        assertEquals(sameTrainer, result);
+        assertEquals(sameTrainer, training.getTrainer());
+    }
+
 }
