@@ -1,6 +1,6 @@
 package epam.lab.gymapp.exceptions;
 
-public class InvalidCredentialsException extends ApplicationException {
+public class InvalidCredentialsException extends RuntimeException {
 
     private static final String INVALID_CREDENTIALS_ERROR_MSG = "Invalid credentials : %s";
 
@@ -8,8 +8,5 @@ public class InvalidCredentialsException extends ApplicationException {
         super(String.format(INVALID_CREDENTIALS_ERROR_MSG, username));
     }
 
-    @Override
-    public String getUserMessage() {
-        return "Provided credentials are not valid";
-    }
+
 }

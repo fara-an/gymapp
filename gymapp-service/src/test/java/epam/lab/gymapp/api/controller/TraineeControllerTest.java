@@ -204,7 +204,6 @@ public class TraineeControllerTest {
         LocalDateTime from = LocalDateTime.of(2023, 1, 1, 0, 0);
         LocalDateTime to = LocalDateTime.of(2023, 12, 31, 0, 0);
 
-        Prepare mock Training object
         Training mockTraining = Training.builder()
                 .trainingType(TrainingType.builder().name(trainingType).build())
                 .trainingName(trainingName)

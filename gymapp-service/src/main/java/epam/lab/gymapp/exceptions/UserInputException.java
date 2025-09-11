@@ -1,6 +1,6 @@
 package epam.lab.gymapp.exceptions;
 
-public class UserInputException extends ApplicationException {
+public class UserInputException extends RuntimeException {
 
     public UserInputException(String message) {
         super(message);
@@ -10,8 +10,5 @@ public class UserInputException extends ApplicationException {
         super(message, cause);
     }
 
-    @Override
-    public String getUserMessage() {
-        return "User entered invalid input";
-    }
+
 }

@@ -1,6 +1,7 @@
 package epam.lab.gymapp.config;
 
 import com.zaxxer.hikari.HikariDataSource;
+import epam.lab.gymapp.config.hibernate.DatabaseConfig;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

@@ -1,4 +1,4 @@
-package epam.lab.gymapp.config.security;
+package epam.lab.gymapp.service.implementation;
 
 import org.springframework.stereotype.Service;
 
