@@ -62,12 +62,12 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(UserInputException.class)
-    public ResponseEntity<MessageResponse> handleException(UserInputException ex) {
+    public ResponseEntity<MessageResponse> handleUserException(UserInputException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(build(USER_INPUT_EXCEPTION));
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<MessageResponse> handleException() {
+    public ResponseEntity<MessageResponse> handleException(Exception ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(build(GENERAL_EXCEPTION));
     }
 

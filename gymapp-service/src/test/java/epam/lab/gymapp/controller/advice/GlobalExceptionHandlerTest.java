@@ -165,7 +165,7 @@ class GlobalExceptionHandlerTest {
 
     @Test
     void handleGenericException_ShouldReturnBadRequest() {
-        ResponseEntity<MessageResponse> response = globalExceptionHandler.handleException();
+        ResponseEntity<MessageResponse> response = globalExceptionHandler.handleException(new Exception());
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertNotNull(response.getBody());
