@@ -1,11 +1,29 @@
 package epam.lab.gymapp.cucumber.config;
 
-import org.springframework.boot.test.context.SpringBootTest;
+import epam.lab.gymapp.configuration.TestHibernateConfig;
+import epam.lab.gymapp.configuration.TrainerWorkloadClientServiceStubConfig;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import io.cucumber.spring.CucumberContextConfiguration;
-import epam.lab.gymapp.GymApplication;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ActiveProfiles;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 @CucumberContextConfiguration
-@SpringBootTest(classes = GymApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@Import({TestHibernateConfig.class, TrainerWorkloadClientServiceStubConfig.class})
+@AutoConfigureMockMvc
+@Testcontainers
+@ActiveProfiles("test")
 public class CucumberSpringConfiguration {
-    // This class will be automatically detected by Cucumber
+
+    @Container
+    @ServiceConnection
+    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16.0").withReuse(false);
+
+
+
 }

@@ -2,6 +2,7 @@ package epam.lab.gymapp.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import epam.lab.gymapp.config.metric.MetricsConfig;
+import epam.lab.gymapp.configuration.NoSecurityConfig;
 import epam.lab.gymapp.dto.mapper.TraineeMapper;
 import epam.lab.gymapp.dto.mapper.TrainerMapper;
 import epam.lab.gymapp.dto.mapper.TrainingMapper;

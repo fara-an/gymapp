@@ -5,6 +5,7 @@ import epam.lab.gymapp.exceptions.DaoException;
 import epam.lab.gymapp.exceptions.EntityNotFoundException;
 import epam.lab.gymapp.exceptions.InvalidCredentialsException;
 import epam.lab.gymapp.exceptions.UserInputException;
+import io.jsonwebtoken.JwtException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -19,7 +20,8 @@ import java.util.stream.Collectors;
 public class GlobalExceptionHandler {
 
     private static final String GENERAL_EXCEPTION="Something went wrong on our end. Please try again";
-    private static final String USER_INPUT_EXCEPTION="Resource already exists";
+    private static final String JWT_EXCEPTION="Something went wrong with your token. Please try again with a valid token";
+    private static final String USER_INPUT_EXCEPTION="Problem with user input";
     private static final String INVALID_CREDENTIALS_EXCEPTION="Invalid credentials provided";
     private static final String DAO_EXCEPTION="Error occurred during database interaction";
     private static final String ENTITY_NOT_EXCEPTION="Error occurred during database interaction";
@@ -65,6 +67,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<MessageResponse> handleUserException(UserInputException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(build(USER_INPUT_EXCEPTION));
     }
+
+    @ExceptionHandler(JwtException.class)
+    public ResponseEntity<MessageResponse> handleException(JwtException ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(build(JWT_EXCEPTION));
+    }
+
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<MessageResponse> handleException(Exception ex) {

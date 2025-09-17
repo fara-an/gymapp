@@ -1,8 +1,11 @@
 package epam.lab.gymapp.api.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import epam.lab.gymapp.GymApplication;
+import epam.lab.gymapp.configuration.NoSecurityConfig;
+import epam.lab.gymapp.configuration.NoServiceConfig;
+import epam.lab.gymapp.configuration.TestHibernateConfig;
+import epam.lab.gymapp.configuration.TrainerWorkloadClientServiceStubConfig;
 import epam.lab.gymapp.dto.MessageResponse;
 import epam.lab.gymapp.dto.request.training.TrainingAddDto;
 import epam.lab.gymapp.dto.response.training.TrainingResponse;

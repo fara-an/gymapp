@@ -1,5 +1,6 @@
 package epam.lab.gymapp.api.controller;
 
+import epam.lab.gymapp.configuration.NoSecurityConfig;
 import epam.lab.gymapp.dto.request.training.TrainingAddDto;
 import epam.lab.gymapp.service.interfaces.TrainingService;
 import org.junit.jupiter.api.Test;

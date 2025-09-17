@@ -1,4 +1,4 @@
-package epam.lab.gymapp.api.controller;
+package epam.lab.gymapp.configuration;
 
 import epam.lab.gymapp.model.Training;
 import epam.lab.gymapp.service.implementation.TrainerWorkloadClientService;

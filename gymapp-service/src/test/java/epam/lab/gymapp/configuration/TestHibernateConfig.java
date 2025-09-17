@@ -1,4 +1,4 @@
-package epam.lab.gymapp.api.controller;
+package epam.lab.gymapp.configuration;
 
 import org.hibernate.SessionFactory;
 import org.springframework.boot.test.context.TestConfiguration;

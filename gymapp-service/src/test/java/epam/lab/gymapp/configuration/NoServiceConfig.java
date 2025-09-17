@@ -1,4 +1,4 @@
-package epam.lab.gymapp.api.controller;
+package epam.lab.gymapp.configuration;
 
 import epam.lab.gymapp.jwt.JwtService;
 import org.springframework.boot.test.context.TestConfiguration;
