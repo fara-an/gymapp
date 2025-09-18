@@ -48,7 +48,6 @@ public class UserControllerITSteps {
     public void login() throws Exception {
         Credentials creds = new Credentials("Emily.Brown", "pass789");
         ResponseEntity<String> resp = restTemplate.postForEntity(url("/users/login"), creds, String.class);
-
         LoginResponse loginResponse = objectMapper.readValue(resp.getBody(), LoginResponse.class);
         testContextJwt.setJwtToken(loginResponse.getToken());
     }

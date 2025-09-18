@@ -7,6 +7,7 @@ import epam.lab.gymapp.service.interfaces.TrainingTypeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
@@ -20,6 +21,7 @@ public class TrainingTypeServiceImpl implements TrainingTypeService {
         this.dao = dao;
     }
 
+    @Transactional
     @Override
     public TrainingType findByName(String name) {
         String serviceName = getClass().getSimpleName();
