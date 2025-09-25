@@ -3,6 +3,7 @@ package epam.lab.gymapp.api.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import epam.lab.gymapp.config.metric.MetricsConfig;
 import epam.lab.gymapp.configuration.NoSecurityConfig;
+import epam.lab.gymapp.configuration.NoServiceConfig;
 import epam.lab.gymapp.dto.mapper.TraineeMapper;
 import epam.lab.gymapp.dto.mapper.TrainerMapper;
 import epam.lab.gymapp.dto.mapper.TrainingMapper;
@@ -12,6 +13,7 @@ import epam.lab.gymapp.dto.request.update.UpdateTraineeTrainerList;
 import epam.lab.gymapp.dto.response.get.TraineeGetResponse;
 import epam.lab.gymapp.dto.response.get.TrainerWithoutTraineesResponse;
 import epam.lab.gymapp.dto.response.training.TrainingResponse;
+import epam.lab.gymapp.filter.perrequest.JwtAuthenticationFilter;
 import epam.lab.gymapp.model.Trainee;
 import epam.lab.gymapp.model.Trainer;
 import epam.lab.gymapp.model.Training;
@@ -25,6 +27,8 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
@@ -41,8 +45,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ActiveProfiles("test")
-@WebMvcTest(value = TraineeController.class)
-@Import(NoSecurityConfig.class)
+@WebMvcTest(value = TraineeController.class, excludeFilters =@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE ,classes = JwtAuthenticationFilter.class))
+@Import({NoSecurityConfig.class, NoServiceConfig.class})
 @ImportAutoConfiguration(exclude = MetricsConfig.class)
 public class TraineeControllerTest {
 
@@ -86,7 +90,7 @@ public class TraineeControllerTest {
                             .content(objectMapper.writeValueAsString(registrationBody)))
 
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.name").value("alice123"))
+                    .andExpect(jsonPath("$.username").value("alice123"))
                     .andExpect(jsonPath("$.password").value("securepass"));
 
             verify(traineeService).createProfile(trainee);

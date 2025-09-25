@@ -1,4 +1,4 @@
-package epam.lab.gymapp.cucumber.steps;
+package epam.lab.gymapp.cucumber;
 
 import io.cucumber.spring.ScenarioScope;
 import lombok.Getter;

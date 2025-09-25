@@ -2,6 +2,7 @@ package epam.lab.gymapp.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import epam.lab.gymapp.configuration.NoSecurityConfig;
+import epam.lab.gymapp.configuration.NoServiceConfig;
 import epam.lab.gymapp.dto.mapper.TrainerMapper;
 import epam.lab.gymapp.dto.mapper.TrainingMapper;
 import epam.lab.gymapp.dto.request.registration.TrainerRegistrationBody;
@@ -10,6 +11,8 @@ import epam.lab.gymapp.dto.response.get.TrainerGetResponse;
 import epam.lab.gymapp.dto.response.get.TrainerWithoutTraineesResponse;
 import epam.lab.gymapp.dto.response.training.TrainingResponse;
 import epam.lab.gymapp.exceptions.EntityNotFoundException;
+import epam.lab.gymapp.filter.perrequest.JwtAuthenticationFilter;
+import epam.lab.gymapp.jwt.JwtService;
 import epam.lab.gymapp.model.Trainer;
 import epam.lab.gymapp.model.Training;
 import epam.lab.gymapp.model.TrainingType;
@@ -20,7 +23,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
@@ -38,8 +44,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ActiveProfiles("test")
-@WebMvcTest(value = TrainerController.class)
-@Import(NoSecurityConfig.class)
+@WebMvcTest(value = TrainerController.class, excludeFilters =@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE ,classes = JwtAuthenticationFilter.class))
+@Import({NoSecurityConfig.class, NoServiceConfig.class})
 public class TrainerControllerTest {
 
     @Autowired
@@ -56,6 +62,7 @@ public class TrainerControllerTest {
 
     @MockitoBean
     MeterRegistry meterRegistry;
+
 
     private static final String TRAINING_TYPE_NAME = "Cardio";
     private static final String FIRSTNAME = "John";

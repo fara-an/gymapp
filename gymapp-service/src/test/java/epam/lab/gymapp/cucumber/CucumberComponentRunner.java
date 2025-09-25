@@ -1,4 +1,4 @@
-package epam.lab.gymapp.cucumber.config;
+package epam.lab.gymapp.cucumber;
 
 import org.junit.platform.suite.api.ConfigurationParameter;
 import org.junit.platform.suite.api.IncludeEngines;
@@ -10,15 +10,18 @@ import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PROPERTY_NAME;
 
 @Suite
 @IncludeEngines("cucumber")
-@SelectClasspathResource("features")   // looks under src/test/resources/features
+@SelectClasspathResource("features/component")
 @ConfigurationParameter(
         key = GLUE_PROPERTY_NAME,
-        value = "epam.lab.gymapp.cucumber.steps"
+        value = "epam.lab.gymapp.cucumber.component"
 )
 @ConfigurationParameter(
         key = PLUGIN_PROPERTY_NAME,
         value = "pretty, json:target/cucumber-reports/Cucumber.json"
 )
-public class RunCucumberTest {
-    // Empty: all config via annotations
+@ConfigurationParameter(
+        key = "cucumber.experimental.exclude-configurations",
+        value = "true"
+)
+public class CucumberComponentRunner {
 }

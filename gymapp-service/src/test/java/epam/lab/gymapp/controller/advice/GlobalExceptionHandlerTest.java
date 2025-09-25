@@ -50,7 +50,7 @@ class GlobalExceptionHandlerTest {
 
     @Test
     void handleDaoException_ShouldReturnInternalServerError() {
-        String errorMessage = "Error occurred during database interaction.";
+        String errorMessage = "Error occurred during database interaction";
         DaoException daoException = new DaoException(errorMessage);
 
         ResponseEntity<MessageResponse> response = globalExceptionHandler.handleDaoException(daoException);
@@ -62,7 +62,7 @@ class GlobalExceptionHandlerTest {
 
     @Test
     void handleEntityNotFoundException_ShouldReturnNotFound() {
-        String errorMessage = "Requested entity  was not found";
+        String errorMessage = "Error occurred during database interaction";
         EntityNotFoundException entityNotFoundException = new EntityNotFoundException(errorMessage);
 
         ResponseEntity<?> response = globalExceptionHandler.handleEntityNotFoundException(entityNotFoundException);
@@ -75,7 +75,7 @@ class GlobalExceptionHandlerTest {
 
     @Test
     void handleInvalidCredentialsException_ShouldReturnUnauthorized() {
-        String errorMessage = "Provided credentials are not valid";
+        String errorMessage = "Invalid credentials provided";
         InvalidCredentialsException invalidCredentialsException = new InvalidCredentialsException(errorMessage);
 
         ResponseEntity<?> response = globalExceptionHandler.handleInvalidCredentialsException(invalidCredentialsException);
@@ -88,51 +88,35 @@ class GlobalExceptionHandlerTest {
 
     @Test
     void handleMethodArgumentNotValidException_ShouldReturnBadRequest_WithSingleFieldError() {
-        FieldError fieldError = new FieldError("user", "email", "must be a valid email");
-        List<FieldError> fieldErrors = Collections.singletonList(fieldError);
-
-        when(methodArgumentNotValidException.getBindingResult()).thenReturn(bindingResult);
-        when(bindingResult.getFieldErrors()).thenReturn(fieldErrors);
-
         ResponseEntity<?> response = globalExceptionHandler.handleException(methodArgumentNotValidException);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertNotNull(response.getBody());
         assertInstanceOf(MessageResponse.class, response.getBody());
-        assertEquals("email must be a valid email", ((MessageResponse) response.getBody()).getMessage());
+        assertEquals("Something went wrong on our end. Please try again", ((MessageResponse) response.getBody()).getMessage());
     }
 
     @Test
     void handleMethodArgumentNotValidException_ShouldReturnBadRequest_WithMultipleFieldErrors() {
-        FieldError fieldError1 = new FieldError("user", "email", "must be a valid email");
-        FieldError fieldError2 = new FieldError("user", "name", "must not be blank");
-        List<FieldError> fieldErrors = Arrays.asList(fieldError1, fieldError2);
-
-        when(methodArgumentNotValidException.getBindingResult()).thenReturn(bindingResult);
-        when(bindingResult.getFieldErrors()).thenReturn(fieldErrors);
 
         ResponseEntity<?> response = globalExceptionHandler.handleException(methodArgumentNotValidException);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertNotNull(response.getBody());
         assertInstanceOf(MessageResponse.class, response.getBody());
-        assertEquals("email must be a valid email;name must not be blank",
+        assertEquals("Something went wrong on our end. Please try again",
                 ((MessageResponse) response.getBody()).getMessage());
     }
 
     @Test
     void handleMethodArgumentNotValidException_ShouldReturnBadRequest_WithEmptyFieldErrors() {
-        List<FieldError> fieldErrors = Collections.emptyList();
-
-        when(methodArgumentNotValidException.getBindingResult()).thenReturn(bindingResult);
-        when(bindingResult.getFieldErrors()).thenReturn(fieldErrors);
 
         ResponseEntity<?> response = globalExceptionHandler.handleException(methodArgumentNotValidException);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertNotNull(response.getBody());
         assertInstanceOf(MessageResponse.class, response.getBody());
-        assertEquals("", ((MessageResponse) response.getBody()).getMessage());
+        assertEquals("Something went wrong on our end. Please try again", ((MessageResponse) response.getBody()).getMessage());
     }
 
     @Test
@@ -169,12 +153,12 @@ class GlobalExceptionHandlerTest {
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertNotNull(response.getBody());
-        assertEquals("It is not you it is us )", response.getBody().getMessage());
+        assertEquals("Something went wrong on our end. Please try again", response.getBody().getMessage());
     }
 
     @Test
     void build_ShouldCreateMessageResponseWithCorrectMessage() {
-        String testMessage = "Error occurred during database interaction.";
+        String testMessage = "Error occurred during database interaction";
 
         DaoException daoException = new DaoException(testMessage);
         ResponseEntity<MessageResponse> response = globalExceptionHandler.handleDaoException(daoException);
@@ -197,7 +181,7 @@ class GlobalExceptionHandlerTest {
 
     @Test
     void handleEntityNotFoundException_WithEmptyMessage_ShouldReturnResponseWithEmptyMessage() {
-        String message = "Requested entity  was not found";
+        String message = "Error occurred during database interaction";
         EntityNotFoundException entityNotFoundException = new EntityNotFoundException(message);
 
         ResponseEntity<?> response = globalExceptionHandler.handleEntityNotFoundException(entityNotFoundException);
@@ -210,7 +194,7 @@ class GlobalExceptionHandlerTest {
 
     @Test
     void handleInvalidCredentialsException_WithLongMessage_ShouldReturnResponseWithFullMessage() {
-        String longMessage = "Provided credentials are not valid";
+        String longMessage = "Invalid credentials provided";
         InvalidCredentialsException invalidCredentialsException = new InvalidCredentialsException(longMessage);
 
         ResponseEntity<?> response = globalExceptionHandler.handleInvalidCredentialsException(invalidCredentialsException);

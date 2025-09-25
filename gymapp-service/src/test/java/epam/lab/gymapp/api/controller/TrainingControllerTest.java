@@ -1,12 +1,16 @@
 package epam.lab.gymapp.api.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import epam.lab.gymapp.configuration.NoSecurityConfig;
 import epam.lab.gymapp.dto.request.training.TrainingAddDto;
+import epam.lab.gymapp.filter.perrequest.JwtAuthenticationFilter;
 import epam.lab.gymapp.service.interfaces.TrainingService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -21,26 +25,35 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 @ActiveProfiles("test")
-@WebMvcTest(value = TrainingController.class)
+@WebMvcTest(value = TrainingController.class, excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE ,classes = JwtAuthenticationFilter.class ))
 @Import(NoSecurityConfig.class)
 class TrainingControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
     @MockitoBean
     private TrainingService trainingService;
 
     @Test
     void addTraining_ShouldReturnOk() throws Exception {
-        TrainingAddDto dto = new TrainingAddDto();
-        Mockito.when(trainingService.addTraining(any(TrainingAddDto.class))) .thenReturn((ResponseEntity)ResponseEntity.ok("training added"));
+        TrainingAddDto dto =  TrainingAddDto.builder()
+                .traineeUserName("Emily.Brown")
+                .trainerUserName("John.Doe")
+                .trainingName("working on biceps")
+                .trainingType("Strength Training")
+                .trainingDateStart(LocalDateTime.now().plusDays(1))
+                .duration(60)
+                .build();
+        Mockito.when(trainingService.addTraining(dto)) .thenReturn((ResponseEntity)ResponseEntity.ok("training added"));
 
         mockMvc.perform(post("/trainings")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"trainerUsername\":\"trainer1\",\"traineeUsername\":\"trainee1\",\"startTime\":\"2025-09-02T15:00:00\"}"))
-                .andExpect(status().isOk())
-                .andExpect(content().string("training added"));
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isOk());
     }
 
     @Test

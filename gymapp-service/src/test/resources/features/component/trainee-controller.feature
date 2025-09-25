@@ -1,3 +1,4 @@
+@TraineeController
 Feature: Trainee Controller API
 
   Scenario: Register new trainee

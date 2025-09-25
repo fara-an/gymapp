@@ -1,3 +1,4 @@
+@TrainingController
 Feature: TrainingController API tests
 
   Scenario: Successfully add a training
@@ -23,7 +24,6 @@ Feature: TrainingController API tests
     Given a training exists between trainer "John.Doe" and trainee "Emily.Brown" at "2025-06-14T08:00:00"
     When I send a DELETE request to "/trainings?trainerUsername=John.Doe&traineeUsername=Emily.Brown&startTime=2025-06-14T08:00:00"
     Then TrainingController the response status should be 200
-
 
 
   Scenario: Fail to add training due to trainee schedule conflict

@@ -1,6 +1,7 @@
-package epam.lab.gymapp.cucumber.steps;
+package epam.lab.gymapp.cucumber.component.steps;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import epam.lab.gymapp.cucumber.TestContextJwt;
 import epam.lab.gymapp.dto.request.login.Credentials;
 import epam.lab.gymapp.dto.response.login.LoginResponse;
 import epam.lab.gymapp.model.Trainee;
@@ -25,7 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-public class TrainingControllerITSteps {
+public class TrainingControllerSteps {
 
     @LocalServerPort
     private int port;

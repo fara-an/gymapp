@@ -1,4 +1,4 @@
-package epam.lab.gymapp.cucumber.config;
+package epam.lab.gymapp.cucumber.component;
 
 import epam.lab.gymapp.configuration.TestHibernateConfig;
 import epam.lab.gymapp.configuration.TrainerWorkloadClientServiceStubConfig;
@@ -23,7 +23,5 @@ public class CucumberSpringConfiguration {
     @Container
     @ServiceConnection
     static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16.0").withReuse(false);
-
-
 
 }

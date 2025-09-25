@@ -1,7 +1,8 @@
-package epam.lab.gymapp.cucumber.steps;
+package epam.lab.gymapp.cucumber.component.steps;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import epam.lab.gymapp.cucumber.TestContextJwt;
 import epam.lab.gymapp.dto.request.login.Credentials;
 import epam.lab.gymapp.dto.request.changePassword.PasswordChangeDto;
 import epam.lab.gymapp.dto.response.login.LoginResponse;
@@ -16,7 +17,7 @@ import org.springframework.http.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class UserControllerITSteps {
+public class UserControllerSteps {
 
     @LocalServerPort
     private int port;
@@ -31,7 +32,7 @@ public class UserControllerITSteps {
     private TestContextJwt testContextJwt;
 
 
-    Logger LOGGER = LoggerFactory.getLogger(UserControllerITSteps.class);
+    Logger LOGGER = LoggerFactory.getLogger(UserControllerSteps.class);
 
     private String currentUsername;
     private String currentPassword;
@@ -41,9 +42,6 @@ public class UserControllerITSteps {
         return "http://localhost:" + port + path;
     }
 
-    // -------------------------
-    // LOGIN
-    // -------------------------
     @Before()
     public void login() throws Exception {
         Credentials creds = new Credentials("Emily.Brown", "pass789");
@@ -81,9 +79,7 @@ public class UserControllerITSteps {
         this.testContextJwt.setJwtToken(loginResponse.getToken());
     }
 
-    // -------------------------
-    // TOGGLE ACTIVE STATUS
-    // -------------------------
+
     @When("I send a PATCH request to {string}")
     public void i_send_a_patch_request_to(String path) {
         LOGGER.debug("Returned jwt token is {}", testContextJwt.getJwtToken());
@@ -93,9 +89,6 @@ public class UserControllerITSteps {
         response = restTemplate.exchange(url(path), HttpMethod.PATCH, entity, String.class);
     }
 
-    // -------------------------
-    // CHANGE PASSWORD
-    // -------------------------
     @When("I send a PUT request to {string} with old password {string} and new password {string} of username {string}")
     public void i_send_a_put_request_to_with_old_password_and_new_password(String path, String oldPass, String newPass, String username) {
         LOGGER.debug("Returned jwt token is {}", testContextJwt.getJwtToken());
@@ -110,11 +103,6 @@ public class UserControllerITSteps {
 
         response = restTemplate.exchange(url(path), HttpMethod.PUT, entity, String.class);
     }
-
-    // -------------------------
-    // LOGOUT
-    // -------------------------
-
 
     @Given("an invalid JWT token {string}")
     public void an_invalid_jwt_token(String token) {

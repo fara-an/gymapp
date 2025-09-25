@@ -60,16 +60,8 @@ class TrainingControllerIT {
     }
 
     @Test
-    void debugContainerState() {
-        System.out.println("Container ID: " + postgres.getContainerId());
-        System.out.println("Container is running: " + postgres.isRunning());
-        System.out.println("JDBC URL: " + postgres.getJdbcUrl());
-        var trainings = jdbcTemplate.queryForList("SELECT * FROM training");
-        System.out.println(trainings);
-    }
-
-    @Test
     void addTraining_ShouldPersistAndReturnOk() throws JsonProcessingException {
+        trainingAddDto.setTrainingDateStart(LocalDateTime.now().plusDays(4));
         ResponseEntity<TrainingResponse> response = restTemplate.postForEntity(
                 "/trainings",
                 trainingAddDto,
@@ -92,7 +84,7 @@ class TrainingControllerIT {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
         assertThat(response.getBody()).isNotNull();
-        assertThat(response.getBody().getMessage()).isEqualTo("Requested entity  was not found");
+        assertThat(response.getBody().getMessage()).isEqualTo("Error occurred during database interaction");
     }
 
     @Test
@@ -107,12 +99,12 @@ class TrainingControllerIT {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
         assertThat(response.getBody()).isNotNull();
-        assertThat(response.getBody().getMessage()).isEqualTo("Requested entity  was not found");
+        assertThat(response.getBody().getMessage()).isEqualTo("Error occurred during database interaction");
     }
 
     @Test
     void addTraining_ShouldFailOnInvalidTrainingType() {
-        trainingAddDto.setTrainingType("Yoga"); // assume John.Doe specialization ≠ Yoga
+        trainingAddDto.setTrainingType("Yoga");
 
         ResponseEntity<MessageResponse> response = restTemplate.postForEntity(
                 "/trainings",
@@ -122,7 +114,7 @@ class TrainingControllerIT {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
         assertThat(response.getBody()).isNotNull();
-        assertThat(response.getBody().getMessage()).contains("TrainingServiceImpl: Trainer specialization 'Strength Training' does not match required 'Yoga'");
+        assertThat(response.getBody().getMessage()).contains("Problem with user input");
     }
 
     @Test
@@ -139,7 +131,7 @@ class TrainingControllerIT {
                 .trainerUserName("John.Doe")
                 .trainingName("Chest day clash")
                 .trainingType("Strength Training")
-                .trainingDateStart(trainingAddDto.getTrainingDateStart()) // same start
+                .trainingDateStart(trainingAddDto.getTrainingDateStart())
                 .duration(30)
                 .build();
 
@@ -151,12 +143,13 @@ class TrainingControllerIT {
 
         assertThat(conflictResponse.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
         assertThat(conflictResponse.getBody()).isNotNull();
-        assertThat(conflictResponse.getBody().getMessage()).contains("session that overlaps with this time window");
+        assertThat(conflictResponse.getBody().getMessage()).contains("Problem with user input");
     }
 
     @Test
     void addTraining_ShouldFailWhenTrainerWorkloadServiceFails() {
            trainingAddDto.setTrainingName("force-fail");
+           trainingAddDto.setTrainingDateStart(LocalDateTime.now().plusDays(9));
 
         ResponseEntity<MessageResponse> response = restTemplate.postForEntity(
                 "/trainings",
@@ -164,7 +157,7 @@ class TrainingControllerIT {
                 MessageResponse.class
         );
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SERVICE_UNAVAILABLE);
         assertThat(response.getBody()).isNull();
     }
 

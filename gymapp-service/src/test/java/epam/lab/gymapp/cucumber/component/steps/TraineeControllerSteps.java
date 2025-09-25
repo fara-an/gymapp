@@ -1,7 +1,8 @@
-package epam.lab.gymapp.cucumber.steps;
+package epam.lab.gymapp.cucumber.component.steps;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import epam.lab.gymapp.cucumber.TestContextJwt;
 import epam.lab.gymapp.dto.request.login.Credentials;
 import epam.lab.gymapp.dto.request.registration.TraineeRegistrationBody;
 import epam.lab.gymapp.dto.request.update.UpdateTraineeTrainerList;
@@ -15,13 +16,12 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.*;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class TraineeControllerITSteps {
+public class TraineeControllerSteps {
 
     @LocalServerPort
     private int port;
@@ -69,7 +69,6 @@ public class TraineeControllerITSteps {
 
     @Given("a trainee with username {string} already exists")
     public void traineeAlreadyExists(String username) {
-        // no-op: data is seeded from SQL (Emily.Brown exists already)
     }
 
     @When("I try to register a trainee with firstName {string}, lastName {string}, dateOfBirth {string} and address {string}")

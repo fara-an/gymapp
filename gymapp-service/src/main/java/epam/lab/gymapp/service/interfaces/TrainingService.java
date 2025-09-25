@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 public interface TrainingService {
     ResponseEntity<?> addTraining(TrainingAddDto trainingAddDto);
 
-    void deleteTraining(String trainerName, String traineeName, LocalDateTime start);
+    ResponseEntity<?> deleteTraining(String trainerName, String traineeName, LocalDateTime start);
 
     Training findTraining(String trainerName, String traineeName, LocalDateTime start);
 

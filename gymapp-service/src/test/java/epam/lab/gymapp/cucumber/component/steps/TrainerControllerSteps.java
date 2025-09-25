@@ -1,6 +1,7 @@
-package epam.lab.gymapp.cucumber.steps;
+package epam.lab.gymapp.cucumber.component.steps;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import epam.lab.gymapp.cucumber.TestContextJwt;
 import epam.lab.gymapp.dto.request.login.Credentials;
 import epam.lab.gymapp.dto.request.registration.TrainerRegistrationBody;
 import epam.lab.gymapp.dto.request.update.UpdateTrainerDto;
@@ -14,7 +15,7 @@ import org.springframework.http.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class TrainerControllerITSteps {
+public class TrainerControllerSteps {
 
     @LocalServerPort
     private int port;
@@ -64,11 +65,27 @@ public class TrainerControllerITSteps {
         response = restTemplate.postForEntity("/trainers", httpEntity, String.class);
     }
 
+    @When("I get trainings for trainer {string} with from date {string} and to date {string}")
+    public void getTrainerTrainingsWithDates(String username, String fromDate, String toDate) {
+        StringBuilder endpoint = new StringBuilder("/trainers/" + username + "/trainings");
+        if (fromDate != null && toDate != null) {
+            endpoint.append("?from=").append(fromDate).append("&to=").append(toDate);
+        }
+        HttpEntity<?> entity = new HttpEntity<>(httpHeaders);
+        response = restTemplate.exchange(
+                endpoint.toString(),
+                HttpMethod.GET,
+                entity,
+                String.class
+        );
+    }
+
     @When("I get trainer {string}")
     public void getTrainer(String username) {
         HttpEntity<?> httpEntity = new HttpEntity<>(httpHeaders);
         response = restTemplate.exchange("/trainers/" + username, HttpMethod.GET, httpEntity, String.class);
     }
+
 
     @When("I update trainer with id {int} to have firstName {string}, lastName {string}, username {string}, active {string}")
     public void updateTrainer(int id, String firstName, String lastName, String username, String active) {
@@ -94,6 +111,8 @@ public class TrainerControllerITSteps {
         response = restTemplate.exchange("/trainers/" + username + "/trainings", HttpMethod.GET, entity, String.class);
     }
 
+
+
     @Then("Trainer Controller: the response status should be {int}")
     public void responseStatusShouldBe(int status) {
         assertThat(response.getStatusCode().value()).isEqualTo(status);
@@ -117,5 +136,20 @@ public class TrainerControllerITSteps {
     @Then("Trainer Controller: the response should contain training {string}")
     public void responseContainsTraining(String trainingName) {
         assertThat(response.getBody()).contains(trainingName);
+    }
+
+
+    @Then("Trainer Controller: the response should contain error message {string}")
+    public void responseContainsErrorMessage(String errorMessage) {
+        assertThat(response.getBody())
+                .as("Response should contain error message: " + errorMessage)
+                .contains(errorMessage);
+    }
+
+    @Then("Trainer Controller: the response should be an empty list")
+    public void responseShouldBeEmptyList() {
+        assertThat(response.getBody())
+                .as("Response should be an empty list")
+                .isEqualTo("[]");
     }
 }
