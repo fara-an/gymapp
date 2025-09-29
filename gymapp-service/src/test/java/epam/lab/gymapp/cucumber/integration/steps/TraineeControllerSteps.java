@@ -1,4 +1,4 @@
-package epam.lab.gymapp.cucumber.component.steps;
+package epam.lab.gymapp.cucumber.integration.steps;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

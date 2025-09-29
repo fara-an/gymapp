@@ -1,4 +1,4 @@
-package epam.lab.gymapp.cucumber.component.steps;
+package epam.lab.gymapp.cucumber.integration.steps;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import epam.lab.gymapp.cucumber.TestContextJwt;
@@ -23,8 +23,7 @@ import epam.lab.gymapp.dto.request.training.TrainingAddDto;
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+
 
 public class TrainingControllerSteps {
 
