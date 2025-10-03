@@ -10,7 +10,7 @@ import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PROPERTY_NAME;
 
 @Suite
 @IncludeEngines("cucumber")
-@SelectClasspathResource("features/integration")
+@SelectClasspathResource("cucumber/features/integration")
 @ConfigurationParameter(
         key = GLUE_PROPERTY_NAME,
         value = "epam.lab.gymapp.cucumber.integration"

@@ -85,12 +85,4 @@ public class DatabaseConfig {
         return new HibernateTransactionManager(sf);
     }
 
-//    @Bean
-//    public SessionFactory sessionFactory(LocalSessionFactoryBean factory) {
-//        return factory.getObject();
-//    }
-
-
-
-
 }

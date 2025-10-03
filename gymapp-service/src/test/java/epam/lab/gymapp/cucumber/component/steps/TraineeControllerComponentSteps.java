@@ -11,6 +11,9 @@ import epam.lab.gymapp.service.interfaces.TraineeService;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
+import org.junit.Before;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.MockMvc;
@@ -37,6 +40,7 @@ public class TraineeControllerComponentSteps {
     private TraineeService traineeService;
 
     private MvcResult lastMvcResult;
+
 
 
     @Given("trainee {string} exists")
@@ -163,17 +167,18 @@ public class TraineeControllerComponentSteps {
 
     @When("I update trainee id {int} with payload:")
     public void i_update_trainee_with_payload(Integer id, String docString) throws Exception {
-        Map<String, Object> payload = objectMapper.readValue(docString, new TypeReference<>() {});
+        Map<String, Object> payload = objectMapper.readValue(docString, new TypeReference<>() {
+        });
         String userName = (String) payload.getOrDefault("userName", "unknown");
 
         Trainee updated = Trainee.builder()
                 .id(id.longValue())
                 .userName(userName)
-                .firstName((String) payload.getOrDefault("firstName",""))
-                .lastName((String) payload.getOrDefault("lastName",""))
-                .birthday(LocalDateTime.parse((String)payload.getOrDefault("birthday", LocalDateTime.now().toString())))
-                .address((String) payload.getOrDefault("address",""))
-                .isActive((Boolean)payload.getOrDefault("isActive", true))
+                .firstName((String) payload.getOrDefault("firstName", ""))
+                .lastName((String) payload.getOrDefault("lastName", ""))
+                .birthday(LocalDateTime.parse((String) payload.getOrDefault("birthday", LocalDateTime.now().toString())))
+                .address((String) payload.getOrDefault("address", ""))
+                .isActive((Boolean) payload.getOrDefault("isActive", true))
                 .trainers(List.of())
                 .build();
 
@@ -215,7 +220,8 @@ public class TraineeControllerComponentSteps {
     @Then("the response should contain username and password")
     public void the_response_should_contain_username_and_password() throws Exception {
         String body = safeBody();
-        Map<String, Object> map = objectMapper.readValue(body, new TypeReference<>() {});
+        Map<String, Object> map = objectMapper.readValue(body, new TypeReference<>() {
+        });
         Assertions.assertTrue(map.containsKey("username") || map.containsKey("userName"),
                 "Response does not contain username. Body: " + body);
         Assertions.assertTrue(map.containsKey("password"),
