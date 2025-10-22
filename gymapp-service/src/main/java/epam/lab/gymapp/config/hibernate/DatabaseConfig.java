@@ -14,7 +14,7 @@ import javax.sql.DataSource;
 import java.util.Properties;
 
 @Configuration
-@Profile("!test")
+@Profile("!test & !no-integrations")
 public class DatabaseConfig {
 
     @Value("${spring.datasource.driver-class-name}")
