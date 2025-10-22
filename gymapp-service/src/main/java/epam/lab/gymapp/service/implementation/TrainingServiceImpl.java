@@ -18,10 +18,18 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 
-
+/**
+ * Implementation of TrainingService interface.
+ *
+ * @author Valentin Zhurgut
+ * @version 1.0
+ */
 @Service
 public class TrainingServiceImpl implements TrainingService {
 
@@ -63,9 +71,15 @@ public class TrainingServiceImpl implements TrainingService {
         Training newTraining = buildTraining(trainingAddDto, trainer, trainee, start, end, trainingType);
 
         Training createdTraining = trainingDao.create(newTraining);
-        ResponseEntity<Void> response = trainerWorkloadClientService.callToTrainerWorkloadService(createdTraining, "ADD");
-        if (!response.getStatusCode().is2xxSuccessful()) {
-            return response;
+        try {
+            ResponseEntity<Void> response = trainerWorkloadClientService.callToTrainerWorkloadService(createdTraining, "ADD");
+            if (!response.getStatusCode().is2xxSuccessful()) {
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
+
         }
         TrainingResponse dto = TrainingMapper.trainingWithTrainer(createdTraining);
 
@@ -108,13 +122,24 @@ public class TrainingServiceImpl implements TrainingService {
     }
 
     @Override
-    public void deleteTraining(String trainerUsername, String traineeUsername, LocalDateTime startTime) {
+    @Transactional
+    public ResponseEntity<?> deleteTraining(String trainerUsername, String traineeUsername, LocalDateTime startTime) {
         LOGGER.debug(SERVICE_NAME + " - Deleting training ");
         Training training = findTraining(trainerUsername, traineeUsername, startTime);
         LOGGER.debug("Training with id{}, trainerUsername {}, traineeUsername {}", training.getId(), training.getTrainer().getUserName(), training.getTrainee().getUserName());
         trainingDao.deleteTraining(training);
-        trainerWorkloadClientService.callToTrainerWorkloadService(training, "DELETE");
+        try {
+            ResponseEntity<Void> response = trainerWorkloadClientService.callToTrainerWorkloadService(training, "DELETE");
+            if (!response.getStatusCode().is2xxSuccessful()) {
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
+            }
+        } catch (Exception e) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
 
+        }
+        return ResponseEntity.ok().build();
 
     }
 

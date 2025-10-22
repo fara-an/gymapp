@@ -1,8 +1,8 @@
 package epam.lab.gymapp.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import epam.lab.gymapp.GymApplication;
 import epam.lab.gymapp.config.metric.MetricsConfig;
+import epam.lab.gymapp.configuration.NoSecurityConfig;
 import epam.lab.gymapp.dto.request.changePassword.PasswordChangeDto;
 import epam.lab.gymapp.dto.request.login.Credentials;
 import epam.lab.gymapp.jwt.JwtService;

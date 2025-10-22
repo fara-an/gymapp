@@ -28,3 +28,4 @@ INSERT INTO training (id, trainer_id, trainee_id, training_name, training_type_i
 INSERT INTO training (id, trainer_id, trainee_id, training_name, training_type_id, training_date_start, training_duration,training_date_end) VALUES ( 3, 1, 4, 'Yoga Basics', 3, '2025-06-14T12:00:00', 90,'2025-06-14T13:30:00');
 
 ALTER TABLE training ALTER COLUMN id RESTART WITH 4;
+ALTER TABLE userprofile ALTER COLUMN user_id RESTART WITH 6;

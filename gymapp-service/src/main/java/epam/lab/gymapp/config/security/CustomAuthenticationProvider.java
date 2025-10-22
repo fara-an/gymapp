@@ -1,5 +1,6 @@
 package epam.lab.gymapp.config.security;
 
+import epam.lab.gymapp.service.implementation.LoginAttemptService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;

@@ -16,8 +16,8 @@ import java.util.List;
 @NoArgsConstructor
 public class Trainer extends UserProfile {
 
-    @OneToOne
-    @JoinColumn(name = DatabaseConstants.COL_SPECIALIZATION)
+    @ManyToOne
+    @JoinColumn(name = DatabaseConstants.COL_SPECIALIZATION, nullable = false)
     private TrainingType specialization;
 
 

@@ -13,7 +13,6 @@ import lombok.NoArgsConstructor;
 @Builder
 public class PasswordChangeDto {
     @NotBlank
-    @Size(min = 6)
     String username;
     String oldPassword;
     String newPassword;

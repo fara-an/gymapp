@@ -83,7 +83,7 @@ public class TrainingDaoImpl extends BaseDao<Training, Long> implements Training
                 .setParameter("startTime", startTime)
                 .uniqueResultOptional()
                 .orElseThrow(() ->
-                     new EntityNotFoundException("Training with traineeUsername '%s';, trainerUsername '%s', starTime '%s' not found" .formatted(trainerUsername, traineeUsername, startTime)));
+                     new EntityNotFoundException("Training with traineeUsername '%s';, trainerUsername '%s', starTime '%s' not found" .formatted( traineeUsername,trainerUsername, startTime)));
 
 
 
@@ -122,7 +122,6 @@ public class TrainingDaoImpl extends BaseDao<Training, Long> implements Training
                         new EntityNotFoundException("Training id=%d not found" .formatted(trainingId)));
 
         if (!training.getTrainee().getUserName().equals(traineeUsername)) {
-            System.out.println(training.getTrainee().getUserName());
             throw new EntityNotFoundException("Training id=%d does not belong to trainee '%s'"
                     .formatted(trainingId, traineeUsername));
         }

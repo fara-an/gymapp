@@ -29,8 +29,8 @@ public class TrainingController {
     public ResponseEntity<?> deleteTraining(@RequestParam(value = "trainerUsername") String trainerUsername,
                                             @RequestParam(value = "traineeUsername") String traineeUsername,
                                             @RequestParam(value = "startTime")LocalDateTime startTime) {
-        trainingService.deleteTraining(trainerUsername, traineeUsername, startTime);
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return trainingService.deleteTraining(trainerUsername, traineeUsername, startTime);
+
     }
 
     @GetMapping
