@@ -1,0 +1,8 @@
+spring.profiles.active=dev
+JWT_SECRET=984hg493gh0439rthr0429uruj2309yh937gc763fe87t3f89723gf
+SPRING_DATASOURCE_PASSWORD=elephants
+SPRING_DATASOURCE_USERNAME=postgres
+SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/gymapp
+ACTIVEMQ_URL=tcp://localhost:61616
+ACTIVEMQ_USER=admin
+ACTIVEMQ_PASSWORD=admin
