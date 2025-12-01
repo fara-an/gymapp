@@ -34,7 +34,7 @@ public class TrainerController {
     }
 
 
-    @PostMapping()
+    @PostMapping
     public ResponseEntity<TrainerRegistrationResponse> register(
             @Valid @RequestBody TrainerRegistrationBody registrationDto) {
         Trainer trainer = Trainer.builder().

@@ -10,6 +10,6 @@ public class Resilience4jConfig {
 
     @Bean
     public CircuitBreaker trainerWorkloadCircuitBreaker(CircuitBreakerRegistry registry) {
-      return   registry.circuitBreaker("trainerWorkloadCB");
+        return registry.circuitBreaker("trainerWorkloadCB");
     }
 }

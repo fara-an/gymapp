@@ -3,6 +3,7 @@ package epam.lab.gymapp.service.implementation;
 import epam.lab.gymapp.dto.request.trainerWorkloadRequest.TrainerWorkloadRequest;
 import epam.lab.gymapp.model.Trainer;
 import epam.lab.gymapp.model.Training;
+import io.awspring.cloud.sqs.operations.SqsTemplate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -20,14 +21,14 @@ import static org.mockito.Mockito.*;
 class TrainerWorkloadClientServiceTest {
 
     @Mock
-    private JmsTemplate jmsTemplate;
+    private SqsTemplate sqsTemplate;
 
     private TrainerWorkloadClientService service;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        service = new TrainerWorkloadClientService(jmsTemplate, "trainerWorkload.queue");
+        service = new TrainerWorkloadClientService(sqsTemplate, "trainerWorkload.queue");
     }
 
     private Training buildTraining() {
@@ -54,7 +55,7 @@ class TrainerWorkloadClientServiceTest {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
 
         ArgumentCaptor<TrainerWorkloadRequest> captor = ArgumentCaptor.forClass(TrainerWorkloadRequest.class);
-        verify(jmsTemplate, times(1)).convertAndSend(eq("trainerWorkload.queue"), captor.capture());
+        verify(sqsTemplate, times(1)).send(eq("trainerWorkload.queue"), captor.capture());
 
         TrainerWorkloadRequest sentRequest = captor.getValue();
         assertThat(sentRequest.getTrainerUsername()).isEqualTo("john.doe");
