@@ -15,21 +15,14 @@ import epam.lab.gymapp.service.interfaces.TrainingService;
 import epam.lab.gymapp.service.interfaces.TrainingTypeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.server.ResponseStatusException;
+
 
 import java.time.LocalDateTime;
-
-/**
- * Implementation of TrainingService interface.
- *
- * @author Valentin Zhurgut
- * @version 1.0
- */
 @Service
 public class TrainingServiceImpl implements TrainingService {
 
